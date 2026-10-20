@@ -67,7 +67,7 @@ def omit_panels(L, omitted):
         L['size_pt'] = [w, h - dy]
         del L['letters'][p]
     kept = [k for k in order if k not in omitted]
-    L['printed_letters'] = {k: chr(ord('A') + i) for i, k in enumerate(kept)}
+    L['printed_letters'] = {k: chr(ord('a') + i) for i, k in enumerate(kept)}
     return L
 
 
@@ -84,6 +84,11 @@ class FigureContext:
         tv = layout['track_view']
         self.track_style = dict(tv['style'], font_family=self.sans, **self.L.get('track_style', {}))
         self.renderer = TrackRenderer(cfg, self.df, self.track_style)
+        # output.width_mm: the page is written at that width (the layout stays in published-page
+        # points), so every size in the layout prints at `scale` times its value
+        w_pt = self.L['size_pt'][0]
+        width_mm = layout.get('output', {}).get('width_mm')
+        self.scale = width_mm / (w_pt / 72 * 25.4) if width_mm else 1.0
 
     # -- track views --------------------------------------------------------------------
     def track_view(self, contig, column, ruler_y, tag):
@@ -160,16 +165,23 @@ class FigureContext:
                     warnings.warn(f'{self.name}: legend has no entry for {kind} feature {feat}')
 
     def letters(self):
-        size = self.layout['fonts']['letter_size']
+        fonts = self.layout['fonts']
+        size = fonts['letter_size']
+        if 'output' in self.layout and fonts.get('letter_size_final'):
+            size = round(fonts['letter_size_final'] / self.scale, 3)
         printed = self.L.get('printed_letters', {})
         for letter, (x, y) in self.L['letters'].items():
-            self.items.append(_txt(printed.get(letter, letter), x, y, size, self.sans, bold=True))
+            self.items.append(_txt(printed.get(letter, letter.lower()), x, y, size, self.sans, bold=True))
 
     def write(self):
         w, h = self.L['size_pt']
         stem = self.out / self.name
-        fc.compose(self.items, w, h, f'{stem}.svg')
-        fc.render(f'{stem}.svg', f'{stem}.pdf', f'{stem}.png', png_size=self.L['png_px'])
+        png_px = self.L['png_px']
+        ppi = self.layout.get('output', {}).get('ppi')
+        if ppi:
+            png_px = [round(w * self.scale / 72 * ppi), round(h * self.scale / 72 * ppi)]
+        fc.compose(self.items, w, h, f'{stem}.svg', scale=self.scale)
+        fc.render(f'{stem}.svg', f'{stem}.pdf', f'{stem}.png', png_size=png_px)
         return [Path(f'{stem}.{ext}') for ext in ('svg', 'pdf', 'png')]
 
 
@@ -363,7 +375,8 @@ def hmm_scatter(ctx):
 
 
 def build_figS9(ctx):
-    ctx.items.append(figure_schematic.svg_fragment(ctx.L['page_origin'], ctx.sans))
+    ctx.items.append(figure_schematic.svg_fragment(ctx.L['page_origin'], ctx.sans,
+                                                   ctx.L.get('schematic_text_size')))
     hmm_scatter(ctx)
     ctx.all_tracks()
     ctx.track_legend()

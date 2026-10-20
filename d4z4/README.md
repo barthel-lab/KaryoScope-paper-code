@@ -1,13 +1,18 @@
 > **Snapshot note (KaryoScope-paper-code).** Copied from `barthel-lab/HPRC-D4Z4` at
-> `77e804b`, the head of PR #1 (`figures/reproducible-layout`), which is not merged.
-> Changes: the home-directory defaults in `analyze_d4z4_arrays.py` (now `D4Z4_BASE_DIR`,
-> default `.`), `plot_d4z4_arrays.py`, `plot_hmm_correlation.py` and
+> `77e804b`, the head of PR #1 (`figures/reproducible-layout`), which is not merged,
+> with `figure_build.py`, `figure_compose.py`, `figure_schematic.py` and
+> `figures_layout.yaml` taken from `52ed8cc`, the head of PR #2 (`nature/ed-spec`, on
+> top of PR #1, not merged): the figures are drawn at 183 mm wide with 5-7 pt text and
+> 8 pt lowercase panel letters. PR #2 changes no data or analysis. Other changes: the
+> home-directory defaults in `analyze_d4z4_arrays.py` (now `D4Z4_BASE_DIR`, default
+> `.`), `plot_d4z4_arrays.py`, `plot_hmm_correlation.py` and
 > `generate_notable_samples_report.py` are relative to the working directory, and
 > cluster paths use the variables in the repository README.
 > Two inputs of the figures are not in a public location: the HMM repeat counts
 > (`Hailey-notes/HPRC_chr4_counts.xlsx`) and the pLAM BLAST calls behind
 > `results/d4z4_array_coordinates.plam.tsv`. With them, `make_figures.py` run in
-> `environment/d4z4.yml` gives SVGs byte-identical to the `77e804b` render.
+> `environment/d4z4.yml` gives the same `figure_data.tsv` and the same drawn elements
+> and values as the submitted Fig. 4, Extended Data Fig. 8 and Supplementary Fig. 2.
 
 # HPRC D4Z4 Array Analysis
 

@@ -64,11 +64,16 @@ def line_el(x1, y1, x2, y2, stroke='#000000', width=0.5):
             f'stroke="{stroke}" stroke-width="{width}"/>')
 
 
-def compose(items, width_pt, height_pt, out_svg):
-    """Write the page SVG. Each item is an SVG fragment string."""
+def compose(items, width_pt, height_pt, out_svg, scale=1.0):
+    """Write the page SVG. Each item is an SVG fragment string.
+
+    The items are in page points; the page is written `scale` times that size (the viewBox
+    keeps the page-point coordinates).
+    """
     head = (f'<?xml version="1.0" encoding="UTF-8"?>\n'
             f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
-            f'width="{width_pt}pt" height="{height_pt}pt" viewBox="0 0 {width_pt} {height_pt}">\n'
+            f'width="{round(width_pt * scale, 3)}pt" height="{round(height_pt * scale, 3)}pt" '
+            f'viewBox="0 0 {width_pt} {height_pt}">\n'
             f'<rect x="0" y="0" width="{width_pt}" height="{height_pt}" fill="#FFFFFF"/>\n')
     Path(out_svg).write_text(head + '\n'.join(items) + '\n</svg>\n')
 

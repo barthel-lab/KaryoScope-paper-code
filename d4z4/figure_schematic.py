@@ -97,8 +97,13 @@ def _example(out, font, title, title_y, rows, array, extra):
     out.extend(extra)
 
 
-def svg_fragment(origin, font):
-    """The schematic as an SVG <g>, shifted so that page point `origin` maps to (0, 0)."""
+def svg_fragment(origin, font, size=None):
+    """The schematic as an SVG <g>, shifted so that page point `origin` maps to (0, 0).
+
+    size: text size in page points (default SIZE, the published 9.31).
+    """
+    global SIZE
+    SIZE = size or 9.31
     ox, oy = origin
     out = [f'<g transform="translate({-ox:.2f} {-oy:.2f})">']
 

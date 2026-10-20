@@ -1,14 +1,22 @@
 units: points (1/72 in); origin at the top-left of the published figure; y down
 provenance: Read with PyMuPDF from the published Illustrator files in KaryoScope-paper figures/fig5/ (branch revision/fpb-comments-2026-10-10).
 fonts: {sans: 'Helvetica, Arial, Liberation Sans, sans-serif', plot: 'Arial, Liberation Sans, Helvetica, sans-serif',
-  letter_size: 14, letter_weight: bold}
+  letter_size: 14, letter_weight: bold, letter_size_final: 8}
+# Nature Extended Data size: each page is written 183 mm wide (PNG at 300 ppi). Positions and
+# sizes below stay in published-page points, so text prints at about 0.87-0.88 times the size
+# given here (fig4 0.879, figS9 0.877, figS10 0.869); letter_size_final is in printed points.
+# Without this block the pages are written at the published size, with letter_size.
+output: {width_mm: 183, ppi: 300}
 track_view:
   width: 1200
   left_margin: 120
   right_margin: 50
   height_ratio: 3.0
   line_width_pt: 1.0
-  style: {array_labels: figure, plam_marker_gap: -2.2, label_window_end: true}
+  style: {array_labels: figure, plam_marker_gap: -2.2, label_window_end: true,
+          # drawing units (x ~0.246 to page points): titles and row labels 38 -> 32,
+          # element numbers 22 -> 24, for 5-7 pt at 183 mm
+          title_font: 32, track_label_font: 32, element_font: 24}
 track_legend: {header_size: 7.68, item_size: 5.95, item_pitch: 8.92, swatch: 5.45, swatch_dx: -6.71, swatch_dy: -4.71}
 hidden_element_labels:
   NA19240#1#CM099581.1:   # S10E: 24 collides with 25 at the start of array 1
@@ -161,7 +169,7 @@ fig4:
     titles:
       chr4: [393.31, 114.65]
       chr10: [523.96, 114.46]
-    title_size: 8.0
+    title_size: 7.9
     grids:
       chr4:
         origin: [334.23, 117.16]
@@ -199,9 +207,9 @@ fig4:
   H:
     box: [323.85, 385.24, 250.3, 243.0]
     axes: [366.89, 399.21, 194.86, 194.86]
-    title_size: 8.0
-    axis_size: 8.0
-    tick_size: 8.0
+    title_size: 7.9
+    axis_size: 7.9
+    tick_size: 7.9
     legend_size: 7.0
     label_size: 6.0
     fold_size: 6.0
@@ -221,6 +229,7 @@ figS9:
   page_origin: [12.28, 3.14]
   size_pt: [591.6, 779.52]
   png_px: [2465, 3248]
+  schematic_text_size: 7.9   # S9A text (published 9.31)
   letters:
     A: [0.58, 12.09]
     B: [0.17, 433.4]
