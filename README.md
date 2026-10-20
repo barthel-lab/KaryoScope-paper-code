@@ -21,7 +21,7 @@ Numbering as in the submitted manuscript.
 | Fig. 5a, 5c, 5d | `centromere/scripts/HPRC2_centromere_analysis.sh` | yes |
 | Fig. 5b | none (FISH images) | n/a |
 | ED Fig. 1-3 | none (Illustrator) | no |
-| ED Fig. 4 | `revision/a3-cross-genome/figure/make_build_panels_ab.py` (a, b), `make_build_figure.py` (c); data `revision/a3-cross-genome/` | a, b yes; c no (its karyotype renders were not kept) |
+| ED Fig. 4 | `revision/a3-cross-genome/figure/make_build_panels_ab.py` (a, b), `make_build_figure.py` (c); data `revision/a3-cross-genome/` | yes |
 | ED Fig. 5 | `benchmarks/edfig5/supplementary_CHM13_benchmarking.nature.R` | yes |
 | ED Fig. 6 | `benchmarks/figS6/` | yes |
 | ED Fig. 7 | KaryoScope-ROBs figure scripts, withheld (ROB coordinates) | not in this snapshot |
@@ -59,7 +59,7 @@ vendored/      the KaryoScope-ISCN and KaryoScope-conductor files the figure cod
 | `benchmarks/tableS1/`, `benchmarks/figS6/` | TGen cluster job directories `ks_slurm/tableS1_cold/`, `ks_slurm/threadsweep_cold/` | n/a | jobs 38434006 and 38373939; not previously in a repository |
 | `benchmarks/figS6/plot_figS6.py` and its TSVs | barthel-lab/KaryoScope-paper | `6166acf` | `figures/fig3/data/` |
 | `benchmarks/fig2/`, `benchmarks/edfig5/` | KaryoScope-archive working tree at `7c976e04` | n/a | uncommitted files; sha256 in `benchmarks/README.md` |
-| `revision/a3-cross-genome/figure/` | barthel-lab/KaryoScope-paper | `6166acf` | `scripts/make_build_figure.py`, `make_build_panels_ab.py` |
+| `revision/a3-cross-genome/figure/` | barthel-lab/KaryoScope-paper | `bf6b6c3` (PR #35) | `scripts/make_build_figure.py`, `make_build_panels_ab.py`, with the Nature text sizes and lowercase panel letters |
 | `vendored/KaryoScope-ISCN/` | barthel-lab/KaryoScope-ISCN | `4e42a98` | four files |
 | `vendored/KaryoScope-conductor/` | barthel-lab/KaryoScope-conductor | `0732e96` | ten files |
 | `vendored/KaryoScope-archive-resources/` | KaryoScope-archive pipeline | `7c976e04` | palettes, k-mer counts, priority and hierarchy files |
@@ -72,8 +72,9 @@ public `barthel-lab/KaryoScope-archive` repository. It is reachable in the priva
 Pending style-only updates (font sizes, panel-letter case, export format for
 the Nature figure specification) are open as pull requests and are not in this
 snapshot: HPRC-D4Z4 #2 (Fig. 4, ED Fig. 8, Supp. Fig. 2), KaryoScope-paper #35
-(ED Figs. 4 and 6), KaryoScope-ISCN #87 (Fig. 3 lowercase panel letters), and
-the ED Fig. 5 (KaryoScope-archive) and ED Fig. 7 (KaryoScope-ROBs) changes.
+(ED Fig. 6; the ED Fig. 4 scripts here are already the #35 versions),
+KaryoScope-ISCN #87 (Fig. 3 lowercase panel letters) and KaryoScope-ROBs #2
+(ED Fig. 7). The ED Fig. 5 styling is in `benchmarks/edfig5/` (`.nature.R`).
 None of them changes plotted data.
 
 ## Withheld

@@ -12,31 +12,57 @@ centromeric -- is not drawn. A bare side-by-side would therefore
 read as a flawless transfer while the Results text reports 10.3% falling back to
 a parent node.
 
-    python3 scripts/make_build_figure.py
+    python3 scripts/make_build_figure.py [--a3-dir DIR]
+
+Panel C reads the A3 cross-genome run directory (the two karyotype renders and
+results/label_composition.tsv). It is located by --a3-dir, else the KS_A3_DIR
+environment variable, else <repo>/a3_crossgenome.
 
 Writes figures/fig7/build_workflow.svg.
+
+Text sizes are SVG user units on the 1400-unit-wide canvas. The figure is
+printed 183 mm wide, so 1 unit = 0.3705 pt; the FS_* constants keep body text
+at >= 5 pt and panel letters at 8 pt at that size.
 """
 
+import os
 import re
 import csv
+import argparse
 import collections
-import os
 from pathlib import Path
 
-ROOT = Path(os.environ.get("BUILD_FIG_ROOT", "."))  # directory holding figures/fig7/ and a3_crossgenome/
+ROOT = Path(__file__).resolve().parent.parent
 DRAFT = ROOT / "figures" / "fig7" / "build_workflow_panelsAB.svg"
 OUT = ROOT / "figures" / "fig7" / "build_workflow.svg"
-A3 = ROOT / "a3_crossgenome"
+A3 = Path(os.environ.get("KS_A3_DIR", ROOT / "a3_crossgenome"))
 
-EY_SVG = A3 / "karyotype_ey15_2" / \
-    "ey15-2.HKS_arabidopsis_ColCEN.genome.region.smoothed.karyotype.svg"
-CC_SVG = A3 / "karyotype_colcen" / \
-    "Col-CEN_v1.2.HKS_arabidopsis_ColCEN.genome.region.smoothed.karyotype.svg"
-COMP = A3 / "results" / "label_composition.tsv"
+
+def set_a3(a3):
+    """Point panel C's three inputs at an A3 run directory."""
+    global A3, EY_SVG, CC_SVG, COMP
+    A3 = Path(a3)
+    EY_SVG = A3 / "karyotype_ey15_2" / \
+        "ey15-2.HKS_arabidopsis_ColCEN.genome.region.smoothed.karyotype.svg"
+    CC_SVG = A3 / "karyotype_colcen" / \
+        "Col-CEN_v1.2.HKS_arabidopsis_ColCEN.genome.region.smoothed.karyotype.svg"
+    COMP = A3 / "results" / "label_composition.tsv"
+
+
+set_a3(A3)
 
 # Scale each source render was drawn at, from the A3 handoff. The two differ by
 # ~6%, which is exactly why they cannot be placed side by side as rendered.
 KBP_PER_PX = {"ey": 34.4, "cc": 32.5}
+
+# ------------------------------------------------------------ font sizes -----
+# User units; x 0.3705 = pt at the printed width of 183 mm.
+FS_LETTER = 21.6    # 8.0 pt, panel letter
+FS_TITLE = 18.5     # 6.9 pt, panel title
+FS_GROUP = 16       # 5.9 pt, genome group labels
+FS_BODY = 14        # 5.2 pt, labels, legends, headers
+FS_SMALL = 13.5     # 5.0 pt, tick labels, bar values, parent-label names
+CHAR_W = 8.5 * FS_BODY / 13   # legend advance per character (was 8.5 at 13)
 
 # ---------------------------------------------------------------- canvas -----
 W = 1400
@@ -154,7 +180,7 @@ def karyotype_group(blocks, kbp_per_px, kb_per_px_target, x0, y0, names):
         top = chrom[0][0]
         name = names[i] if i < len(names) else f"Chr{i + 1}"
         out.append(
-            f'  <text x="{x0 - 8}" y="{y + BAR_H - 3:.0f}" font-size="13" '
+            f'  <text x="{x0 - 8}" y="{y + BAR_H - 3:.0f}" font-size="{FS_BODY}" '
             f'fill="#555555" text-anchor="end">{esc(name)}</text>'
         )
         for by, bh, fill in chrom:
@@ -210,20 +236,20 @@ def build_panel_c(comp):
 
     s = []
     top = PANEL_C_TOP
-    s.append(f'  <text x="20" y="{top + 26}" font-size="24" font-weight="bold" '
-             f'fill="#222222">C</text>')
-    s.append(f'  <text x="50" y="{top + 26}" font-size="20" fill="#222222">'
+    s.append(f'  <text x="20" y="{top + 26}" font-size="{FS_LETTER}" font-weight="bold" '
+             f'fill="#222222">c</text>')
+    s.append(f'  <text x="50" y="{top + 26}" font-size="{FS_TITLE}" fill="#222222">'
              f'Annotating a second accession with the database</text>')
 
     # ---- left: the two karyotypes, matched scale --------------------------
     ey_y = top + 60
-    s.append(f'  <text x="{KX0 - 52}" y="{ey_y - 12}" font-size="15" '
+    s.append(f'  <text x="{KX0 - 52}" y="{ey_y - 12}" font-size="{FS_GROUP}" '
              f'font-weight="bold" fill="#333333">Ey15-2</text>')
     s += karyotype_group(ey_blocks, KBP_PER_PX["ey"], kb_per_px, KX0, ey_y,
                          ey_names)
 
     cc_y = ey_y + 5 * ROW_PITCH + 34
-    s.append(f'  <text x="{KX0 - 52}" y="{cc_y - 12}" font-size="15" '
+    s.append(f'  <text x="{KX0 - 52}" y="{cc_y - 12}" font-size="{FS_GROUP}" '
              f'font-weight="bold" fill="#333333">Col-CEN (control)</text>')
     s += karyotype_group(cc_blocks, KBP_PER_PX["cc"], kb_per_px, KX0, cc_y,
                          cc_names)
@@ -234,7 +260,7 @@ def build_panel_c(comp):
     sb_w = 10000.0 / kb_per_px
     s.append(f'  <rect x="{KX0}" y="{sb_y}" width="{sb_w:.2f}" height="3" '
              f'fill="#444444"/>')
-    s.append(f'  <text x="{KX0 + sb_w + 8:.2f}" y="{sb_y + 10}" font-size="13" '
+    s.append(f'  <text x="{KX0 + sb_w + 8:.2f}" y="{sb_y + 10}" font-size="{FS_BODY}" '
              f'fill="#555555">10 Mb, both genomes drawn at one scale</text>')
 
     # shared legend for the four labels the renderer drew
@@ -244,24 +270,24 @@ def build_panel_c(comp):
         s.append(f'  <rect x="{lx}" y="{lg_y}" width="13" height="13" '
                  f'fill="{LEAF_COLOR[label]}" stroke="#666666" '
                  f'stroke-width="0.5"/>')
-        s.append(f'  <text x="{lx + 19}" y="{lg_y + 11}" font-size="13" '
+        s.append(f'  <text x="{lx + 19}" y="{lg_y + 11}" font-size="{FS_BODY}" '
                  f'fill="#555555">{esc(label)}</text>')
-        lx += 19 + 8.5 * len(label) + 24
+        lx += 19 + CHAR_W * len(label) + 24
 
     # ---- right: the composition the karyotype cannot show ------------------
     ey_r = comp[("ey15_2", "region")]
     cc_r = comp[("colcen", "region")]
 
     ry = top + 44
-    s.append(f'  <text x="{CX0}" y="{ry}" font-size="13" letter-spacing="0.8" '
+    s.append(f'  <text x="{CX0}" y="{ry}" font-size="{FS_BODY}" letter-spacing="0.8" '
              f'fill="#777777">REGION-SET COMPOSITION, ALL LABELS</text>')
 
     b1 = ry + 38
-    s.append(f'  <text x="{CX0}" y="{b1 - 6}" font-size="13" fill="#555555">'
+    s.append(f'  <text x="{CX0}" y="{b1 - 6}" font-size="{FS_BODY}" fill="#555555">'
              f'Ey15-2</text>')
     s += stacked_bar(ey_r, CX0, b1, CW, 26)
     b2 = b1 + 80
-    s.append(f'  <text x="{CX0}" y="{b2 - 6}" font-size="13" fill="#555555">'
+    s.append(f'  <text x="{CX0}" y="{b2 - 6}" font-size="{FS_BODY}" fill="#555555">'
              f'Col-CEN (control)</text>')
     s += stacked_bar(cc_r, CX0, b2, CW, 26)
 
@@ -272,10 +298,10 @@ def build_panel_c(comp):
     s.append(f'  <path d="M {nl_x:.2f} {b1 + 30} L {nl_x:.2f} {b1 + 36} '
              f'L {CX0 + CW} {b1 + 36} L {CX0 + CW} {b1 + 30}" fill="none" '
              f'stroke="#B4741F" stroke-width="1.1"/>')
-    s.append(f'  <text x="{CX0 + CW}" y="{b1 + 52}" font-size="13" '
+    s.append(f'  <text x="{CX0 + CW}" y="{b1 + 52}" font-size="{FS_BODY}" '
              f'fill="#B4741F" text-anchor="end">{ey_nl:.2f}% not resolved to a '
              f'leaf</text>')
-    s.append(f'  <text x="{CX0 + CW}" y="{b2 + 46}" font-size="13" '
+    s.append(f'  <text x="{CX0 + CW}" y="{b2 + 46}" font-size="{FS_BODY}" '
              f'fill="#777777" text-anchor="end">{cc_nl:.3f}% in the control'
              f'</text>')
 
@@ -283,13 +309,13 @@ def build_panel_c(comp):
     lx = CX0
     for label in LEAF_ORDER + NONLEAF_ORDER:
         fill = LEAF_COLOR.get(label) or NONLEAF_COLOR[label]
-        item_w = 19 + 8.5 * len(label) + 24
+        item_w = 19 + CHAR_W * len(label) + 24
         if lx + item_w > CX0 + CW + 10:
             lx = CX0
             ly += 22
         s.append(f'  <rect x="{lx}" y="{ly}" width="13" height="13" '
                  f'fill="{fill}" stroke="#666666" stroke-width="0.5"/>')
-        s.append(f'  <text x="{lx + 19}" y="{ly + 11}" font-size="13" '
+        s.append(f'  <text x="{lx + 19}" y="{ly + 11}" font-size="{FS_BODY}" '
                  f'fill="#555555">{esc(label)}</text>')
         lx += item_w
 
@@ -298,7 +324,7 @@ def build_panel_c(comp):
     # and region sets, but novel is the larger share in repeat and gene, so a
     # chart showing only the parent label would overstate the pattern.
     gy = ly + 56
-    s.append(f'  <text x="{CX0}" y="{gy}" font-size="13" letter-spacing="0.8" '
+    s.append(f'  <text x="{CX0}" y="{gy}" font-size="{FS_BODY}" letter-spacing="0.8" '
              f'fill="#777777">POSITIONS NOT RESOLVED TO A LEAF</text>')
 
     plot_y = gy + 20
@@ -311,7 +337,7 @@ def build_panel_c(comp):
         s.append(f'  <line x1="{tx:.2f}" y1="{plot_y}" x2="{tx:.2f}" '
                  f'y2="{plot_y + plot_h}" stroke="#E2E2E2" stroke-width="1"/>')
         s.append(f'  <text x="{tx:.2f}" y="{plot_y + plot_h + 16}" '
-                 f'font-size="12" fill="#888888" text-anchor="middle">'
+                 f'font-size="{FS_SMALL}" fill="#888888" text-anchor="middle">'
                  f'{tick}%</text>')
 
     pitch = plot_h / len(SET_ORDER)
@@ -321,9 +347,9 @@ def build_panel_c(comp):
         ey_novel = comp[("ey15_2", fset)].get("novel", 0.0)
         cc_parent = comp[("colcen", fset)].get(label, 0.0)
         row_y = plot_y + i * pitch + 2
-        s.append(f'  <text x="{CX0}" y="{row_y + 13}" font-size="13" '
+        s.append(f'  <text x="{CX0}" y="{row_y + 13}" font-size="{FS_BODY}" '
                  f'fill="#555555">{esc(fset)}</text>')
-        s.append(f'  <text x="{CX0}" y="{row_y + 28}" font-size="11.5" '
+        s.append(f'  <text x="{CX0}" y="{row_y + 28}" font-size="{FS_SMALL}" '
                  f'fill="#999999">{esc(label)}</text>')
         for j, (val, fill, tcol) in enumerate((
                 (ey_parent, "#8A8A8A", "#666666"),
@@ -334,7 +360,7 @@ def build_panel_c(comp):
             s.append(f'  <rect x="{ax0}" y="{by}" width="{bw:.2f}" height="10" '
                      f'fill="{fill}"/>')
             s.append(f'  <text x="{ax0 + bw + 6:.2f}" y="{by + 9.5}" '
-                     f'font-size="12" fill="{tcol}">{fmt_pct(val)}</text>')
+                     f'font-size="{FS_SMALL}" fill="{tcol}">{fmt_pct(val)}</text>')
 
     key_y = plot_y + plot_h + 34
     kx = CX0
@@ -343,14 +369,25 @@ def build_panel_c(comp):
                        ("#C6C6C6", "Col-CEN parent")):
         s.append(f'  <rect x="{kx}" y="{key_y}" width="13" height="13" '
                  f'fill="{fill}"/>')
-        s.append(f'  <text x="{kx + 19}" y="{key_y + 11}" font-size="13" '
+        s.append(f'  <text x="{kx + 19}" y="{key_y + 11}" font-size="{FS_BODY}" '
                  f'fill="#555555">{text}</text>')
-        kx += 19 + 8.5 * len(text) + 24
+        kx += 19 + CHAR_W * len(text) + 24
 
     return s
 
 
 def main():
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--a3-dir", type=Path, default=None,
+                    help="A3 cross-genome run directory (default: $KS_A3_DIR, "
+                         "else <repo>/a3_crossgenome)")
+    args = ap.parse_args()
+    if args.a3_dir is not None:
+        set_a3(args.a3_dir)
+    for f in (EY_SVG, CC_SVG, COMP):
+        if not f.is_file():
+            raise SystemExit(f"panel C input missing: {f}")
+
     draft = DRAFT.read_text()
     body = draft.split("\n")
     # drop the closing tag and the opening svg/background, keep panels A and B
