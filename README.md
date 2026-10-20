@@ -44,7 +44,8 @@ centromere/    centromere clustering and gating (Fig. 5)
 hg002/         HG002 assembly figure configuration (Fig. 1b-e)
 benchmarks/    Supp. Table 1, ED Fig. 6, ED Table 1, Fig. 2 and ED Fig. 5 scripts
 revision/      the revision analyses A2-A7 and the concordance harness
-vendored/      the KaryoScope-ISCN and KaryoScope-conductor files the figure code imports
+vendored/      the KaryoScope-ISCN and KaryoScope-conductor files the figure code imports, and the
+               KaryoScope-archive binning script (bin_features.py)
 ```
 
 ## Sources
@@ -63,6 +64,7 @@ vendored/      the KaryoScope-ISCN and KaryoScope-conductor files the figure cod
 | `vendored/KaryoScope-ISCN/` | barthel-lab/KaryoScope-ISCN | `4e42a98` | four files |
 | `vendored/KaryoScope-conductor/` | barthel-lab/KaryoScope-conductor | `0732e96` | ten files |
 | `vendored/KaryoScope-archive-resources/` | KaryoScope-archive pipeline | `7c976e04` | palettes, k-mer counts, priority and hierarchy files |
+| `vendored/KaryoScope-archive/bin_features.py` | barthel-lab/KaryoScope-archive (public) | `4434885` | the binning script for the D4Z4 and centromere windows |
 
 Commit `7c976e04` (the KaryoScope-archive pipeline commit named above) is not in the
 public `barthel-lab/KaryoScope-archive` repository. It is reachable in the private

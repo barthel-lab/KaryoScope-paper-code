@@ -50,3 +50,17 @@ The figure scripts also import `karyoplot`
 On the same inputs, the vendored copy and the original repositories at the
 commits above give byte-identical SVG and PNG output, for Fig. 3 and for the
 HG002 figure.
+
+## KaryoScope-archive `bin_features.py` (`barthel-lab/KaryoScope-archive` at `4434885`)
+
+| file | used by |
+|---|---|
+| `KaryoScope-archive/bin_features.py` | binning of the pangenome annotations into the 100 bp (D4Z4) and 100 kb (centromere) windows that `d4z4/` and `centromere/` read |
+
+The script assigns each bin the feature with the largest overlap, ties going to
+the first feature seen. It is unchanged below its header. KaryoScope v1.1.0
+`karyoscope bin` uses a different rule (a bin is novel only above 50 % novel;
+ties broken alphabetically) and does not reproduce these windows.
+`revision/a2-k-sensitivity/step4/scripts/v1-region-rebuild/bin_features_feb2026.py`
+is the same code under a different header.
+
