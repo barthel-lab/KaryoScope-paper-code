@@ -1,0 +1,17 @@
+# Gene set only, NO priority file -- to reproduce the recipe's "786 Mb resolves to categorized" claim.
+id: HKS_human_CHM13_v2_gene_noprio
+version: "0.0.1"
+sequence: ${KS_WORK}/recipe_repro/CHM13.fasta
+kmer:
+  s: 31
+build:
+  threads: 16
+  mem_gigas: 16
+  external_memory: ${KS_WORK}/a7_review_checks/job2_noprio/extmem
+exclude: [chrM]
+feature_sets:
+  - name: gene
+    bed: ${KS_WORK}/recipe_repro/chm13_gene.bed
+    hierarchy: ${KS_WORK}/recipe_repro/chm13_gene.tsv
+    colors: ${KS_WORK}/recipe_repro/chm13_gene.colors.tsv
+    background: null

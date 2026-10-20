@@ -1,0 +1,28 @@
+# v1-like REGION-ONLY rebuild at k=21 for A2 Step 4 (D4Z4 k-robustness).
+# Source: v1 region BED regenerated 2026-09-03 from old.CHM13.censat.processed.bed
+# (minus rDNA, per KaryoScope-archive cbc091d) with get_region_featureset.py @ 0d1cb76
+# (the 2025-08-25 version that built KS_human_CHM13). Leaves and priorities verified
+# identical to the installed v1 hierarchy/priority file.
+id: HKS_human_CHM13_v1like_region_k21
+version: "1.0.0"
+sequence: ${KS_REFERENCES}/CHM13v2/chm13v2.0.fasta
+
+kmer:
+  s: 21
+
+build:
+  threads: 16
+  mem_gigas: 16
+  external_memory: ${KS_WORK}/ks_build_sources/v1like_ksweep/extmem/k21
+
+exclude: [chrM]
+
+feature_sets:
+  - name: region
+    bed: ${KS_WORK}/a2_step4/common/v1/CHM13_reg.v1.bed
+    priority: ${KS_WORK}/a2_step4/common/v1/CHM13_reg.v1.priority.txt
+    background: null
+
+roles:
+  region_assignment: region
+  centromere_detection: region

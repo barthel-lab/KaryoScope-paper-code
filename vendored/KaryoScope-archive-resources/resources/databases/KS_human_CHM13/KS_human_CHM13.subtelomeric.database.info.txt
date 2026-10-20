@@ -1,0 +1,7 @@
+canonical_telomere_specific	6
+ITS_specific	40,583
+noncanonical_telomere_specific	9,307
+TAR1_specific	50,523
+nonsubtelomeric_specific	2,512,275,922
+telomere_like_multigroup1	1,328
+TOTAL	2,512,377,669

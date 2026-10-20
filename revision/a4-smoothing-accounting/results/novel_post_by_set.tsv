@@ -1,0 +1,7 @@
+assembly	feature_set	novel_pre_bp	novel_pre_pct	novel_post_bp	novel_post_pct
+hg002hap1	chromosome	75396753	2.5643	693707	0.0236
+hg002hap1	region	75396753	2.5643	1680157	0.0571
+hg002hap1	repeat	75396753	2.5643	1194781	0.0406
+hg002hap1	subtelomeric	75396753	2.5643	3306	0.0001
+hg002hap1	gene	75396753	2.5643	6921596	0.2354
+hg002hap1	acrocentric	75396753	2.5643	1354055	0.0461

@@ -1,0 +1,360 @@
+units: points (1/72 in); origin at the top-left of the published figure; y down
+provenance: Read with PyMuPDF from the published Illustrator files in KaryoScope-paper figures/fig5/ (branch revision/fpb-comments-2026-10-10).
+fonts: {sans: 'Helvetica, Arial, Liberation Sans, sans-serif', plot: 'Arial, Liberation Sans, Helvetica, sans-serif',
+  letter_size: 14, letter_weight: bold}
+track_view:
+  width: 1200
+  left_margin: 120
+  right_margin: 50
+  height_ratio: 3.0
+  line_width_pt: 1.0
+  style: {array_labels: figure, plam_marker_gap: -2.2, label_window_end: true}
+track_legend: {header_size: 7.68, item_size: 5.95, item_pitch: 8.92, swatch: 5.45, swatch_dx: -6.71, swatch_dy: -4.71}
+hidden_element_labels:
+  NA19240#1#CM099581.1:   # S10E: 24 collides with 25 at the start of array 1
+  - [1, 24]
+  HG03471#1#CM087526.1:   # S10E: 20 collides with 21 at the start of array 1
+  - [1, 20]
+  HG01891#2#CM088207.1:
+  - [2, 2]
+  - [2, 4]
+  - [2, 6]
+  - [2, 8]
+  HG02717#2#CM088975.1:
+  - [1, 20]
+  - [3, 2]
+  - [9, 2]
+  - [9, 4]
+  - [9, 6]
+  HG02818#2#CM091991.1:
+  - [1, 32]
+  - [2, 2]
+  - [3, 28]
+  - [4, 2]
+  - [5, 2]
+  - [5, 4]
+  HG02976#2#CM087126.1:
+  - [1, 18]
+  HG03704#1#CM086215.1:
+  - [1, 24]
+  HG03704#2#CM086193.1:
+  - [1, 24]
+  HG06807#2#CM101438.1:
+  - [1, 12]
+  - [2, 2]
+  - [3, 2]
+  - [3, 3]
+  NA18565#1#CM094322.1:
+  - [1, 12]
+  - [2, 28]
+  NA18570#1#CM087657.1:
+  - [1, 4]
+  - [1, 8]
+  - [1, 12]
+  - [1, 16]
+  - [2, 2]
+  - [2, 4]
+  - [2, 6]
+  NA19468#1#CM087822.1:
+  - [1, 20]
+  - [2, 2]
+  - [5, 1]
+  - [5, 3]
+  - [5, 5]
+fig4:
+  source: D4Z4-fig-1-v2.ai
+  page_origin: [15.85, 11.76]
+  size_pt: [590.4, 654.72]
+  png_px: [2460, 2728]
+  letters:
+    A: [0.12, 12.22]
+    B: [323.82, 112.6]
+    C: [0.12, 226.08]
+    D: [0.12, 333.31]
+    E: [0.12, 443.51]
+    F: [0.12, 556.05]
+    G: [323.82, 259.9]
+    H: [323.82, 398.67]
+  track_columns:
+    0: [60.05, 313.85]
+    1: [334.53, 588.33]
+  title_axis_gap: 15.7
+  track_style: {array_bar_offset: 2.0, array_caption_offset: 24.9}
+  tracks:
+  - {panel: A, column: 0, ruler_y: 14.03}
+  - {panel: A, column: 1, ruler_y: 14.03}
+  - {panel: C, column: 0, ruler_y: 228.96}
+  - {panel: D, column: 0, ruler_y: 337.16}
+  - {panel: E, column: 0, ruler_y: 447.31}
+  - {panel: F, column: 0, ruler_y: 561.05}
+  track_legend:
+  - header: Common
+    header_at: [9.75, 113.04]
+    items_at: [17.25, 121.67]
+    items: &id001
+    - [novel, novel]
+  - header: Genes
+    header_at: [9.95, 134.94]
+    items_at: [17.35, 142.56]
+    items: &id002
+    - [exon, 'gene:exon_specific']
+    - [intergenic, 'gene:intergenic_specific']
+    - [intron, 'gene:intron_specific']
+  - header: Satellites
+    header_at: [57.45, 113.04]
+    items_at: [64.85, 122.01]
+    items: &id003
+    - [arm, 'region:arm_multigroup1']
+    - [bsat, 'region:bsat_specific']
+    - [censat, 'region:censat_specific']
+    - [centromeric, 'region:centromeric_multigroup1']
+    - [ct, 'region:ct_specific']
+  - header: Repeats
+    header_at: [106.75, 113.04]
+    items_at: [114.25, 121.68]
+    items:
+    - &id004 [Class_I_Retrotransposition, 'repeat:Class_I_Retrotransposition_multigroup1']
+    - &id010 [Transposable_Element, 'repeat:Transposable_Element_multigroup1']
+    - &id006 [LINE, 'repeat:LINE_specific']
+    - &id007 [LTR, 'repeat:LTR_specific']
+    - &id008 [Retroposon, 'repeat:Retroposon_specific']
+  - header: null
+    header_at: null
+    items_at: [200.45, 121.57]
+    items:
+    - &id009 [SINE, 'repeat:SINE_specific']
+    - &id005 [DNA, 'repeat:DNA_specific']
+    - &id011 [Unknown, 'repeat:Unknown_specific']
+    - &id012 [nonrepeat, 'repeat:nonrepeat_specific']
+    - &id013 [rRNA, 'repeat:rRNA_specific']
+  - header: Subtelomere
+    header_at: [251.35, 113.04]
+    items_at: [258.75, 121.8]
+    items: &id014
+    - [ITS, 'subtelomeric:ITS_specific']
+    - [TAR1, 'subtelomeric:TAR1_specific']
+    - [canonical_telomere, 'subtelomeric:canonical_telomere_specific']
+    - [noncanonical_telomere, 'subtelomeric:noncanonical_telomere_specific']
+    - [nonsubtelomeric, 'subtelomeric:nonsubtelomeric_specific']
+    - [telomere_like, 'subtelomeric:telomere_like_multigroup1']
+  - header: D4Z4 Arrays
+    header_at: [9.55, 176.55]
+    items_at: [16.95, 185.09]
+    items: &id015
+    - [A-like (C+), 'd4z4:COLOR_CANONICAL_BSAT']
+    - [B-like (C-), 'd4z4:COLOR_CANONICAL_CT']
+    - [Degraded array, 'd4z4:COLOR_DEGRADED_ARRAY']
+  - header: Other Elements
+    header_at: [86.45, 176.55]
+    items_at: [93.95, 185.39]
+    items: &id016
+    - [Transition element (T), 'd4z4:COLOR_TRANSITION']
+    - [bsat terminal, 'd4z4:COLOR_PLAM']
+    - [Solitary bsat, 'd4z4:COLOR_SOLITARY_PLAM']
+  - header: pLAM Sequence
+    header_at: [159.85, 176.55]
+    items_at: [167.35, 185.39]
+    items: &id017
+    - [Functional pLAM, 'triangle:COLOR_PLAM_FUNCTIONAL']
+    - [Non-functional pLAM, 'triangle:COLOR_PLAM_NONFUNCTIONAL']
+  B:
+    titles:
+      chr4: [393.31, 114.65]
+      chr10: [523.96, 114.46]
+    title_size: 8.0
+    grids:
+      chr4:
+        origin: [334.23, 117.16]
+        pitch: [6.7447, 6.562]
+      chr10:
+        origin: [465.96, 117.67]
+        pitch: [5.826, 5.666]
+    cell_fraction: 0.9
+    cell_edge: '#E5E7EB'
+    cell_edge_width: 0.3
+    legend:
+      columns_x: [345.02, 405.82, 463.67, 534.53]
+      rows_baseline: [223.5, 233.61]
+      size: 7.09
+      swatch: [5.67, 4.96]
+      swatch_dx: -9.81
+  G:
+    tables:
+      chr4:
+        axes: [368.34, 265.4, 61.57, 42.65]
+        title: [399.9, 262.09]
+      chr10:
+        axes: [502.45, 264.95, 87.35, 60.64]
+        title: [548.28, 262.45]
+    text_size: 6.76
+    cell_size: 7.0
+    frame_width: 0.8
+    tick_length: 0.7
+    ytick_gap: 1.9
+    ytick_dy: 2.2
+    xtick_dx: 1.9
+    xtick_dy: 5.3
+    xlabel_gap: {chr4: 34.4, chr10: 45.02}
+    ylabel_gap: {chr4: 40.24, chr10: 56.7}
+  H:
+    box: [323.85, 385.24, 250.3, 243.0]
+    axes: [366.89, 399.21, 194.86, 194.86]
+    title_size: 8.0
+    axis_size: 8.0
+    tick_size: 8.0
+    legend_size: 7.0
+    label_size: 6.0
+    fold_size: 6.0
+    marker_size: 9
+    legend_box: [471.95, 530.84, 57.6, 19.4]
+    outlier_labels:
+      HG00099: [371.94, 479.06]
+      NA19909: [410.66, 503.37]
+      HG005: [410.66, 503.37]   # third label once NA19909 is filtered out (its longer haplotype fails QC)
+      HG03017: [412.74, 559.09]
+    outlier_labels_qc:            # used with filters: assembly_qc (axes 0-110, labels below the diagonal)
+      HG00099: [368.66, 425.78]
+      HG005: [430.66, 537.38]
+      HG03017: [430.66, 569.27]
+figS9:
+  source: D4Z4-sup-fig-1-v2.ai
+  page_origin: [12.28, 3.14]
+  size_pt: [591.6, 779.52]
+  png_px: [2465, 3248]
+  letters:
+    A: [0.58, 12.09]
+    B: [0.17, 433.4]
+    C: [0.58, 578.08]
+    D: [0.58, 686.92]
+  track_columns:
+    0: [55.17, 306.63]
+    1: [336.06, 587.52]
+  title_axis_gap: 42.0
+  track_style: {}
+  tracks:
+  - {panel: C, column: 0, ruler_y: 587.63}
+  - {panel: C, column: 1, ruler_y: 587.63}
+  - {panel: D, column: 0, ruler_y: 695.01}
+  - {panel: D, column: 1, ruler_y: 695.01}
+  track_legend:
+  - header: Common
+    header_at: [179.72, 431.68]
+    items_at: [187.12, 448.03]
+    items: *id001
+  - header: Genes
+    header_at: [179.82, 463.1]
+    items_at: [187.22, 479.45]
+    items: *id002
+  - header: Satellites
+    header_at: [227.42, 431.68]
+    items_at: [234.82, 448.03]
+    items: *id003
+  - header: Repeats
+    header_at: [287.52, 431.68]
+    items_at: [295.02, 448.03]
+    items: &id018
+    - *id004
+    - *id005
+    - *id006
+    - *id007
+    - *id008
+  - header: null
+    header_at: null
+    items_at: [377.42, 447.98]
+    items: &id019
+    - *id009
+    - *id010
+    - *id011
+    - *id012
+    - *id013
+  - header: Subtelomere
+    header_at: [460.22, 431.68]
+    items_at: [467.62, 448.03]
+    items: *id014
+  - header: D4Z4 Arrays
+    header_at: [177.92, 514.87]
+    items_at: [185.32, 531.22]
+    items: *id015
+  - header: Other Elements
+    header_at: [254.92, 514.87]
+    items_at: [262.32, 531.22]
+    items: *id016
+  - header: pLAM Sequence
+    header_at: [328.32, 514.87]
+    items_at: [335.72, 531.22]
+    items: *id017
+  B:
+    box: [0.12, 419.96, 167.6, 141.9]
+    axes: [37.07, 422.58, 118.82, 118.82]
+    text_size: 7.11
+    marker_size: 7
+    marker_color: '#A9B4C2'
+    marker_edge: '#3B4A5C'
+    stat_box: [41.71, 424.96, 31.41, 15.11]
+figS10:
+  source: D4Z4-sup-fig-2.ai
+  page_origin: [6.99, 3.14]
+  size_pt: [597.12, 773.52]
+  png_px: [2488, 3223]
+  letters:
+    A: [7.11, 12.22]
+    B: [7.11, 125.68]
+    C: [7.11, 233.34]
+    D: [7.11, 338.5]
+    E: [7.11, 455.21]
+    F: [7.11, 580.02]
+  track_columns:
+    0: [55.94, 311.22]
+    1: [340.97, 596.25]
+  title_axis_gap: 42.0
+  track_style: {array_bar_offset: 6.1, array_caption_offset: 33.9}
+  tracks:
+  - {panel: A, column: 0, ruler_y: 18.28}
+  - {panel: A, column: 1, ruler_y: 18.28}
+  - {panel: B, column: 0, ruler_y: 132.56}
+  - {panel: B, column: 1, ruler_y: 132.56}
+  - {panel: C, column: 0, ruler_y: 243.82}
+  - {panel: C, column: 1, ruler_y: 243.82}
+  - {panel: D, column: 0, ruler_y: 347.8}
+  - {panel: D, column: 1, ruler_y: 347.8}
+  - {panel: E, column: 0, ruler_y: 465.15}
+  - {panel: E, column: 1, ruler_y: 465.15}
+  - {panel: F, column: 0, ruler_y: 590.44}
+  - {panel: F, column: 1, ruler_y: 590.44}
+  track_legend:
+  - header: Common
+    header_at: [6.41, 704.96]
+    items_at: [13.81, 721.31]
+    items: *id001
+  - header: Genes
+    header_at: [6.51, 736.38]
+    items_at: [13.91, 752.73]
+    items: *id002
+  - header: Satellites
+    header_at: [54.01, 704.96]
+    items_at: [61.51, 721.31]
+    items: *id003
+  - header: Repeats
+    header_at: [114.21, 704.96]
+    items_at: [121.61, 721.31]
+    items: *id018
+  - header: null
+    header_at: null
+    items_at: [204.01, 721.26]
+    items: *id019
+  - header: Subtelomere
+    header_at: [286.81, 704.96]
+    items_at: [294.21, 721.31]
+    items: *id014
+  - header: D4Z4 Arrays
+    header_at: [373.21, 704.96]
+    items_at: [380.61, 721.31]
+    items: *id015
+  - header: Other Elements
+    header_at: [450.21, 704.96]
+    items_at: [457.61, 721.31]
+    items: *id016
+  - header: pLAM Sequence
+    header_at: [523.61, 704.96]
+    items_at: [531.01, 721.31]
+    items: *id017

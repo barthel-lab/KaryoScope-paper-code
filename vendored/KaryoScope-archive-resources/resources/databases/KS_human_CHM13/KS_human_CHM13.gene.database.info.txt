@@ -1,0 +1,4 @@
+exon_specific	139,315,571
+intron_specific	1,323,604,280
+intergenic_specific	1,049,457,818
+TOTAL	2,512,377,669

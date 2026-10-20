@@ -1,0 +1,8 @@
+feature	color
+array	#FF0000
+DJ	#FFA500
+PJ	#FFFF00
+rDNA	#964B00
+SST1	#00FF00
+PHR	#0000FF
+nonacrocentric	#808080

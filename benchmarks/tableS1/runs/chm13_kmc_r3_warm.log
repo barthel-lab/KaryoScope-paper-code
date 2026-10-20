@@ -1,0 +1,226 @@
+16:07:45 INFO: annotating $KS_REFERENCES/CHM13v2/chm13v2.0.fasta against KS_human_CHM13_v2, sets=['chromosome', 'region', 'repeat', 'subtelomeric', 'gene', 'acrocentric']
+16:07:45 INFO: estimated output footprint: 17.8 GB for 6 feature set(s) over ~3.12 Gbp of input
+Annotating chm13v2.0.fasta against KS_human_CHM13_v2
+  6 feature set(s), 16 thread(s), ~17.8 GB estimated output
+16:07:45 INFO: running get_featureIDs on chm13v2.0.fasta (threads=16); this may take several minutes
+16:10:59 INFO: ran get_featureIDs in 194.5s (combined BED: 3.7 GB)
+  k-mer query  3m14s
+16:10:59 INFO: smoothing pass: 6 feature set(s), threads=16
+16:11:57 INFO [worker 679065] smoothed chromosome/chr3: 7294138 intervals -> 3248292 presmoothed, 5 smoothed in 36.3s (4 passes)
+16:12:01 INFO [worker 679066] smoothed chromosome/chr4: 7105426 intervals -> 3540658 presmoothed, 5 smoothed in 35.8s (4 passes)
+16:12:02 INFO [worker 679064] smoothed chromosome/chr2: 8766302 intervals -> 4135555 presmoothed, 2 smoothed in 44.3s (4 passes)
+16:12:04 INFO [worker 679070] smoothed chromosome/chr8: 5233756 intervals -> 2544968 presmoothed, 2 smoothed in 26.9s (4 passes)
+16:12:04 INFO [worker 679068] smoothed chromosome/chr6: 6370337 intervals -> 3080776 presmoothed, 4 smoothed in 32.8s (4 passes)
+16:12:05 INFO [worker 679067] smoothed chromosome/chr5: 6749526 intervals -> 3200728 presmoothed, 2 smoothed in 36.4s (4 passes)
+16:12:09 INFO [worker 679063] smoothed chromosome/chr1: 10631550 intervals -> 4836023 presmoothed, 3 smoothed in 54.4s (4 passes)
+16:12:12 INFO [worker 679069] smoothed chromosome/chr7: 6859223 intervals -> 3322410 presmoothed, 4 smoothed in 36.3s (4 passes)
+16:12:15 INFO [worker 679072] smoothed chromosome/chr10: 5384381 intervals -> 2560821 presmoothed, 6 smoothed in 28.7s (4 passes)
+16:12:16 INFO [worker 679073] smoothed chromosome/chr11: 5280559 intervals -> 2499054 presmoothed, 3 smoothed in 27.3s (4 passes)
+16:12:16 INFO [worker 679075] smoothed chromosome/chr13: 4317141 intervals -> 2102686 presmoothed, 5 smoothed in 22.4s (4 passes)
+16:12:20 INFO [worker 679076] smoothed chromosome/chr14: 4539476 intervals -> 2191973 presmoothed, 4 smoothed in 23.2s (4 passes)
+16:12:22 INFO [worker 679074] smoothed chromosome/chr12: 5634743 intervals -> 2696581 presmoothed, 4 smoothed in 30.1s (4 passes)
+16:12:26 INFO [worker 679077] smoothed chromosome/chr15: 4970409 intervals -> 2527993 presmoothed, 4 smoothed in 26.4s (4 passes)
+16:12:28 INFO [worker 679078] smoothed chromosome/chr16: 4907080 intervals -> 2533979 presmoothed, 5 smoothed in 26.1s (4 passes)
+16:12:39 INFO [worker 679071] smoothed chromosome/chr9: 9907898 intervals -> 4959817 presmoothed, 5 smoothed in 52.3s (4 passes)
+16:12:42 INFO [worker 679070] smoothed region/chr8: 5233756 intervals -> 2447083 presmoothed, 943720 smoothed in 37.1s (3 passes)
+16:12:44 INFO [worker 679075] smoothed region/chr13: 4317141 intervals -> 1635452 presmoothed, 648056 smoothed in 27.4s (3 passes)
+16:12:50 INFO [worker 679068] smoothed region/chr6: 6370337 intervals -> 3013693 presmoothed, 1156888 smoothed in 44.3s (3 passes)
+16:12:50 INFO [worker 679065] smoothed region/chr3: 7294138 intervals -> 3477786 presmoothed, 1336163 smoothed in 52.0s (3 passes)
+16:12:51 INFO [worker 679066] smoothed region/chr4: 7105426 intervals -> 3285465 presmoothed, 1257633 smoothed in 50.0s (3 passes)
+16:12:52 INFO [worker 679073] smoothed region/chr11: 5280559 intervals -> 2479824 presmoothed, 927752 smoothed in 35.7s (3 passes)
+16:12:53 INFO [worker 679067] smoothed region/chr5: 6749526 intervals -> 3184780 presmoothed, 1206300 smoothed in 47.2s (3 passes)
+16:12:54 INFO [worker 679072] smoothed region/chr10: 5384381 intervals -> 2462787 presmoothed, 947005 smoothed in 38.2s (3 passes)
+16:12:55 INFO [worker 679076] smoothed region/chr14: 4539476 intervals -> 1912048 presmoothed, 671435 smoothed in 34.9s (4 passes)
+16:12:56 INFO [worker 679077] smoothed region/chr15: 4970409 intervals -> 1735663 presmoothed, 648252 smoothed in 29.0s (3 passes)
+16:12:59 INFO [worker 679078] smoothed region/chr16: 4907080 intervals -> 1951510 presmoothed, 692811 smoothed in 30.0s (3 passes)
+16:13:01 INFO [worker 679069] smoothed region/chr7: 6859223 intervals -> 3151560 presmoothed, 1151221 smoothed in 47.8s (3 passes)
+16:13:05 INFO [worker 679074] smoothed region/chr12: 5634743 intervals -> 2638979 presmoothed, 1017305 smoothed in 41.8s (3 passes)
+16:13:16 INFO [worker 679064] smoothed region/chr2: 8766302 intervals -> 4061241 presmoothed, 1588755 smoothed in 72.8s (4 passes)
+16:13:20 INFO [worker 679063] smoothed region/chr1: 10631550 intervals -> 4802692 presmoothed, 1753791 smoothed in 69.9s (3 passes)
+16:13:24 INFO [worker 679075] smoothed repeat/chr13: 4317141 intervals -> 1585529 presmoothed, 243984 smoothed in 39.2s (5 passes)
+16:13:31 INFO [worker 679070] smoothed repeat/chr8: 5233756 intervals -> 2214006 presmoothed, 242825 smoothed in 47.8s (5 passes)
+16:13:31 INFO [worker 679071] smoothed region/chr9: 9907898 intervals -> 2813834 presmoothed, 782145 smoothed in 51.3s (3 passes)
+16:13:40 INFO [worker 679076] smoothed repeat/chr14: 4539476 intervals -> 1770849 presmoothed, 297148 smoothed in 44.3s (5 passes)
+16:13:41 INFO [worker 679075] smoothed subtelomeric/chr13: 4317141 intervals -> 49986 presmoothed, 47089 smoothed in 16.9s (2 passes)
+16:13:43 INFO [worker 679073] smoothed repeat/chr11: 5280559 intervals -> 2124520 presmoothed, 240664 smoothed in 49.8s (5 passes)
+16:13:45 INFO [worker 679072] smoothed repeat/chr10: 5384381 intervals -> 2239830 presmoothed, 300149 smoothed in 51.0s (5 passes)
+16:13:47 INFO [worker 679078] smoothed repeat/chr16: 4907080 intervals -> 1842566 presmoothed, 347424 smoothed in 46.9s (5 passes)
+16:13:50 INFO [worker 679068] smoothed repeat/chr6: 6370337 intervals -> 2659329 presmoothed, 278738 smoothed in 59.3s (5 passes)
+16:13:51 INFO [worker 679077] smoothed repeat/chr15: 4970409 intervals -> 1843791 presmoothed, 443778 smoothed in 54.4s (5 passes)
+16:13:54 INFO [worker 679070] smoothed subtelomeric/chr8: 5233756 intervals -> 74101 presmoothed, 70171 smoothed in 22.9s (2 passes)
+16:13:56 INFO [worker 679067] smoothed repeat/chr5: 6749526 intervals -> 2771453 presmoothed, 316882 smoothed in 62.2s (5 passes)
+16:13:58 INFO [worker 679065] smoothed repeat/chr3: 7294138 intervals -> 3064105 presmoothed, 340701 smoothed in 67.3s (5 passes)
+16:13:58 INFO [worker 679074] smoothed repeat/chr12: 5634743 intervals -> 2326637 presmoothed, 238847 smoothed in 52.6s (5 passes)
+16:13:59 INFO [worker 679076] smoothed subtelomeric/chr14: 4539476 intervals -> 59560 presmoothed, 56410 smoothed in 18.2s (2 passes)
+16:13:59 INFO [worker 679066] smoothed repeat/chr4: 7105426 intervals -> 2833090 presmoothed, 309846 smoothed in 66.6s (5 passes)
+16:14:00 INFO [worker 679075] smoothed gene/chr13: 4317141 intervals -> 1154652 presmoothed, 1154652 smoothed in 18.2s (1 pass)
+16:14:04 INFO [worker 679073] smoothed subtelomeric/chr11: 5280559 intervals -> 76711 presmoothed, 72490 smoothed in 20.5s (2 passes)
+16:14:08 INFO [worker 679069] smoothed repeat/chr7: 6859223 intervals -> 2773856 presmoothed, 325776 smoothed in 66.1s (5 passes)
+16:14:09 INFO [worker 679078] smoothed subtelomeric/chr16: 4907080 intervals -> 73401 presmoothed, 69736 smoothed in 21.8s (2 passes)
+16:14:11 INFO [worker 679077] smoothed subtelomeric/chr15: 4970409 intervals -> 63901 presmoothed, 60259 smoothed in 19.4s (2 passes)
+16:14:11 INFO [worker 679072] smoothed subtelomeric/chr10: 5384381 intervals -> 84393 presmoothed, 80030 smoothed in 24.7s (2 passes)
+16:14:17 INFO [worker 679070] smoothed gene/chr8: 5233756 intervals -> 1504819 presmoothed, 1504819 smoothed in 22.3s (1 pass)
+16:14:18 INFO [worker 679076] smoothed gene/chr14: 4539476 intervals -> 1236284 presmoothed, 1236284 smoothed in 18.9s (1 pass)
+16:14:19 INFO [worker 679068] smoothed subtelomeric/chr6: 6370337 intervals -> 94880 presmoothed, 89889 smoothed in 28.1s (2 passes)
+16:14:22 INFO [worker 679074] smoothed subtelomeric/chr12: 5634743 intervals -> 92337 presmoothed, 87401 smoothed in 22.7s (2 passes)
+16:14:24 INFO [worker 679067] smoothed subtelomeric/chr5: 6749526 intervals -> 93057 presmoothed, 88232 smoothed in 27.2s (2 passes)
+16:14:25 INFO [worker 679075] smoothed acrocentric/chr13: 4317141 intervals -> 794018 presmoothed, 779964 smoothed in 24.8s (2 passes)
+16:14:26 INFO [worker 679066] smoothed subtelomeric/chr4: 7105426 intervals -> 87788 presmoothed, 82947 smoothed in 25.7s (2 passes)
+16:14:28 INFO [worker 679073] smoothed gene/chr11: 5280559 intervals -> 1450193 presmoothed, 1450193 smoothed in 23.0s (1 pass)
+16:14:28 INFO [worker 679065] smoothed subtelomeric/chr3: 7294138 intervals -> 108290 presmoothed, 102383 smoothed in 29.2s (2 passes)
+16:14:29 INFO [worker 679078] smoothed gene/chr16: 4907080 intervals -> 1072521 presmoothed, 1072521 smoothed in 19.3s (1 pass)
+16:14:31 INFO [worker 679077] smoothed gene/chr15: 4970409 intervals -> 1189329 presmoothed, 1189329 smoothed in 19.8s (1 pass)
+16:14:34 INFO [worker 679072] smoothed gene/chr10: 5384381 intervals -> 1427240 presmoothed, 1427240 smoothed in 22.2s (1 pass)
+16:14:41 INFO [worker 679064] smoothed repeat/chr2: 8766302 intervals -> 3680268 presmoothed, 443632 smoothed in 83.4s (5 passes)
+16:14:41 INFO [worker 679069] smoothed subtelomeric/chr7: 6859223 intervals -> 107208 presmoothed, 101544 smoothed in 32.4s (2 passes)
+16:14:46 INFO [worker 679068] smoothed gene/chr6: 6370337 intervals -> 1814223 presmoothed, 1814223 smoothed in 26.3s (1 pass)
+16:14:46 INFO [worker 679074] smoothed gene/chr12: 5634743 intervals -> 1514824 presmoothed, 1514824 smoothed in 24.2s (1 pass)
+16:14:47 INFO [worker 679076] smoothed acrocentric/chr14: 4539476 intervals -> 720963 presmoothed, 710188 smoothed in 27.9s (2 passes)
+16:14:51 INFO [worker 679070] smoothed acrocentric/chr8: 5233756 intervals -> 897129 presmoothed, 884210 smoothed in 33.0s (2 passes)
+16:14:51 INFO [worker 679075] smoothed chromosome/chr17: 4570447 intervals -> 2116697 presmoothed, 1 smoothed in 21.6s (4 passes)
+16:14:53 INFO [worker 679067] smoothed gene/chr5: 6749526 intervals -> 1877407 presmoothed, 1877407 smoothed in 28.9s (1 pass)
+16:14:57 INFO [worker 679066] smoothed gene/chr4: 7105426 intervals -> 2027171 presmoothed, 2027171 smoothed in 30.7s (1 pass)
+16:14:59 INFO [worker 679078] smoothed acrocentric/chr16: 4907080 intervals -> 700676 presmoothed, 689484 smoothed in 29.8s (2 passes)
+16:15:00 INFO [worker 679065] smoothed gene/chr3: 7294138 intervals -> 2009847 presmoothed, 2009847 smoothed in 31.0s (1 pass)
+16:15:02 INFO [worker 679063] smoothed repeat/chr1: 10631550 intervals -> 4242041 presmoothed, 675064 smoothed in 100.1s (5 passes)
+16:15:02 INFO [worker 679073] smoothed acrocentric/chr11: 5280559 intervals -> 937298 presmoothed, 924119 smoothed in 33.6s (2 passes)
+16:15:03 INFO [worker 679077] smoothed acrocentric/chr15: 4970409 intervals -> 1086839 presmoothed, 1073078 smoothed in 31.4s (2 passes)
+16:15:04 INFO [worker 679076] smoothed chromosome/chr18: 3023516 intervals -> 1557614 presmoothed, 5 smoothed in 13.8s (4 passes)
+16:15:10 INFO [worker 679072] smoothed acrocentric/chr10: 5384381 intervals -> 933528 presmoothed, 919721 smoothed in 35.3s (2 passes)
+16:15:10 INFO [worker 679069] smoothed gene/chr7: 6859223 intervals -> 1851152 presmoothed, 1851152 smoothed in 27.9s (1 pass)
+16:15:15 INFO [worker 679073] smoothed chromosome/chr21: 2015811 intervals -> 1038178 presmoothed, 3 smoothed in 10.6s (4 passes)
+16:15:16 INFO [worker 679064] smoothed subtelomeric/chr2: 8766302 intervals -> 134646 presmoothed, 127410 smoothed in 33.6s (2 passes)
+16:15:17 INFO [worker 679070] smoothed chromosome/chr19: 4226230 intervals -> 1808363 presmoothed, 4 smoothed in 21.6s (4 passes)
+16:15:18 INFO [worker 679078] smoothed chromosome/chr20: 3014351 intervals -> 1393616 presmoothed, 4 smoothed in 15.2s (4 passes)
+16:15:23 INFO [worker 679077] smoothed chromosome/chr22: 3103130 intervals -> 1558871 presmoothed, 3 smoothed in 15.2s (4 passes)
+16:15:23 INFO [worker 679075] smoothed region/chr17: 4570447 intervals -> 1997755 presmoothed, 712130 smoothed in 31.3s (3 passes)
+16:15:23 INFO [worker 679074] smoothed acrocentric/chr12: 5634743 intervals -> 967455 presmoothed, 952352 smoothed in 36.2s (2 passes)
+16:15:25 INFO [worker 679076] smoothed region/chr18: 3023516 intervals -> 1509490 presmoothed, 440597 smoothed in 21.0s (3 passes)
+16:15:27 INFO [worker 679073] smoothed region/chr21: 2015811 intervals -> 664288 presmoothed, 259648 smoothed in 11.5s (3 passes)
+16:15:27 INFO [worker 679068] smoothed acrocentric/chr6: 6370337 intervals -> 1101015 presmoothed, 1084980 smoothed in 41.0s (2 passes)
+16:15:29 INFO [worker 679068] smoothed chromosome/chrM: 517 intervals -> 452 presmoothed, 236 smoothed in 0.0s (3 passes)
+16:15:29 INFO [worker 679068] smoothed region/chrM: 517 intervals -> 406 presmoothed, 170 smoothed in 0.0s (3 passes)
+16:15:29 INFO [worker 679068] smoothed repeat/chrM: 517 intervals -> 393 presmoothed, 186 smoothed in 0.0s (3 passes)
+16:15:29 INFO [worker 679068] smoothed subtelomeric/chrM: 517 intervals -> 319 presmoothed, 3 smoothed in 0.0s (2 passes)
+16:15:29 INFO [worker 679068] smoothed gene/chrM: 517 intervals -> 366 presmoothed, 182 smoothed in 0.0s (2 passes)
+16:15:29 INFO [worker 679068] smoothed acrocentric/chrM: 517 intervals -> 323 presmoothed, 15 smoothed in 0.0s (2 passes)
+16:15:34 INFO [worker 679071] smoothed repeat/chr9: 9907898 intervals -> 4015320 presmoothed, 1744211 smoothed in 121.0s (5 passes)
+16:15:38 INFO [worker 679078] smoothed region/chr20: 3014351 intervals -> 1382308 presmoothed, 436528 smoothed in 20.4s (3 passes)
+16:15:39 INFO [worker 679067] smoothed acrocentric/chr5: 6749526 intervals -> 1161237 presmoothed, 1144865 smoothed in 44.4s (2 passes)
+16:15:39 INFO [worker 679077] smoothed region/chr22: 3103130 intervals -> 1033175 presmoothed, 272778 smoothed in 16.5s (3 passes)
+16:15:41 INFO [worker 679074] smoothed chromosome/chrY: 3035959 intervals -> 1490918 presmoothed, 3 smoothed in 13.8s (3 passes)
+16:15:44 INFO [worker 679072] smoothed chromosome/chrX: 6377229 intervals -> 2104921 presmoothed, 3 smoothed in 28.2s (3 passes)
+16:15:44 INFO [worker 679070] smoothed region/chr19: 4226230 intervals -> 1944409 presmoothed, 679116 smoothed in 27.0s (3 passes)
+16:15:44 INFO [worker 679073] smoothed repeat/chr21: 2015811 intervals -> 776990 presmoothed, 177486 smoothed in 17.1s (4 passes)
+16:15:45 INFO [worker 679066] smoothed acrocentric/chr4: 7105426 intervals -> 1274398 presmoothed, 1258594 smoothed in 47.1s (2 passes)
+16:15:46 INFO [worker 679063] smoothed subtelomeric/chr1: 10631550 intervals -> 163768 presmoothed, 155094 smoothed in 42.6s (2 passes)
+16:15:47 INFO [worker 679065] smoothed acrocentric/chr3: 7294138 intervals -> 1347324 presmoothed, 1328480 smoothed in 45.6s (2 passes)
+16:15:50 INFO [worker 679076] smoothed repeat/chr18: 3023516 intervals -> 1062227 presmoothed, 137493 smoothed in 24.2s (4 passes)
+16:15:52 INFO [worker 679073] smoothed subtelomeric/chr21: 2015811 intervals -> 23128 presmoothed, 21868 smoothed in 7.6s (2 passes)
+16:15:54 INFO [worker 679064] smoothed gene/chr2: 8766302 intervals -> 2430360 presmoothed, 2430360 smoothed in 37.1s (1 pass)
+16:15:56 INFO [worker 679074] smoothed region/chrY: 3035959 intervals -> 911725 presmoothed, 218518 smoothed in 15.4s (3 passes)
+16:15:56 INFO [worker 679069] smoothed acrocentric/chr7: 6859223 intervals -> 1213046 presmoothed, 1195364 smoothed in 45.7s (2 passes)
+16:16:01 INFO [worker 679073] smoothed gene/chr21: 2015811 intervals -> 557411 presmoothed, 557411 smoothed in 8.7s (1 pass)
+16:16:02 INFO [worker 679076] smoothed subtelomeric/chr18: 3023516 intervals -> 38815 presmoothed, 36738 smoothed in 11.7s (2 passes)
+16:16:09 INFO [worker 679075] smoothed repeat/chr17: 4570447 intervals -> 1833827 presmoothed, 231724 smoothed in 44.9s (5 passes)
+16:16:09 INFO [worker 679078] smoothed repeat/chr20: 3014351 intervals -> 1139648 presmoothed, 196210 smoothed in 30.5s (5 passes)
+16:16:10 INFO [worker 679071] smoothed subtelomeric/chr9: 9907898 intervals -> 80053 presmoothed, 75822 smoothed in 35.1s (2 passes)
+16:16:12 INFO [worker 679077] smoothed repeat/chr22: 3103130 intervals -> 1057488 presmoothed, 245980 smoothed in 32.0s (5 passes)
+16:16:12 INFO [worker 679073] smoothed acrocentric/chr21: 2015811 intervals -> 338489 presmoothed, 331041 smoothed in 11.1s (2 passes)
+16:16:14 INFO [worker 679076] smoothed gene/chr18: 3023516 intervals -> 781920 presmoothed, 781920 smoothed in 12.5s (1 pass)
+16:16:23 INFO [worker 679078] smoothed subtelomeric/chr20: 3014351 intervals -> 45382 presmoothed, 42944 smoothed in 12.8s (2 passes)
+16:16:25 INFO [worker 679070] smoothed repeat/chr19: 4226230 intervals -> 1673982 presmoothed, 147733 smoothed in 39.6s (5 passes)
+16:16:25 INFO [worker 679077] smoothed subtelomeric/chr22: 3103130 intervals -> 42535 presmoothed, 40233 smoothed in 13.3s (2 passes)
+16:16:30 INFO [worker 679072] smoothed region/chrX: 6377229 intervals -> 3292694 presmoothed, 1239393 smoothed in 44.9s (3 passes)
+16:16:31 INFO [worker 679063] smoothed gene/chr1: 10631550 intervals -> 2668082 presmoothed, 2668082 smoothed in 43.9s (1 pass)
+16:16:31 INFO [worker 679075] smoothed subtelomeric/chr17: 4570447 intervals -> 95020 presmoothed, 90167 smoothed in 22.0s (2 passes)
+16:16:32 INFO [worker 679074] smoothed repeat/chrY: 3035959 intervals -> 923606 presmoothed, 407580 smoothed in 35.5s (4 passes)
+16:16:33 INFO [worker 679076] smoothed acrocentric/chr18: 3023516 intervals -> 578799 presmoothed, 572041 smoothed in 18.6s (2 passes)
+16:16:35 INFO [worker 679078] smoothed gene/chr20: 3014351 intervals -> 805366 presmoothed, 805366 smoothed in 12.1s (1 pass)
+16:16:38 INFO [worker 679077] smoothed gene/chr22: 3103130 intervals -> 783145 presmoothed, 783145 smoothed in 12.7s (1 pass)
+16:16:43 INFO [worker 679074] smoothed subtelomeric/chrY: 3035959 intervals -> 11431 presmoothed, 10619 smoothed in 9.9s (2 passes)
+16:16:46 INFO [worker 679070] smoothed subtelomeric/chr19: 4226230 intervals -> 86837 presmoothed, 82462 smoothed in 20.8s (2 passes)
+16:16:50 INFO [worker 679075] smoothed gene/chr17: 4570447 intervals -> 1141602 presmoothed, 1141602 smoothed in 17.7s (1 pass)
+16:16:50 INFO [worker 679064] smoothed acrocentric/chr2: 8766302 intervals -> 1540295 presmoothed, 1517451 smoothed in 54.9s (2 passes)
+16:16:55 INFO [worker 679074] smoothed gene/chrY: 3035959 intervals -> 578830 presmoothed, 578830 smoothed in 11.9s (1 pass)
+16:16:55 INFO [worker 679078] smoothed acrocentric/chr20: 3014351 intervals -> 625757 presmoothed, 618861 smoothed in 19.8s (2 passes)
+16:16:56 INFO [worker 679071] smoothed gene/chr9: 9907898 intervals -> 2258419 presmoothed, 2258419 smoothed in 44.7s (1 pass)
+16:16:58 INFO [worker 679077] smoothed acrocentric/chr22: 3103130 intervals -> 634434 presmoothed, 627068 smoothed in 19.1s (2 passes)
+16:17:04 INFO [worker 679070] smoothed gene/chr19: 4226230 intervals -> 1069779 presmoothed, 1069779 smoothed in 17.5s (1 pass)
+16:17:12 INFO [worker 679074] smoothed acrocentric/chrY: 3035959 intervals -> 704998 presmoothed, 702316 smoothed in 16.5s (2 passes)
+16:17:22 INFO [worker 679075] smoothed acrocentric/chr17: 4570447 intervals -> 889988 presmoothed, 876140 smoothed in 31.8s (2 passes)
+16:17:27 INFO [worker 679072] smoothed repeat/chrX: 6377229 intervals -> 2807922 presmoothed, 229577 smoothed in 56.6s (5 passes)
+16:17:33 INFO [worker 679070] smoothed acrocentric/chr19: 4226230 intervals -> 803969 presmoothed, 791572 smoothed in 28.5s (2 passes)
+16:17:43 INFO [worker 679063] smoothed acrocentric/chr1: 10631550 intervals -> 1688849 presmoothed, 1662705 smoothed in 70.8s (2 passes)
+16:17:53 INFO [worker 679071] smoothed acrocentric/chr9: 9907898 intervals -> 2143845 presmoothed, 2130826 smoothed in 55.6s (2 passes)
+16:17:53 INFO [worker 679072] smoothed subtelomeric/chrX: 6377229 intervals -> 79747 presmoothed, 75657 smoothed in 24.7s (2 passes)
+16:18:20 INFO [worker 679072] smoothed gene/chrX: 6377229 intervals -> 2210038 presmoothed, 2210038 smoothed in 26.9s (1 pass)
+16:19:02 INFO [worker 679072] smoothed acrocentric/chrX: 6377229 intervals -> 1111362 presmoothed, 1097937 smoothed in 41.3s (2 passes)
+16:19:03 INFO: concat pass: 12 temp-file group(s) (threads=12)
+16:19:05 INFO: concat pass complete in 1.6s
+16:19:06 INFO: smoothing pass complete in 487.0s
+  smoothing 6 feature set(s)  8m06s
+16:19:07 INFO: bgzip pass: 12 BED(s) (threads=16 each)
+16:19:07 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.chromosome.presmoothed.bed (2.1 GB, threads=16)
+16:19:10 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.chromosome.presmoothed.bed.gz (2.1 GB -> 343.2 MB) in 3.4s
+16:19:10 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.chromosome.smoothed.bed (8.2 kB, threads=16)
+16:19:10 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.chromosome.smoothed.bed.gz (8.2 kB -> 2.2 kB) in 0.0s
+16:19:10 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.region.presmoothed.bed (1.7 GB, threads=16)
+16:19:13 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.region.presmoothed.bed.gz (1.7 GB -> 309.6 MB) in 3.0s
+16:19:13 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.region.smoothed.bed (600.0 MB, threads=16)
+16:19:14 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.region.smoothed.bed.gz (600.0 MB -> 112.2 MB) in 1.1s
+16:19:14 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.repeat.presmoothed.bed (2.1 GB, threads=16)
+16:19:17 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.repeat.presmoothed.bed.gz (2.1 GB -> 305.7 MB) in 2.9s
+16:19:17 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.repeat.smoothed.bed (278.3 MB, threads=16)
+16:19:17 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.repeat.smoothed.bed.gz (278.3 MB -> 51.2 MB) in 0.4s
+16:19:17 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.subtelomeric.presmoothed.bed (63.8 MB, threads=16)
+16:19:18 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.subtelomeric.presmoothed.bed.gz (63.8 MB -> 10.8 MB) in 0.1s
+16:19:18 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.subtelomeric.smoothed.bed (60.4 MB, threads=16)
+16:19:18 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.subtelomeric.smoothed.bed.gz (60.4 MB -> 10.3 MB) in 0.1s
+16:19:18 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.gene.presmoothed.bed (1.1 GB, threads=16)
+16:19:20 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.gene.presmoothed.bed.gz (1.1 GB -> 190.7 MB) in 1.9s
+16:19:20 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.gene.smoothed.bed (1.1 GB, threads=16)
+16:19:21 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.gene.smoothed.bed.gz (1.1 GB -> 190.7 MB) in 1.9s
+16:19:21 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.acrocentric.presmoothed.bed (771.7 MB, threads=16)
+16:19:23 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.acrocentric.presmoothed.bed.gz (771.7 MB -> 133.6 MB) in 1.3s
+16:19:23 INFO: bgzipping chm13v2.0.KS_human_CHM13_v2.acrocentric.smoothed.bed (762.4 MB, threads=16)
+16:19:24 INFO: bgzipped chm13v2.0.KS_human_CHM13_v2.acrocentric.smoothed.bed.gz (762.4 MB -> 131.8 MB) in 1.3s
+16:19:24 INFO: bgzip pass complete in 17.5s
+  bgzip (12 file(s))  17.5s
+16:19:24 INFO: annotate complete in 699.4s (12 output BED(s))
+Wrote:
+  chromosome (presmoothed): /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.chromosome.presmoothed.bed.gz
+  region (presmoothed): /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.region.presmoothed.bed.gz
+  repeat (presmoothed): /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.repeat.presmoothed.bed.gz
+  subtelomeric (presmoothed): /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.subtelomeric.presmoothed.bed.gz
+  gene (presmoothed): /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.gene.presmoothed.bed.gz
+  acrocentric (presmoothed): /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.acrocentric.presmoothed.bed.gz
+  chromosome (smoothed):    /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.chromosome.smoothed.bed.gz
+  region (smoothed):    /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.region.smoothed.bed.gz
+  repeat (smoothed):    /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.repeat.smoothed.bed.gz
+  subtelomeric (smoothed):    /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.subtelomeric.smoothed.bed.gz
+  gene (smoothed):    /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.gene.smoothed.bed.gz
+  acrocentric (smoothed):    /tmp/ks_tableS1_38434006/chm13v2.0.KS_human_CHM13_v2.acrocentric.smoothed.bed.gz
+	Command being timed: "$KS_SOFTWARE/miniforge3_new/envs/karyoscope/bin/karyoscope -v annotate -i $KS_REFERENCES/CHM13v2/chm13v2.0.fasta -o /tmp/ks_tableS1_38434006 --db KS_human_CHM13_v2 --db-root $KS_SOFTWARE/github/barthel/KaryoScope/resources/registry -t 16"
+	User time (seconds): 7068.23
+	System time (seconds): 215.06
+	Percent of CPU this job got: 1041%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 11:39.56
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 36139504
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 110852578
+	Voluntary context switches: 451498
+	Involuntary context switches: 12721
+	Swaps: 0
+	File system inputs: 8
+	File system outputs: 52341096
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

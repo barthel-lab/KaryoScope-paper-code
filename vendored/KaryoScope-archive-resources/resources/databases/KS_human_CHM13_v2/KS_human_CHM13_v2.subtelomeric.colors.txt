@@ -1,0 +1,7 @@
+feature	color
+canonical_telomere	#008000
+telomere_like	#FFA500
+ITS	#FFFF00
+noncanonical_telomere	#0000FF
+TAR1	#FF0000
+nonsubtelomeric	#808080

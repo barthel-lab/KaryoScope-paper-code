@@ -1,0 +1,7 @@
+assembly	feature_set	stage	label	level	bp	pct	denominator_bp
+chm13	gene	presmoothed	intron	leaf	1528879983	49.0454	3117274781
+chm13	gene	presmoothed	intergenic	leaf	1227899447	39.3902	3117274781
+chm13	gene	presmoothed	exon	leaf	360495351	11.5644	3117274781
+chm13	gene	smoothed	intron	leaf	1528879983	49.0454	3117274781
+chm13	gene	smoothed	intergenic	leaf	1227899447	39.3902	3117274781
+chm13	gene	smoothed	exon	leaf	360495351	11.5644	3117274781

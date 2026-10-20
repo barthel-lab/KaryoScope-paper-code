@@ -1,0 +1,7 @@
+assembly	feature_set	bucket	n_runs	bases	pct_of_multilabel_bp	cum_pct
+chm13	gene	1-10	0	0	0.0000	0.0000
+chm13	gene	11-31	0	0	0.0000	0.0000
+chm13	gene	32-100	0	0	0.0000	0.0000
+chm13	gene	101-1k	0	0	0.0000	0.0000
+chm13	gene	1k-10k	0	0	0.0000	0.0000
+chm13	gene	>10k	0	0	0.0000	0.0000

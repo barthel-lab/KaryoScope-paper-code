@@ -1,0 +1,49 @@
+chrom	sample	n	structural_difference
+chr1	HG00658	1	rearranged: inactive and hor swapped positions
+chr2	HG01258	1	lost inactive block; gained censat block
+chr3	HG00126	41	hsat1A up (11% to 30%)
+chr3	HG00128	25	edge pattern difference
+chr3	HG01884	1	edge pattern difference
+chr3	HG00290	23	edge pattern difference
+chr3	HG02583	1	rearranged: hsat3 and active swapped positions
+chr3	HG03816	1	gained centromeric block
+chr3	HG01346	29	lost censat block
+chr3	HG01081	2	no hsat1A (11% to 0%); no hsat3 (1% to 0%); ct up (63% to 80%); lost censat block; lost hsat1A block; lost hsat3 block; transitions: 12 to 7
+chr3	NA19043	1	rearranged: hsat1A and censat swapped positions
+chr4	HG02523	1	rearranged: hsat1A and active swapped positions
+chr4	NA18570	1	rearranged: hsat1A and active swapped positions
+chr5	HG04199	1	rearranged: hor and hsat3 swapped positions
+chr5	NA19468	1	gained bsat block; gained divergent block; rearranged: hor and inactive swapped positions
+chr5	HG03041	1	gained bsat block; rearranged: hor and inactive swapped positions
+chr5	HG00558	1	hor down (20% to 3%); lost hsat3 block; rearranged: hor and inactive swapped positions
+chr7	NA19185	1	lost bsat block; rearranged: hsat2 and active swapped positions
+chr7	HG04157	1	gained hor (0% to 16%); lost bsat block; gained hor block; rearranged: inactive and hsat2 swapped positions
+chr7	HG00658	1	lost bsat block; rearranged: inactive and hsat2 swapped positions
+chr8	HG00232	1	edge pattern difference
+chr8	HG00099	112	edge pattern difference
+chr8	HG02257	4	gained bsat block
+chr8	HG00126	89	gained bsat block
+chr9	HG03688	1	hsat3 up (48% to 65%); ct down (43% to 26%); lost bsat block; gained hsat2 block
+chr9	HG02630	1	gained hsat2 block; rearranged: active and hsat3 swapped positions
+chr10	NA18565	1	different block arrangement
+chr10	HG04187	1	lost bsat block; rearranged: active and inactive swapped positions
+chr10	HG01074	1	hor up (2% to 20%); no hsat2 (8% to 0%); lost active block; lost hsat2 block; rearranged: hor and inactive swapped positions
+chr11	HG00099	173	lost inactive block
+chr11	HG03098	4	inverted block order
+chr11	HG00558	1	edge pattern difference
+chr12	HG00097	87	lost inactive block; rearranged: active and divergent swapped positions
+chr12	HG02984	1	lost inactive block; rearranged: active and divergent swapped positions
+chr12	HG03874	2	rearranged: inactive and active swapped positions
+chr12	HG00097	132	lost inactive block; rearranged: active and divergent swapped positions
+chr12	HG00272	10	edge pattern difference
+chr12	HG02004	1	lost inactive block
+chr16	HG03688	1	gained divergent block; rearranged: hor and active swapped positions
+chr16	NA19391	1	lost active block; gained censat block; gained centromeric block; rearranged: hor and hsat2 swapped positions
+chr16	NA20129	1	gained censat block; gained divergent block; rearranged: hsat2 and hor swapped positions; transitions: 8 to 12
+chr18	HG00639	7	edge pattern difference
+chr18	HG00438	5	edge pattern difference
+chr18	HG00280	2	different block arrangement
+chr19	HG04184	1	lost asat block; rearranged: inactive and censat swapped positions
+chr19	HG03195	4	gained divergent block; rearranged: inactive and censat swapped positions
+chr19	HG02622	1	lost asat block; gained bsat block; rearranged: inactive and censat swapped positions
+chrX	HG00097	41	gained gsat block

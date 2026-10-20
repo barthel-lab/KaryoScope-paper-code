@@ -1,0 +1,7 @@
+assembly	feature_set	bucket	n_runs	bases	pct_of_multilabel_bp	cum_pct
+chm13	acrocentric	1-10	341678	1450446	40.0457	40.0457
+chm13	acrocentric	11-31	40210	612835	16.9199	56.9657
+chm13	acrocentric	32-100	4991	214446	5.9207	62.8864
+chm13	acrocentric	101-1k	552	160237	4.4240	67.3104
+chm13	acrocentric	1k-10k	427	1184009	32.6896	100.0000
+chm13	acrocentric	>10k	0	0	0.0000	100.0000

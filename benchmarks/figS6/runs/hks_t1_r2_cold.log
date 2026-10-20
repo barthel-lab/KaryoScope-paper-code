@@ -1,0 +1,46 @@
+18:02:56 INFO: annotating $KS_REFERENCES/HG002/hg002v1.1_hap1.fasta.gz against HKS_human_CHM13_v2, sets=['repeat']
+18:02:56 INFO: estimated output footprint: 2.4 GB for 1 feature set(s) over ~2.95 Gbp of input
+18:02:56 INFO: memory check passed for annotating hg002v1.1_hap1.fasta.gz against HKS_human_CHM13_v2: need ~11.2 GB, 526.1 GB available (per $SLURM_MEM_PER_NODE/$SLURM_MEM_PER_CPU)
+Annotating hg002v1.1_hap1.fasta.gz against HKS_human_CHM13_v2
+  1 feature set(s), 1 thread(s), ~2.4 GB estimated output
+18:02:56 INFO: running hks lookup for feature set 'repeat' over 1 input(s) (reads=False, threads=1)
+18:10:42 INFO: hks lookup for 'repeat' wrote 2.4 GB over 1 input(s) in 466.0s
+18:10:42 INFO: running hks smooth for feature set 'repeat'
+18:11:24 INFO: hks smooth for 'repeat' wrote 317.4 MB in 42.2s (read 2.4 GB at 0.05 GB/s)
+18:11:24 INFO: peak hks memory so far: 10.0 GB
+  [1/1] repeat  8m28s
+18:11:24 INFO: hks backend complete in 508.2s (1 feature set(s) x 1 input(s), peak hks memory 10.0 GB)
+18:11:24 INFO: bgzip pass: 2 BED(s) (threads=1 each)
+18:11:24 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.presmoothed.bed (2.4 GB, threads=1)
+18:11:56 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.presmoothed.bed.gz (2.4 GB -> 321.2 MB) in 31.7s
+18:11:56 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.smoothed.bed (317.4 MB, threads=1)
+18:12:00 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.smoothed.bed.gz (317.4 MB -> 50.8 MB) in 4.4s
+18:12:00 INFO: bgzip pass complete in 36.1s
+  bgzip (2 file(s))  36.1s
+18:12:00 INFO: annotate complete in 544.4s (2 output BED(s))
+Wrote:
+  repeat (presmoothed): /tmp/ks_coldsweep_38373939/hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.presmoothed.bed.gz
+  repeat (smoothed):    /tmp/ks_coldsweep_38373939/hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.smoothed.bed.gz
+	Command being timed: "$KS_SOFTWARE/miniforge3_new/envs/karyoscope/bin/karyoscope -v annotate -i $KS_REFERENCES/HG002/hg002v1.1_hap1.fasta.gz -o /tmp/ks_coldsweep_38373939 --db HKS_human_CHM13_v2 --db-root $KS_SOFTWARE/github/barthel/KaryoScope/resources/registry --feature-set repeat -t 1"
+	User time (seconds): 537.02
+	System time (seconds): 9.62
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 9:04.67
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 9813400
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 47
+	Minor (reclaiming a frame) page faults: 202467
+	Voluntary context switches: 97335
+	Involuntary context switches: 1329
+	Swaps: 0
+	File system inputs: 20702032
+	File system outputs: 6033864
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

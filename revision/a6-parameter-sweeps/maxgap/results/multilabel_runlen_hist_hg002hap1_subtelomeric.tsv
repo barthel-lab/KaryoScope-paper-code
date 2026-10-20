@@ -1,0 +1,7 @@
+assembly	feature_set	bucket	n_runs	bases	pct_of_multilabel_bp	cum_pct
+hg002hap1	subtelomeric	1-10	118950	362178	94.6628	94.6628
+hg002hap1	subtelomeric	11-31	578	12087	3.1592	97.8220
+hg002hap1	subtelomeric	32-100	165	7592	1.9843	99.8063
+hg002hap1	subtelomeric	101-1k	6	741	0.1937	100.0000
+hg002hap1	subtelomeric	1k-10k	0	0	0.0000	100.0000
+hg002hap1	subtelomeric	>10k	0	0	0.0000	100.0000

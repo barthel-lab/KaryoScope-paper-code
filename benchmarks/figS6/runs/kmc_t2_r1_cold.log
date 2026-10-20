@@ -1,0 +1,69 @@
+00:49:40 INFO: annotating $KS_REFERENCES/HG002/hg002v1.1_hap1.fasta.gz against KS_human_CHM13_v2, sets=['repeat']
+00:49:40 INFO: estimated output footprint: 5.0 GB for 1 feature set(s) over ~2.95 Gbp of input
+Annotating hg002v1.1_hap1.fasta.gz against KS_human_CHM13_v2
+  1 feature set(s), 2 thread(s), ~5.0 GB estimated output
+00:49:40 INFO: running get_featureIDs on hg002v1.1_hap1.fasta.gz (threads=2); this may take several minutes
+01:02:06 INFO: ran get_featureIDs in 745.8s (combined BED: 4.2 GB)
+  k-mer query  12m25s
+01:02:06 INFO: smoothing pass: 1 feature set(s), threads=2
+01:03:48 INFO [worker 574015] smoothed repeat/chr2_hap1: 9052304 intervals -> 4065621 presmoothed, 511665 smoothed in 83.3s (5 passes)
+01:04:04 INFO [worker 574014] smoothed repeat/chr1_hap1: 11393936 intervals -> 4859490 presmoothed, 801986 smoothed in 103.0s (5 passes)
+01:05:06 INFO [worker 574015] smoothed repeat/chr3_hap1: 7715731 intervals -> 3417871 presmoothed, 405334 smoothed in 69.4s (5 passes)
+01:05:18 INFO [worker 574014] smoothed repeat/chr4_hap1: 7293128 intervals -> 3242631 presmoothed, 374308 smoothed in 66.2s (5 passes)
+01:06:07 INFO [worker 574015] smoothed repeat/chr5_hap1: 7690583 intervals -> 3199779 presmoothed, 399519 smoothed in 54.0s (4 passes)
+01:06:27 INFO [worker 574014] smoothed repeat/chr6_hap1: 6877185 intervals -> 3027670 presmoothed, 340510 smoothed in 61.4s (5 passes)
+01:07:16 INFO [worker 574015] smoothed repeat/chr7_hap1: 7015875 intervals -> 3050925 presmoothed, 381296 smoothed in 62.0s (5 passes)
+01:07:22 INFO [worker 574014] smoothed repeat/chr8_hap1: 5501420 intervals -> 2493638 presmoothed, 289907 smoothed in 49.7s (5 passes)
+01:08:20 INFO [worker 574014] smoothed repeat/chr10_hap1: 5685584 intervals -> 2531824 presmoothed, 352141 smoothed in 52.2s (5 passes)
+01:08:27 INFO [worker 574015] smoothed repeat/chr9_hap1: 7024547 intervals -> 2994643 presmoothed, 883688 smoothed in 64.0s (4 passes)
+01:09:13 INFO [worker 574014] smoothed repeat/chr11_hap1: 5393851 intervals -> 2364785 presmoothed, 280677 smoothed in 47.8s (5 passes)
+01:09:24 INFO [worker 574015] smoothed repeat/chr12_hap1: 5867342 intervals -> 2578010 presmoothed, 287565 smoothed in 51.9s (5 passes)
+01:09:56 INFO [worker 574014] smoothed repeat/chr13_hap1: 4308235 intervals -> 1854386 presmoothed, 307136 smoothed in 39.2s (5 passes)
+01:10:13 INFO [worker 574015] smoothed repeat/chr14_hap1: 4926891 intervals -> 1999640 presmoothed, 333376 smoothed in 44.1s (5 passes)
+01:10:45 INFO [worker 574014] smoothed repeat/chr15_hap1: 4586738 intervals -> 1886343 presmoothed, 378166 smoothed in 44.5s (5 passes)
+01:11:04 INFO [worker 574015] smoothed repeat/chr16_hap1: 4882771 intervals -> 1957702 presmoothed, 357615 smoothed in 46.1s (5 passes)
+01:11:32 INFO [worker 574015] smoothed repeat/chr18_hap1: 3169751 intervals -> 1189709 presmoothed, 158955 smoothed in 24.2s (4 passes)
+01:11:33 INFO [worker 574014] smoothed repeat/chr17_hap1: 4753556 intervals -> 1995966 presmoothed, 267715 smoothed in 43.6s (5 passes)
+01:12:09 INFO [worker 574014] smoothed repeat/chr20_hap1: 3234969 intervals -> 1292583 presmoothed, 235918 smoothed in 31.8s (5 passes)
+01:12:14 INFO [worker 574015] smoothed repeat/chr19_hap1: 4304480 intervals -> 1817208 presmoothed, 183706 smoothed in 38.5s (5 passes)
+01:12:27 INFO [worker 574014] smoothed repeat/chr21_hap1: 1860665 intervals -> 744097 presmoothed, 140331 smoothed in 16.6s (5 passes)
+01:12:46 INFO [worker 574015] smoothed repeat/chr22_hap1: 2946082 intervals -> 1120016 presmoothed, 255115 smoothed in 28.7s (5 passes)
+01:13:05 INFO [worker 574014] smoothed repeat/chrY_hap1: 3032450 intervals -> 920979 presmoothed, 407479 smoothed in 35.4s (4 passes)
+01:13:06 INFO: concat pass: 2 temp-file group(s) (threads=2)
+01:13:07 INFO: concat pass complete in 1.1s
+01:13:07 INFO: smoothing pass complete in 661.4s
+  smoothing 1 feature set(s)  11m01s
+01:13:08 INFO: bgzip pass: 2 BED(s) (threads=2 each)
+01:13:08 INFO: bgzipping hg002v1.1_hap1.KS_human_CHM13_v2.repeat.presmoothed.bed (2.4 GB, threads=2)
+01:13:24 INFO: bgzipped hg002v1.1_hap1.KS_human_CHM13_v2.repeat.presmoothed.bed.gz (2.4 GB -> 321.2 MB) in 16.2s
+01:13:24 INFO: bgzipping hg002v1.1_hap1.KS_human_CHM13_v2.repeat.smoothed.bed (317.4 MB, threads=2)
+01:13:26 INFO: bgzipped hg002v1.1_hap1.KS_human_CHM13_v2.repeat.smoothed.bed.gz (317.4 MB -> 50.8 MB) in 2.3s
+01:13:26 INFO: bgzip pass complete in 18.5s
+  bgzip (2 file(s))  18.5s
+01:13:26 INFO: annotate complete in 1426.2s (2 output BED(s))
+Wrote:
+  repeat (presmoothed): /tmp/ks_coldsweep_38373939/hg002v1.1_hap1.KS_human_CHM13_v2.repeat.presmoothed.bed.gz
+  repeat (smoothed):    /tmp/ks_coldsweep_38373939/hg002v1.1_hap1.KS_human_CHM13_v2.repeat.smoothed.bed.gz
+	Command being timed: "$KS_SOFTWARE/miniforge3_new/envs/karyoscope/bin/karyoscope -v annotate -i $KS_REFERENCES/HG002/hg002v1.1_hap1.fasta.gz -o /tmp/ks_coldsweep_38373939 --db KS_human_CHM13_v2 --db-root $KS_SOFTWARE/github/barthel/KaryoScope/resources/registry --feature-set repeat -t 2"
+	User time (seconds): 2661.30
+	System time (seconds): 58.20
+	Percent of CPU this job got: 190%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 23:46.45
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 24204584
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 4
+	Minor (reclaiming a frame) page faults: 26460594
+	Voluntary context switches: 278840
+	Involuntary context switches: 3972
+	Swaps: 0
+	File system inputs: 36111760
+	File system outputs: 19596064
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

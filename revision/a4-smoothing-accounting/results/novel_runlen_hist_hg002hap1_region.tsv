@@ -1,0 +1,7 @@
+assembly	feature_set	bucket	n_runs	bases	pct_of_novel_bp
+hg002hap1	region	1-10	664757	3041460	4.0339
+hg002hap1	region	11-31	2268052	62478093	82.8658
+hg002hap1	region	32-100	191774	8681651	11.5146
+hg002hap1	region	101-1k	3310	739588	0.9809
+hg002hap1	region	1k-10k	235	455961	0.6047
+hg002hap1	region	>10k	0	0	0.0000

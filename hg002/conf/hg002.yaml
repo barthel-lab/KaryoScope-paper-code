@@ -1,0 +1,53 @@
+# =============================================================================
+# KaryoScope-HG002 Assembly Figure Configuration
+# =============================================================================
+# HG002 is a normal diploid male (XY) sample used as a reference genome.
+# No translocations or structural variants detected -- only assembly figures
+# are generated (no ISCN pipeline, no zoom plots, no rearrangement plots).
+#
+# This config produces a single assembly figure using v2 database features
+# with v1 centromere coordinates (hybrid mode). The grid layout arranges
+# chromosomes in 3 rows of 8 with TACCAT mirrored haplotype visualization.
+# =============================================================================
+
+name: "KaryoScope-HG002 Assembly Figure"
+
+# Pipeline: the assembly figure only. Run scripts/check_data.sh first to
+# verify that data/ holds the expected BEDs.
+
+# Script repositories. KaryoScope_assembly_figure.py now lives in
+# KaryoScope-ISCN so no per-step override is needed.
+scripts:
+  iscn: ../vendored/KaryoScope-ISCN
+
+output_base_dir: results
+
+samples:
+  HG002:
+    assembly_name: HG002.assembly
+    sex: XY
+    role: sample
+
+defaults:
+  assembly_figure:
+    scale: 1.4
+    subtelo_span: 25000
+    # The wrapper pipeline loads colors, bed files, etc. relative to CWD,
+    # i.e. the hg002/ directory of this repository.
+    # These paths are passed to KaryoScope_assembly_figure.py via CLI.
+    colors_dir: <KS_RESOURCES>/databases/KS_human_CHM13_v2   # set before running; see README
+
+assembly_figure_analyses:
+  # V2 data with V1 centromere coordinates, grid layout.
+  # EDGE CASE: Uses a hybrid centromere file that maps v1 centromere coordinates
+  # onto v2 scaffold names. This is needed because v2 changed scaffold naming
+  # but v1 centromere positions are more accurate for HG002.
+  - name: "HG002 v2-v1cen grid"
+    sample: HG002
+    output: results/assembly_figure/HG002_figure_v2_v1cen_grid.svg
+    figure_args:
+      bed_dir: data/KS_human_CHM13_v2
+      database: KS_human_CHM13_v2
+      centromeres: data/KS_human_CHM13_v2/HG002.assembly.KS_human_CHM13_v2.region.presmoothed.scaffolded.centromeres_v1coords.bed
+      hierarchy_version: v2
+      layout: grid

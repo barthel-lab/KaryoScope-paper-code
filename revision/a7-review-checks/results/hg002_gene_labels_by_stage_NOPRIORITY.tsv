@@ -1,0 +1,11 @@
+assembly	feature_set	stage	label	level	bp	pct	denominator_bp
+hg002hap1	gene	presmoothed	intron	leaf	1235246555	42.0115	2940260101
+hg002hap1	gene	presmoothed	intergenic	leaf	1106258434	37.6245	2940260101
+hg002hap1	gene	presmoothed	categorized	internal	396600461	13.4886	2940260101
+hg002hap1	gene	presmoothed	exon	leaf	126757898	4.3111	2940260101
+hg002hap1	gene	presmoothed	novel	novel	75396753	2.5643	2940260101
+hg002hap1	gene	smoothed	intron	leaf	1451829774	49.3776	2940260101
+hg002hap1	gene	smoothed	intergenic	leaf	1323079416	44.9987	2940260101
+hg002hap1	gene	smoothed	exon	leaf	137828921	4.6876	2940260101
+hg002hap1	gene	smoothed	categorized	internal	22579839	0.7680	2940260101
+hg002hap1	gene	smoothed	novel	novel	4942151	0.1681	2940260101

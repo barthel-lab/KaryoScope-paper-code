@@ -1,0 +1,17 @@
+{
+  "constant": "MIN_ARRAY_ELEMENT_SIZE",
+  "published": 1500,
+  "plateau_lower": 1201,
+  "plateau_upper": 1500,
+  "margin_below": 299,
+  "margin_above": 0,
+  "published_is_interior": false,
+  "baseline": {
+    "n_hap": 582,
+    "arrays": 629,
+    "repeat_main": 14433,
+    "repeat_total": 28580,
+    "canonical": 621,
+    "degraded": 8
+  }
+}

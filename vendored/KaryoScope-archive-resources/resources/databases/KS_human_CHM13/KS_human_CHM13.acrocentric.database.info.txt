@@ -1,0 +1,8 @@
+DJ_specific	416,704
+PJ_specific	2,257
+rDNA_specific	44,298
+SST1_specific	28,166
+PHR_specific	6,149,310
+nonacrocentric_specific	2,505,730,109
+array_multigroup1	6,825
+TOTAL	2,512,377,669

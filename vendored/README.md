@@ -1,0 +1,52 @@
+# Vendored code
+
+Only the files that the Fig. 1b-e and Fig. 3 code paths import are copied. The
+set was found by running both figures with an import tracer (every module file
+loaded by the conductor process and by the figure script it launches). Each
+Python file starts with a header naming its source repository, commit and
+authors.
+
+## KaryoScope-ISCN (`barthel-lab/KaryoScope-ISCN` at `4e42a98`)
+
+| file | used by |
+|---|---|
+| `KaryoScope_assembly_contig_zoom_plot.py` | Fig. 3 (stacked zoom plot, `--panel-letters --hide-scale-bars --no-refine --zoom-levels 5000000,500000,100000`) |
+| `KaryoScope_assembly_figure.py` | Fig. 1b-e |
+| `KaryoScope_assembly_genome_plot.py` | imported by `KaryoScope_assembly_figure.py` |
+| `plot_featureset_tree_bars.py` | imported by `KaryoScope_assembly_figure.py` (hierarchy trees) |
+
+`4e42a98` is the commit Fig. 3 was rendered with (2026-08-28). These four files
+are unchanged from `4e42a98` to `main` (`4eb7128`). KaryoScope-ISCN is
+GPL-3.0-or-later; its `LICENSE` is included.
+
+One change: `plot_featureset_tree_bars.py` reads its resource directory from
+`$KS_RESOURCES` when set (the original fixes it to a directory under `$HOME`).
+Set it to `vendored/KaryoScope-archive-resources/resources`.
+
+## karyoscope_conductor (`barthel-lab/KaryoScope-conductor` at `0732e96`)
+
+The YAML runner (`python -m karyoscope_conductor --config <yaml>`), at the
+commit that KaryoScope-HG002 and KaryoScope-ROBs pin. Copied: the package
+`__init__`, `__main__`, `common`, `config`, `pipeline`, `tsv_generator`, and the
+two steps the figures use, `steps/iscn/assembly_figure.py` and
+`steps/iscn/assembly_contig_zoom_plot_stacked.py`. Steps are imported by name
+from the config's `pipeline:` list, so a config that names any other step
+fails here. Unmodified.
+
+## KaryoScope-archive-resources
+
+Colour palettes, per-feature k-mer counts (`*.database.info.txt`), priority
+files and the v2 hierarchy for the `KS_human_CHM13` (v1) and
+`KS_human_CHM13_v2` databases, from the KaryoScope-archive pipeline at commit
+`7c976e04` (`resources/`), the commit the HG002 and ROB setups pinned. The later
+history of that repository carries an MIT licence (`LICENSE.MIT`).
+
+The figure scripts also import `karyoplot`
+(`barthel-lab/KaryoScope-plotlib`, public, GPL-3.0), installed by
+`environment/figures.yml` at commit `f59c5fd`.
+
+## Check
+
+On the same inputs, the vendored copy and the original repositories at the
+commits above give byte-identical SVG and PNG output, for Fig. 3 and for the
+HG002 figure.

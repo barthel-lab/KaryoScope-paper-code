@@ -1,0 +1,14 @@
+=== Job 2b: gene set without priorities ===
+job=37440288 node=g-c-1-7-24 start=2026-09-07T13:48:50-07:00
+karyoscope: karyoscope 2.3.0  hks: version 0.4.0
+input bed sha256: 03ae30a1a9c90a57...
+[13:48:51] build
+  build rc=0 15:06.52 peakRSS_kb=19746964
+[14:03:57] annotate HG002 hap1, gene set
+  annotate rc=0 1:04.79 peakRSS_kb=9042084
+hg002v1.1_hap1.HKS_human_CHM13_v2_gene_noprio.gene.presmoothed.bed
+hg002v1.1_hap1.HKS_human_CHM13_v2_gene_noprio.gene.smoothed.bed
+denominator 2,940,260,101 (N+chrM masked pre 7,634,373 / post 7,634,373)
+presmoothed intron=1,235,246,555 (42.0115%)  intergenic=1,106,258,434 (37.6245%)  categorized=396,600,461 (13.4886%)  exon=126,757,898 (4.3111%)  novel=75,396,753 (2.5643%)
+smoothed intron=1,451,829,774 (49.3776%)  intergenic=1,323,079,416 (44.9987%)  exon=137,828,921 (4.6876%)  categorized=22,579,839 (0.7680%)  novel=4,942,151 (0.1681%)
+end=2026-09-07T14:05:34-07:00

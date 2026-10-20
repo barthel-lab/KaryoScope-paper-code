@@ -1,0 +1,5 @@
+assembly	feature_set	smoothed_tiled_bp_unmasked	smoothed_novel_bp_unmasked	published_label_composition_novel_bp	check	smoothed_novel_bp_N_masked
+ey15_2	chromosome	136135221	105	105	MATCH	105
+ey15_2	region	136135221	760084	760084	MATCH	760084
+ey15_2	repeat	136135221	2497066	2497066	MATCH	2497066
+ey15_2	gene	136135221	4824275	4824275	MATCH	4824275

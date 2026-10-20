@@ -1,0 +1,13 @@
+measure	label	count	pct	total	note
+input_bed_bp_all_sequences	exon	148541639	4.7651	3117292070	T2T-CHM13v2.0 bases per label in the build input BED (before k-mer resolution), chrM included
+input_bed_bp_all_sequences	intron	1520417471	48.7737	3117292070	T2T-CHM13v2.0 bases per label in the build input BED (before k-mer resolution), chrM included
+input_bed_bp_all_sequences	intergenic	1448332960	46.4613	3117292070	T2T-CHM13v2.0 bases per label in the build input BED (before k-mer resolution), chrM included
+input_bed_bp_all_sequences	categorized	0	0.0000	3117292070	T2T-CHM13v2.0 bases per label in the build input BED (before k-mer resolution), chrM included
+input_bed_bp_excluding_chrM	exon	148541639	4.7651	3117275501	same, chrM dropped (the build excludes chrM)
+input_bed_bp_excluding_chrM	intron	1520417471	48.7739	3117275501	same, chrM dropped (the build excludes chrM)
+input_bed_bp_excluding_chrM	intergenic	1448316391	46.4610	3117275501	same, chrM dropped (the build excludes chrM)
+input_bed_bp_excluding_chrM	categorized	0	0.0000	3117275501	same, chrM dropped (the build excludes chrM)
+index_nodes_k31	exon	278631142	5.5452	5024755338	hks node-stats count at k=31 per label after priority resolution (exon>intron>intergenic); index stores both strands (hks add-feature-set default, no --forward-only), so counts are ~2x distinct canonical k-mers
+index_nodes_k31	intron	2647208560	52.6833	5024755338	hks node-stats count at k=31 per label after priority resolution (exon>intron>intergenic); index stores both strands (hks add-feature-set default, no --forward-only), so counts are ~2x distinct canonical k-mers
+index_nodes_k31	intergenic	2098915636	41.7715	5024755338	hks node-stats count at k=31 per label after priority resolution (exon>intron>intergenic); index stores both strands (hks add-feature-set default, no --forward-only), so counts are ~2x distinct canonical k-mers
+index_nodes_k31	categorized	0	0.0000	5024755338	hks node-stats count at k=31 per label after priority resolution (exon>intron>intergenic); index stores both strands (hks add-feature-set default, no --forward-only), so counts are ~2x distinct canonical k-mers

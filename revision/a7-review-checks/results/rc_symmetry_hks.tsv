@@ -1,0 +1,25 @@
+backend	sequence	description	sequence_kmer_positions	feature_set	stage	bp_compared	bp_identical	bp_differing	pct_differing	n_differing_runs	run_min_bp	run_median_bp	run_max_bp	n_label_pairs
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	chromosome	presmoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	chromosome	smoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	region	presmoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	region	smoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	repeat	presmoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	repeat	smoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	subtelomeric	presmoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	subtelomeric	smoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	gene	presmoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	gene	smoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	acrocentric	presmoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr21_hap1	HG002 hap1 chr21 (acrocentric)	44312568	acrocentric	smoothed	44312568	44312568	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	chromosome	presmoothed	67035349	67035349	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	chromosome	smoothed	67035349	67035349	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	region	presmoothed	67035349	67035349	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	region	smoothed	67035349	67035349	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	repeat	presmoothed	67035349	67035349	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	repeat	smoothed	67035349	67035349	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	subtelomeric	presmoothed	67035349	67035349	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	subtelomeric	smoothed	67035349	67035349	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	gene	presmoothed	67035349	67035349	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	gene	smoothed	67035349	67035349	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	acrocentric	presmoothed	67035349	67035349	0	0.00000	0	0	0	0	0
+hks_v2.3.0	chr20_hap1	HG002 hap1 chr20 (ordinary autosome)	67035349	acrocentric	smoothed	67035349	67035349	0	0.00000	0	0	0	0	0

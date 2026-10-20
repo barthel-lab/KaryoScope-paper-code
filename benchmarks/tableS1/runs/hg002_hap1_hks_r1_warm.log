@@ -1,0 +1,106 @@
+21:27:58 INFO: annotating $KS_REFERENCES/HG002/hg002v1.1_hap1.fasta.gz against HKS_human_CHM13_v2, sets=['chromosome', 'region', 'repeat', 'subtelomeric', 'gene', 'acrocentric']
+21:27:58 INFO: estimated output footprint: 14.1 GB for 6 feature set(s) over ~2.95 Gbp of input
+21:27:58 INFO: memory check passed for annotating hg002v1.1_hap1.fasta.gz against HKS_human_CHM13_v2: need ~11.2 GB, 526.1 GB available (per $SLURM_MEM_PER_NODE/$SLURM_MEM_PER_CPU)
+Annotating hg002v1.1_hap1.fasta.gz against HKS_human_CHM13_v2
+  6 feature set(s), 16 thread(s), ~14.1 GB estimated output
+21:27:58 INFO: running hks lookup for feature set 'chromosome' over 1 input(s) (reads=False, threads=16)
+21:28:51 INFO: hks lookup for 'chromosome' wrote 2.4 GB over 1 input(s) in 52.8s
+21:28:51 INFO: running hks smooth for feature set 'chromosome'
+21:28:57 INFO: hks smooth for 'chromosome' wrote 101.4 MB in 5.8s (read 2.4 GB at 0.39 GB/s)
+21:28:57 INFO: peak hks memory so far: 10.8 GB
+  [1/6] chromosome    58.7s
+21:28:57 INFO: running hks lookup for feature set 'region' over 1 input(s) (reads=False, threads=16)
+21:29:49 INFO: hks lookup for 'region' wrote 2.1 GB over 1 input(s) in 52.7s
+21:29:49 INFO: running hks smooth for feature set 'region'
+21:29:58 INFO: hks smooth for 'region' wrote 699.6 MB in 8.9s (read 2.1 GB at 0.22 GB/s)
+21:29:58 INFO: peak hks memory so far: 10.8 GB
+  [2/6] region        1m01s
+21:29:58 INFO: running hks lookup for feature set 'repeat' over 1 input(s) (reads=False, threads=16)
+21:30:51 INFO: hks lookup for 'repeat' wrote 2.4 GB over 1 input(s) in 52.6s
+21:30:51 INFO: running hks smooth for feature set 'repeat'
+21:31:05 INFO: hks smooth for 'repeat' wrote 317.4 MB in 13.7s (read 2.4 GB at 0.16 GB/s)
+21:31:05 INFO: peak hks memory so far: 10.8 GB
+  [3/6] repeat        1m06s
+21:31:05 INFO: running hks lookup for feature set 'subtelomeric' over 1 input(s) (reads=False, threads=16)
+21:31:57 INFO: hks lookup for 'subtelomeric' wrote 319.0 MB over 1 input(s) in 52.1s
+21:31:57 INFO: running hks smooth for feature set 'subtelomeric'
+21:31:57 INFO: hks smooth for 'subtelomeric' wrote 66.3 MB in 0.6s (read 319.0 MB at 0.47 GB/s)
+21:31:57 INFO: peak hks memory so far: 10.8 GB
+  [4/6] subtelomeric  52.7s
+21:31:57 INFO: running hks lookup for feature set 'gene' over 1 input(s) (reads=False, threads=16)
+21:32:50 INFO: hks lookup for 'gene' wrote 1.4 GB over 1 input(s) in 52.4s
+21:32:50 INFO: running hks smooth for feature set 'gene'
+21:32:57 INFO: hks smooth for 'gene' wrote 1.2 GB in 7.0s (read 1.4 GB at 0.18 GB/s)
+21:32:57 INFO: peak hks memory so far: 10.8 GB
+  [5/6] gene          59.4s
+21:32:57 INFO: running hks lookup for feature set 'acrocentric' over 1 input(s) (reads=False, threads=16)
+21:33:50 INFO: hks lookup for 'acrocentric' wrote 1.1 GB over 1 input(s) in 52.8s
+21:33:50 INFO: running hks smooth for feature set 'acrocentric'
+21:33:54 INFO: hks smooth for 'acrocentric' wrote 810.0 MB in 4.3s (read 1.1 GB at 0.23 GB/s)
+21:33:54 INFO: peak hks memory so far: 10.8 GB
+  [6/6] acrocentric   57.0s
+21:33:54 INFO: hks backend complete in 355.7s (6 feature set(s) x 1 input(s), peak hks memory 10.8 GB)
+21:33:54 INFO: bgzip pass: 12 BED(s) (threads=16 each)
+21:33:54 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.chromosome.presmoothed.bed (2.4 GB, threads=16)
+21:33:57 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.chromosome.presmoothed.bed.gz (2.4 GB -> 356.7 MB) in 3.4s
+21:33:57 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.chromosome.smoothed.bed (101.4 MB, threads=16)
+21:33:57 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.chromosome.smoothed.bed.gz (101.4 MB -> 15.7 MB) in 0.2s
+21:33:57 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.region.presmoothed.bed (2.1 GB, threads=16)
+21:34:00 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.region.presmoothed.bed.gz (2.1 GB -> 328.7 MB) in 3.1s
+21:34:00 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.region.smoothed.bed (699.6 MB, threads=16)
+21:34:02 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.region.smoothed.bed.gz (699.6 MB -> 112.7 MB) in 1.1s
+21:34:02 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.presmoothed.bed (2.4 GB, threads=16)
+21:34:04 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.presmoothed.bed.gz (2.4 GB -> 321.2 MB) in 2.9s
+21:34:04 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.smoothed.bed (317.4 MB, threads=16)
+21:34:05 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.smoothed.bed.gz (317.4 MB -> 50.8 MB) in 0.4s
+21:34:05 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.subtelomeric.presmoothed.bed (319.0 MB, threads=16)
+21:34:05 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.subtelomeric.presmoothed.bed.gz (319.0 MB -> 46.5 MB) in 0.4s
+21:34:05 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.subtelomeric.smoothed.bed (66.3 MB, threads=16)
+21:34:05 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.subtelomeric.smoothed.bed.gz (66.3 MB -> 10.0 MB) in 0.1s
+21:34:05 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.gene.presmoothed.bed (1.4 GB, threads=16)
+21:34:07 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.gene.presmoothed.bed.gz (1.4 GB -> 210.2 MB) in 2.0s
+21:34:07 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.gene.smoothed.bed (1.2 GB, threads=16)
+21:34:09 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.gene.smoothed.bed.gz (1.2 GB -> 179.7 MB) in 1.8s
+21:34:09 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.acrocentric.presmoothed.bed (1.1 GB, threads=16)
+21:34:11 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.acrocentric.presmoothed.bed.gz (1.1 GB -> 159.0 MB) in 1.5s
+21:34:11 INFO: bgzipping hg002v1.1_hap1.HKS_human_CHM13_v2.acrocentric.smoothed.bed (810.0 MB, threads=16)
+21:34:12 INFO: bgzipped hg002v1.1_hap1.HKS_human_CHM13_v2.acrocentric.smoothed.bed.gz (810.0 MB -> 121.8 MB) in 1.2s
+21:34:12 INFO: bgzip pass complete in 18.1s
+  bgzip (12 file(s))  18.1s
+21:34:12 INFO: annotate complete in 373.8s (12 output BED(s))
+Wrote:
+  chromosome (presmoothed): /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.chromosome.presmoothed.bed.gz
+  region (presmoothed): /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.region.presmoothed.bed.gz
+  repeat (presmoothed): /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.presmoothed.bed.gz
+  subtelomeric (presmoothed): /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.subtelomeric.presmoothed.bed.gz
+  gene (presmoothed): /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.gene.presmoothed.bed.gz
+  acrocentric (presmoothed): /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.acrocentric.presmoothed.bed.gz
+  chromosome (smoothed):    /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.chromosome.smoothed.bed.gz
+  region (smoothed):    /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.region.smoothed.bed.gz
+  repeat (smoothed):    /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.repeat.smoothed.bed.gz
+  subtelomeric (smoothed):    /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.subtelomeric.smoothed.bed.gz
+  gene (smoothed):    /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.gene.smoothed.bed.gz
+  acrocentric (smoothed):    /tmp/ks_tableS1_38434006/hg002v1.1_hap1.HKS_human_CHM13_v2.acrocentric.smoothed.bed.gz
+	Command being timed: "$KS_SOFTWARE/miniforge3_new/envs/karyoscope/bin/karyoscope -v annotate -i $KS_REFERENCES/HG002/hg002v1.1_hap1.fasta.gz -o /tmp/ks_tableS1_38434006 --db HKS_human_CHM13_v2 --db-root $KS_SOFTWARE/github/barthel/KaryoScope/resources/registry -t 16"
+	User time (seconds): 3992.98
+	System time (seconds): 40.28
+	Percent of CPU this job got: 1077%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 6:14.26
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 10561780
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 2039728
+	Voluntary context switches: 242306
+	Involuntary context switches: 6466
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 28846600
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

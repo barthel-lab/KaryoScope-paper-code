@@ -1,0 +1,6 @@
+representation	minor_k21	minor_k31	minor_k51	chroms_split_k21	chroms_split_k31	chroms_split_k51	concord_21v31	concord_51v31	concord_21v51	k31_vs_published	fish_minor_of_12
+published	395	821	1266	16	15	17	76.44	85.87	67.9	100.0	9
+lengthw	567	736	1074	16	15	17	82.93	81.85	74.05	86.27	7
+abundonly	606	1184	1212	16	15	17	81.06	78.42	79.65	81.43	10
+abundlw	498	699	747	16	15	17	83.59	87.48	81.21	79.08	7
+edgesabund	613	1125	1043	16	15	17	79.96	80.8	85.06	81.85	10

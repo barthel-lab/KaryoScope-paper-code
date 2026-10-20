@@ -1,0 +1,9 @@
+Job 1 inputs: A3 annotate outputs (karyoscope 2.3.0, hks 0.4.0, HKS_arabidopsis_ColCEN 1.2.0, job 35378568, 2026-08-11); both stages were kept, no re-run.
+ey15_2: N-mask (N runs extended 30 bp left) = OX298799.1:17215865-17215995
+ey15_2: sequence -> chromosome from FASTA headers: OX298797.1=Chr1, OX298798.1=Chr2, OX298799.1=Chr3, OX298800.1=Chr4, OX298801.1=Chr5
+ey15_2: hierarchy leaves per set: chromosome=['Chr1', 'Chr2', 'Chr3', 'Chr4', 'Chr5']; region=['CEN180', 'cen_gap', 'p_arm', 'q_arm']; repeat=['CACTA', 'Copia', 'DNA_other', 'Gypsy', 'Helitron', 'L1', 'LINE_other', 'LTR_other', 'MITE', 'Mutator', 'PIF_Harbinger', 'RathE', 'SINE_other', 'TE_unclassified', 'Tc1_Mariner', 'hAT', 'nonrepeat']; gene=['exon', 'intergenic', 'intron']
+ey15_2: hierarchy internal nodes per set: chromosome=['categorized', 'nuclear']; region=['arm', 'categorized', 'centromeric']; repeat=['Class_II_DNA', 'Class_I_Retro', 'LINE', 'LTR', 'SINE', 'TIR', 'Transposable_Element', 'categorized']; gene=['categorized']
+colcen_nuclear: N-mask (N runs extended 30 bp left) = none
+colcen_nuclear: sequence -> chromosome from FASTA headers: Chr1=Chr1, Chr2=Chr2, Chr3=Chr3, Chr4=Chr4, Chr5=Chr5
+colcen_nuclear: hierarchy leaves per set: chromosome=['Chr1', 'Chr2', 'Chr3', 'Chr4', 'Chr5']; region=['CEN180', 'cen_gap', 'p_arm', 'q_arm']; repeat=['CACTA', 'Copia', 'DNA_other', 'Gypsy', 'Helitron', 'L1', 'LINE_other', 'LTR_other', 'MITE', 'Mutator', 'PIF_Harbinger', 'RathE', 'SINE_other', 'TE_unclassified', 'Tc1_Mariner', 'hAT', 'nonrepeat']; gene=['exon', 'intergenic', 'intron']
+colcen_nuclear: hierarchy internal nodes per set: chromosome=['categorized', 'nuclear']; region=['arm', 'categorized', 'centromeric']; repeat=['Class_II_DNA', 'Class_I_Retro', 'LINE', 'LTR', 'SINE', 'TIR', 'Transposable_Element', 'categorized']; gene=['categorized']

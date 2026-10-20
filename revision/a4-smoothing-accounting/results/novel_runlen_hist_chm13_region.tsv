@@ -1,0 +1,7 @@
+assembly	feature_set	bucket	n_runs	bases	pct_of_novel_bp
+chm13	region	1-10	0	0	0.0000
+chm13	region	11-31	0	0	0.0000
+chm13	region	32-100	0	0	0.0000
+chm13	region	101-1k	0	0	0.0000
+chm13	region	1k-10k	0	0	0.0000
+chm13	region	>10k	0	0	0.0000

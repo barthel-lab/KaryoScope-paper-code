@@ -1,0 +1,7 @@
+assembly	feature_set	bucket	n_runs	bases	pct_of_novel_bp
+chm13	repeat	1-10	0	0	0.0000
+chm13	repeat	11-31	0	0	0.0000
+chm13	repeat	32-100	0	0	0.0000
+chm13	repeat	101-1k	0	0	0.0000
+chm13	repeat	1k-10k	0	0	0.0000
+chm13	repeat	>10k	0	0	0.0000

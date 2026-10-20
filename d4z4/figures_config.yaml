@@ -1,0 +1,149 @@
+# Configuration for make_figures.py: the three D4Z4 manuscript figures.
+#
+#   Figure 4 (A-H)                    repo's old name "Figure 5"
+#   Supplementary Figure S9 (A-D)     repo's old name "Supp. Fig. 1"
+#   Supplementary Figure S10 (A-F)    repo's old name "Supp. Fig. 2"
+#
+# Every haplotype shown and every filter applied is set here. Swapping a haplotype or
+# changing a filter is a one-line edit; the panel layout adapts to the new data.
+# Haplotypes are given as contig IDs (sample#hap#accession); the chromosome comes from
+# the analysis table.
+#
+# Relative paths are relative to this file.
+
+inputs:
+  analysis_tsv: results/d4z4_array_analysis.tsv          # analyze_d4z4_arrays.py
+  plam_tsv: results/d4z4_array_coordinates.plam.tsv      # extract_array_coordinates.py + pLAM BLAST
+  hmm_counts_xlsx: Hailey-notes/HPRC_chr4_counts.xlsx    # HMM repeat counts (supplementary table)
+  qc_classification_tsv: results/d4z4_haplotype_classification.tsv  # export_haplotype_classification.py (qc_pass)
+  bed_dir: data                                          # pangenome.chr{4,10}.subtelo_q.*.bed
+  # KaryoScope v1 colour files (KS_human_CHM13.{region,gene,repeat,subtelomeric}.colors.txt)
+  colors_dir: KaryoScope/resources/KS_human_CHM13
+
+filters:
+  # true: every figure panel and number is computed from the haplotypes that pass the
+  # array-focused assembly QC (qc_pass in inputs: qc_classification_tsv; HMM-Flagger Err or
+  # NucFlag COLLAPSE/COLLAPSE_VAR over the array or terminal zone fails a haplotype). A figure
+  # that lists a failing haplotype then stops with an error naming it. false: all haplotypes,
+  # as in the published figures. The sunburst draws both versions regardless.
+  assembly_qc: true
+
+style:
+  font_family: Arial            # published font; the fallbacks below are used if it is absent
+  font_fallbacks: [Liberation Sans, Helvetica, DejaVu Sans]
+  font_dir: null                # optional directory of .ttf/.otf files to register (also used by cairo)
+
+fig4:
+  A:
+    haplotypes: [HG01358#1#CM089053.1, HG01358#2#CM089066.1]
+  B:
+    # Waffle charts, one cell per haplotype, in this order. Category names are those
+    # returned by categorize_haplotype() in create_d4z4_figure.py.
+    categories:
+      chr4: [A-type (C+), B-type (C-), Multi-array, Mixed, Degraded-only, No arrays]
+      chr10: [A-type (C+), B-type (C-), 10qB (C-), Functional pLAM, Multi-array, Mixed,
+              Degraded-only, No arrays]
+  C:
+    haplotypes: [HG01891#2#CM088207.1]
+  D:
+    haplotypes: [HG02818#2#CM091991.1]
+  E:
+    haplotypes: [HG02717#2#CM088975.1]
+  F:
+    haplotypes: [NA18570#1#CM087657.1]
+  G:
+    # Diploid pairing tables. Individuals in a pairing with an excluded category still
+    # count towards n but are not drawn (commit e09c1d7).
+    tables:
+      chr4:
+        categories: [A-type (C+), B-type (C-), Multi-array, Mixed, Degraded-only, No arrays]
+        exclude_categories: [No arrays]
+      chr10:
+        categories: [A-type (C+), 10qB (C-), Functional pLAM, Multi-array, Mixed,
+                     Degraded-only, No arrays]
+        exclude_categories: []
+  H:
+    chromosomes: [chr4, chr10]
+    single_array_only: true     # both haplotypes must have exactly one array
+    fold_lines: [3, 5]
+    label_top_n: 3              # label the most asymmetric individuals
+    axis_from: pairs            # axes to the largest plotted count (published: all_haplotypes)
+
+figS9:
+  B:
+    chromosome: chr4
+    exclude_truncated: true
+  C:
+    haplotypes: [HG03704#1#CM086215.1, HG03704#2#CM086193.1]
+  D:
+    haplotypes: [HG00280#2#CM087159.1, HG02717#1#CM088962.1]
+
+figS10:
+  # Slots keep their published names here; omitted slots are dropped, the panels below move up,
+  # and the printed letters run on from A (so C prints as B, and so on).
+  omit_panels: [B]   # HG01928 hap2: its novel-rich distal end lies under a NucFlag MISJOIN that
+                     # covers the whole terminal zone, so the degraded call is doubtful
+  A:
+    haplotypes: [HG02572#1#CM088159.1, HG02976#2#CM087126.1]
+  B:
+    haplotypes: [HG01928#2#CM089008.1]   # was also HG01361 hap1, which fails QC (no other chr10 degraded-only passes)
+  C:
+    haplotypes: [HG00290#1#CM089980.1, NA19036#2#CM089743.1]   # was NA18940 hap1 (NucFlag MISJOIN over 60-496 kb)
+  # D-F: multi-array haplotypes grouped by the length of the sequence between their arrays
+  # (d4z4_intervening_sequences.py), in the order of the main-figure examples (Fig. 4C-E)
+  D:   # chr4, ~16 kb (Fig. 4C HG01891)
+    haplotypes: [HG02886#1#CM088084.1, HG06807#2#CM101432.1]   # HG02886 replaces HG03942 hap1 (13 kb N gap at its break)
+  E:   # chr10, ~20 kb (Fig. 4D HG02818)
+    haplotypes: [HG02668#2#CM088900.1, HG06807#2#CM101438.1]   # HG02668 replaces NA18565 hap1 (fails QC)
+  F:   # chr10, 7.5 kb (Fig. 4E HG02717)
+    haplotypes: [NA19240#1#CM099581.1, HG03471#1#CM087526.1]   # replace NA19468 hap1 (MISJOIN) and HG01109 hap1 (mixed, shown in Fig. 4F)
+
+sunburst:
+  # HPRC2 Supplementary Fig. D4Z4_7f (formerly Fig. 7f); drawn for all haplotypes and for those
+  # passing the array-focused assembly QC (qc_pass in qc_classification_tsv)
+  chromosome: chr4
+  palette: ordinal               # published: the panel's colours; ordinal: array count and repeat
+                                 # units as one-hue ramps (amber, violet; darker for more), no colour
+                                 # repeated across rings
+  # Wedge geometry chosen with figure_sunburst.search_layouts() (every start angle in 5-degree
+  # steps, direction, ring order, tilt limit and outside-label mode, scored on both versions for
+  # mean text tilt and bounding-box area, rejecting any layout where a label or leader line
+  # touches a ring, a label or another leader line), with the five large wedges required to keep
+  # their labels in their rings. The rectangle around rings, labels and leader lines (not the
+  # title or legend) is 6.6 square inches. Each ring label slides along its wedge to its most
+  # upright position. The title sits above, level with the top of the legend.
+  layout:
+    start: 350.0                 # degrees, where the inner ring starts
+    clockwise: false
+    max_tilt: 10.0               # a ring label tilted more than this (mean, from upright) goes outside,
+                                 # unless it is listed in inside
+    polar_labels: false          # true: labels near the top or bottom sit centred above or below
+    label_style: full            # full: name and count; values: counts only; hybrid: counts in the
+                                 # rings, name and count on the leader labels
+    inside: [1 array, C+, C-, Functional, Non-functional]   # labels that must stay in their ring
+    center_gap: true             # rotate so the second ring's empty part is centred on the +x axis
+    other_step: 0.7              # circle: the other rings' labels step at this fraction of the outer ring's
+    outer_spacing: vertical      # circle: outer-ring labels evenly spaced in angle (angle) or their
+                                 # centres evenly spaced in height (vertical), end points on the circle
+    label_arrangement: circle    # circle: leader lines end on one circle, evenly spaced in angle
+                                 # within each ring's labels; column: labels stacked beside wedges
+    order1: [No arrays, 1 array, 2+ arrays]
+    order2: [C+, C-, D]
+    order3: [Absent, Functional, Non-functional]
+    order4: [1-10 (FSHD1), 11-20 (FSHD2), 21-30, 31+]
+
+
+hprc2:
+  # HPRC2 marker paper figures built from KaryoScope track views (make_figures.py --figures hprc2,
+  # which also draws Fig. 6e, the sunburst above). Each: the haplotypes stacked top to bottom on one
+  # kb scale, panel letters (none for a panel placed inside a larger figure), and the colour legend
+  # packed to the right of the tracks or below them, listing only the features drawn.
+  fig6f:                         # Figure 6f: HG01530, haplotype 2 above haplotype 1 (as panel g)
+    haplotypes: [HG01530#2#CM087558.1, HG01530#1#CM087534.1]
+    letters: []
+    legend: right
+  figS42:                        # Supplementary Fig. 42 (D4Z4_SUPP): a 4qA, a 4qB, an FSHD1-range 4qA
+    haplotypes: [HG02717#2#CM088970.1, HG03017#2#CM088926.1, HG03470#1#CM091820.1]
+    letters: [a, b, c]
+    legend: below
+    width_pt: 462                # the HPRC2 doc's page width; tracks lengthen to fill it

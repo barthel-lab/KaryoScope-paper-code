@@ -1,0 +1,7 @@
+assembly	feature_set	bucket	n_runs	bases	pct_of_multilabel_bp	cum_pct
+chm13	subtelomeric	1-10	124797	380060	94.4302	94.4302
+chm13	subtelomeric	11-31	636	13382	3.3249	97.7552
+chm13	subtelomeric	32-100	180	8195	2.0361	99.7913
+chm13	subtelomeric	101-1k	7	840	0.2087	100.0000
+chm13	subtelomeric	1k-10k	0	0	0.0000	100.0000
+chm13	subtelomeric	>10k	0	0	0.0000	100.0000

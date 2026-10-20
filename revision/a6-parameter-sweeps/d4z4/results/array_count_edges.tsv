@@ -1,0 +1,8 @@
+value	n_hap	arrays	repeat_main	repeat_total	canonical	degraded	haps_changed	arrays_and_class_same	differs
+1601	582	616	14338	28580	603	13	5	0	arrays,repeat_main,canonical,degraded
+1700	582	616	14338	28580	603	13	5	0	arrays,repeat_main,canonical,degraded
+1000	582	629	14437	28580	621	8	0	1	repeat_main
+900	582	630	14447	28580	622	8	1	0	arrays,repeat_main,canonical
+800	582	630	14451	28580	622	8	1	0	arrays,repeat_main,canonical
+700	582	630	14453	28580	622	8	1	0	arrays,repeat_main,canonical
+600	582	630	14453	28580	622	8	1	0	arrays,repeat_main,canonical
