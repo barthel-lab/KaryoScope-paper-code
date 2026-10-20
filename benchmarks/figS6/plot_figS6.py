@@ -33,7 +33,12 @@ Two deliberate departures from the original, both forced by what is measurable:
      (42.2 s -> 13.8 s over 1 -> 8 threads, warm), so it is plotted as a curve.
 
 Text is emitted as text, not outlined paths (`svg.fonttype = "none"`), so every
-label stays editable in Illustrator.
+label stays editable in Illustrator; the PDF embeds TrueType (`pdf.fonttype` 42).
+
+Layout follows the Nature Extended Data spec: the figure is drawn at its final
+size (183 mm wide), with 6-7 pt text and 8 pt bold lowercase panel letters
+a (throughput), b (smoothing) and c (peak memory). The canvas is saved at that
+size (no `bbox_inches="tight"`), so the output dimensions are fixed.
 """
 from __future__ import annotations
 
@@ -116,12 +121,20 @@ def main():
         "mathtext.rm": "Arial",
         "mathtext.it": "Arial:italic",
         "mathtext.bf": "Arial:bold",
-        "font.size": 10, "axes.titlesize": 11, "axes.labelsize": 10,
-        "legend.fontsize": 9, "figure.dpi": 150,
+        "pdf.fonttype": 42, "ps.fonttype": 42,   # embed TrueType, not Type 3
+        # Sizes are at final print size (the figure is drawn at 183 mm wide).
+        "font.size": 6, "axes.titlesize": 7, "axes.labelsize": 6,
+        "xtick.labelsize": 6, "ytick.labelsize": 6, "legend.fontsize": 6,
+        "axes.linewidth": 0.6, "xtick.major.width": 0.6, "ytick.major.width": 0.6,
+        "xtick.major.size": 2.5, "ytick.major.size": 2.5,
+        "ytick.minor.width": 0.4, "ytick.minor.size": 1.5,
+        "figure.dpi": 150,
     })
 
-    fig = plt.figure(figsize=(9, 7.0))
-    gs = fig.add_gridspec(2, 2, height_ratios=[1.0, 0.85], hspace=0.32, wspace=0.26)
+    mm = 1 / 25.4
+    fig = plt.figure(figsize=(183 * mm, 140 * mm))
+    gs = fig.add_gridspec(2, 2, height_ratios=[1.0, 0.85], hspace=0.42, wspace=0.22,
+                          left=0.07, right=0.985, top=0.95, bottom=0.075)
     ax_assign = fig.add_subplot(gs[0, 0])
     ax_smooth = fig.add_subplot(gs[0, 1])
     ax_mem = fig.add_subplot(gs[1, :])
@@ -131,12 +144,12 @@ def main():
         s = g[g["backend"] == b]
         st = STYLE[b]
         ax_assign.errorbar(s["threads"], s["assign_mb_s"], yerr=s["assign_sd"].fillna(0),
-                           capsize=3, linewidth=1.5, markersize=6, **st)
+                           capsize=2, linewidth=1.0, markersize=3.5, elinewidth=0.7, **st)
         ax_smooth.errorbar(s["threads"], s["smooth_s"], yerr=s["smooth_sd"].fillna(0),
-                           capsize=3, linewidth=1.5, markersize=6,
+                           capsize=2, linewidth=1.0, markersize=3.5, elinewidth=0.7,
                            color=st["color"], marker=st["marker"], label=SMOOTH_LABEL[b])
         ax_mem.errorbar(s["threads"], s["rss"], yerr=s["rss_sd"].fillna(0),
-                        capsize=3, linewidth=1.5, markersize=6, **st)
+                        capsize=2, linewidth=1.0, markersize=3.5, elinewidth=0.7, **st)
 
     ax_assign.set_title("$k$-mer feature assignment")
     ax_assign.set_ylabel("Throughput (Mb/s)")
@@ -165,10 +178,17 @@ def main():
     ax_mem.legend(frameon=False, loc="center right")
     style_axes(ax_mem, ticks)
 
+    # Panel letters: 8 pt bold lowercase, at the top-left corner of each panel's
+    # label area (left of the y-axis label, level with the title).
+    for letter, ax in (("a", ax_assign), ("b", ax_smooth), ("c", ax_mem)):
+        pos = ax.get_position()
+        fig.text(pos.x0 - 0.055, pos.y1 + 0.012, letter, fontsize=8,
+                 fontweight="bold", ha="left", va="bottom")
+
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(args.out, bbox_inches="tight", format="svg")
-    fig.savefig(args.out.with_suffix(".pdf"), bbox_inches="tight")
-    fig.savefig(args.out.with_suffix(".png"), bbox_inches="tight", dpi=300)
+    fig.savefig(args.out, format="svg")
+    fig.savefig(args.out.with_suffix(".pdf"))
+    fig.savefig(args.out.with_suffix(".png"), dpi=300, facecolor="white")
     print(f"[ok] {args.out}  (+ .pdf, .png)")
     print(f"[ok] {args.summary_tsv}")
 
