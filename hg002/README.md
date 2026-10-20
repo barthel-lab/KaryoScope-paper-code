@@ -48,4 +48,5 @@ the render committed in KaryoScope-HG002 was made with KaryoScope-ISCN
 `4d1b086`. Run with the standard
 `HG002.assembly.KS_human_CHM13_v2.region.presmoothed.scaffolded.centromeres.bed.gz`
 instead, the vendored code produces output byte-identical to the
-un-vendored KaryoScope-ISCN `4e42a98` and conductor `0732e96`.
+un-vendored KaryoScope-ISCN `4e42a98` and conductor `0732e96` (the Fig. 1 files are
+unchanged from `4e42a98` to the vendored `68a9816`).

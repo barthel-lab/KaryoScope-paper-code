@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Vendored from barthel-lab/KaryoScope-ISCN at commit 4e42a98d6526ecb31ca6fb5d6c8910e4e84c605a, file plot_featureset_tree_bars.py.
+# Vendored from barthel-lab/KaryoScope-ISCN at commit 68a9816baab659c5b710f265c3713844cc2729d2, file plot_featureset_tree_bars.py.
 # Copied unmodified except: KS_RESOURCES can be set from the environment (originally fixed to a directory under $HOME). Authors (git log): Floris Barthel <fbarthel@tgen.org>.
 # Part of the KaryoScope-paper-code snapshot; see vendored/README.md.
 """

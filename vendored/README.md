@@ -6,7 +6,7 @@ loaded by the conductor process and by the figure script it launches). Each
 Python file starts with a header naming its source repository, commit and
 authors.
 
-## KaryoScope-ISCN (`barthel-lab/KaryoScope-ISCN` at `4e42a98`)
+## KaryoScope-ISCN (`barthel-lab/KaryoScope-ISCN` at `68a9816`, PR #87)
 
 | file | used by |
 |---|---|
@@ -15,8 +15,12 @@ authors.
 | `KaryoScope_assembly_genome_plot.py` | imported by `KaryoScope_assembly_figure.py` |
 | `plot_featureset_tree_bars.py` | imported by `KaryoScope_assembly_figure.py` (hierarchy trees) |
 
-`4e42a98` is the commit Fig. 3 was rendered with (2026-08-28). These four files
-are unchanged from `4e42a98` to `main` (`4eb7128`). KaryoScope-ISCN is
+`68a9816` is the head of KaryoScope-ISCN PR #87 (`fig3/lowercase-panel-letters`,
+not merged), branched from `main` (`4eb7128`). Its only change to these files is
+in `KaryoScope_assembly_contig_zoom_plot.py`: `--panel-letters` draws lowercase
+a, b, c (it drew A, B, C), as in the revised manuscript. The other three files
+are unchanged from `4e42a98`, the commit the first Fig. 3 render used
+(2026-08-28), to `68a9816`. KaryoScope-ISCN is
 GPL-3.0-or-later; its `LICENSE` is included.
 
 One change: `plot_featureset_tree_bars.py` reads its resource directory from

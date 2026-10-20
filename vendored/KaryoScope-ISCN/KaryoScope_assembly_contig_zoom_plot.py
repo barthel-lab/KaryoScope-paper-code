@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Vendored from barthel-lab/KaryoScope-ISCN at commit 4e42a98d6526ecb31ca6fb5d6c8910e4e84c605a, file KaryoScope_assembly_contig_zoom_plot.py.
+# Vendored from barthel-lab/KaryoScope-ISCN at commit 68a9816baab659c5b710f265c3713844cc2729d2, file KaryoScope_assembly_contig_zoom_plot.py.
 # Copied unmodified. Authors (git log): Floris Barthel <fbarthel@tgen.org>; Rhyker Ranallo-Benavidez <rranallo-benavidez@tgen.org>.
 # Part of the KaryoScope-paper-code snapshot; see vendored/README.md.
 """
@@ -84,7 +84,7 @@ def parse_args():
     parser.add_argument('--hide-scale-bars', action='store_true', default=False,
                         help='Hide scale bars and CI lines in zoom panels')
     parser.add_argument('--panel-letters', action='store_true', default=False,
-                        help='Label each stacked row A, B, C ... at its top-left '
+                        help='Label each stacked row a, b, c ... at its top-left '
                              '(stacked mode only)')
     parser.add_argument('--show-contig-breakpoints', action='store_true', default=False,
                         help='Show dashed breakpoint lines on the full contig view '
@@ -2740,9 +2740,10 @@ def draw_stacked_plot(all_scaffolds, colors, featuresets, zoom_levels, args):
             show_track_labels=(sd_idx == len(all_scaffolds) - 1),
         )
 
-        # Panel letter (A, B, C ...) at the row's top-left corner.
+        # Panel letter (a, b, c ...) at the row's top-left corner, lowercase
+        # as Nature and the manuscript captions use.
         if getattr(args, 'panel_letters', False):
-            d.append(draw.Text(chr(ord('A') + sd_idx), font_size=16,
+            d.append(draw.Text(chr(ord('a') + sd_idx), font_size=16,
                                x=8, y=contig_y - 4,
                                fill=text_color, font_family='sans-serif',
                                font_weight='bold', text_anchor='start'))
