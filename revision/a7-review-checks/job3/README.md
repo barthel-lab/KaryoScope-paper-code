@@ -7,8 +7,8 @@
 *k*-mer coordinates and counts differing bases per feature set and stage.
 `job3_kmc.sh` repeats the annotation with the KMC database `KS_human_CHM13_v2`
 (smoothing in `karyoscope/core/smooth.py`). Results go to
-`$KS_WORK/a7_review_checks/results/rc_symmetry_{hks,kmc}*.tsv`; the RESULTS
-write-up is `../RESULTS.md`, Job 3.
+`$KS_WORK/a7_review_checks/results/rc_symmetry_{hks,kmc}*.tsv`. The write-up is
+in `../RESULTS.md`, under Job 3.
 
 ## What it backs in the manuscript
 
@@ -23,10 +23,11 @@ both backends."
 - **HG002 (public).** With `ROBS_CONFIG` unset, the scripts run the two HG002
   haplotype 1 sequences (`chr21_hap1`, `chr20_hap1`) only. The result tables in
   `../results/rc_symmetry_*.tsv` are this HG002 part.
-- **GM03417 (dbGaP phs003920).** With `ROBS_CONFIG` set to a filled ROB
-  configuration, the `a7_job3` section adds the fusion contig (sample,
-  haplotype, contig name in the original assembly, file stem, description) as
-  the third sequence, read from `$KS_GUARRACINO/ks-robs/results/`.
+- **GM03417 (dbGaP phs003920).** With `ROBS_CONFIG` set to a filled
+  Robertsonian (ROB) configuration, the fusion contig named in its `a7_job3`
+  section (sample, haplotype, contig name in the original assembly, file stem,
+  and description) is added as the third sequence, read from
+  `$KS_GUARRACINO/ks-robs/results/`.
 
 ## Run
 
@@ -41,15 +42,13 @@ sbatch --dependency=afterok:$jid job3_kmc.sh  # about 25 min, 19 GB
 ## Changes from KaryoScope-revisions `b7d2092`
 
 The fusion contig is read from `$ROBS_CONFIG` instead of being written in the
-scripts, and the ROB sequence is optional; cluster paths are replaced by the
-variables in the repository README (Paths). Checked 2026-10-20 (see the
-repository README, Withheld).
+scripts, and the ROB sequence is optional. Cluster paths are replaced by the
+variables in the repository README (Paths). Checked 2026-10-20 (see below).
 
 ## Checked 2026-10-20
 
 The scripts here read the GM03417 contig from the ROB configuration instead of
 naming it. Run with a filled configuration, they write all six
-`rc_symmetry_*.tsv` tables byte-identical to the original scripts' output, which
-is in turn byte-identical to the tables behind the Methods sentence. With
-`ROBS_CONFIG` unset, the six tables are byte-identical to the HG002-only tables
-in `../results/`.
+`rc_symmetry_*.tsv` tables identical to the original scripts' output, which is
+in turn identical to the tables behind the Methods sentence. With `ROBS_CONFIG`
+unset, the six tables are identical to the HG002-only tables in `../results/`.

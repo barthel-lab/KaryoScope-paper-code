@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: "KaryoScope-paper-code: analysis and figure code for the KaryoScope manuscript"
-message: "This repository holds the analysis and figure code behind the KaryoScope manuscript. If you use it, please cite the article below."
+message: "If you use this code, please cite the article below."
 type: software
 authors:
   - given-names: "T. Rhyker"
@@ -20,6 +20,8 @@ authors:
     family-names: "Barthel"
     email: "fbarthel@tgen.org"
     affiliation: "Translational Genomics Research Institute (TGen)"
+version: "1.0.0"
+date-released: "2026-10-21"
 repository-code: "https://github.com/barthel-lab/KaryoScope-paper-code"
 license: "GPL-3.0-or-later"
 keywords:
