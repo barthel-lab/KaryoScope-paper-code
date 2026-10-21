@@ -271,11 +271,13 @@ pC <- build_confusion_matrix(rm_data, RM_TRUTH_ORDER, RM_PREDICTION_ORDER,
 pD <- build_confusion_matrix(cs_data, CENSAT_LEAF_ORDER, CENSAT_PREDICTION_ORDER,
                               stage_filter = "smoothed", title = "CenSat")
 
+# Lettered across the rows, as in Fig. 2: a = RepeatMasker bars, b = RepeatMasker matrix,
+# c = CenSat bars, d = CenSat matrix (patchwork tags the plots in the order pA, pB, pC, pD).
 figure <- (
   (pA / pB) | (pC / pD)
 ) +
   plot_annotation(
-    tag_levels = "a",
+    tag_levels = list(c("a", "c", "b", "d")),
     theme = theme(
       plot.tag = element_text(size = 8, face = "bold", family = "Arial")
     )

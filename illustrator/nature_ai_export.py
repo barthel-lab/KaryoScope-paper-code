@@ -12,7 +12,7 @@ For a figure that exists only as an Illustrator file, this script:
 
 The .ai file itself is never modified.
 
-Usage: nature_ai_export.py FIGURE.ai OUT_PREFIX [--max-pt 7] [--letter-min-size 9]
+Usage: nature_ai_export.py FIGURE.ai OUT_PREFIX [--max-pt 7] [--letter-min-size 9] [--relabel C=E,E=C]
 """
 
 import argparse
@@ -92,7 +92,10 @@ def main():
                     help="remove text that would print under 5 pt (only where it repeats other content)")
     ap.add_argument("--letter-min-size", type=float, default=9,
                     help="nominal size above which a bold single capital counts as a panel letter")
+    ap.add_argument("--relabel", default="",
+                    help="re-letter panels, e.g. C=E,E=C (the .ai keeps its original letters)")
     a = ap.parse_args()
+    relabel = dict(pair.split("=") for pair in a.relabel.split(",")) if a.relabel else {}
 
     doc = fitz.open(a.ai)
     page = doc[0]
@@ -138,7 +141,8 @@ def main():
                           text=fitz.PDF_REDACT_TEXT_REMOVE)
     page.insert_font(fontname="AB", fontfile=ARIAL_BOLD)
     for s in letters:
-        page.insert_text(fitz.Point(s["origin"]), s["text"].strip().lower(),
+        letter = s["text"].strip()
+        page.insert_text(fitz.Point(s["origin"]), relabel.get(letter, letter).lower(),
                          fontname="AB", fontsize=8 / scale, color=(0, 0, 0))
     for s in collateral:
         if s["dir"] != (1.0, 0.0):
@@ -182,7 +186,8 @@ def main():
     large = sum(x > 7 for x in sizes)
     print(f"{Path(a.ai).name}: {clip.width * scale / MM:.0f} x {clip.height * scale / MM:.0f} mm, "
           f"{img.size[0]} x {img.size[1]} px; panel letters replaced: "
-          f"{''.join(sorted(s['text'].strip() for s in letters))}; text shrunk: {len(shrink)}"
+          f"{''.join(sorted(s['text'].strip() for s in letters))}"
+          + (f" (relabelled {a.relabel})" if relabel else "") + f"; text shrunk: {len(shrink)}"
           + (f"; dropped under 5 pt: {len(dropped)}" if a.drop_small else "")
           + (f"; re-inserted (collateral): {len(collateral)}" if collateral else "")
           + (f"; hidden layers removed: {', '.join(hidden)}" if hidden else ""))

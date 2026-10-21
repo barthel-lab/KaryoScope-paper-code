@@ -44,7 +44,7 @@ Snakemake pipeline at commit `7c976e04`, where they were never committed:
 | file | sha256 (as copied) | note |
 |---|---|---|
 | `fig2/figure2_benchmarking.R` | `19f39bd6…34d28346` | rule `figure2_benchmarking` |
-| `edfig5/supplementary_CHM13_benchmarking.nature.R` | `2799f1b0…4c75dc4d5`[^q] | draws the submitted ED Fig. 5: `supplementary_CHM13_benchmarking.R` with Nature styling (Arial, 5–7 pt text, 8 pt lowercase panel letters, 183 × 160 mm, legend and tile-label layout, no overall title), Quartz PDF device. Plotted data identical to the unmodified script |
+| `edfig5/supplementary_CHM13_benchmarking.nature.R` | `2cc0fc3b…e394be83e`[^q] | draws the submitted ED Fig. 5: `supplementary_CHM13_benchmarking.R` with Nature styling (Arial, 5–7 pt text, 8 pt lowercase panel letters, 183 × 160 mm, legend and tile-label layout, no overall title), Quartz PDF device. Plotted data identical to the unmodified script |
 | `fig2/figure2_benchmarking.nature.R` | `8c3121f2…ae1b8aca` | draws the submitted Fig. 2: `figure2_benchmarking.R` at 183 mm, Arial, the published layout and lettering (a, c bars; b, d matrices), cells in percent, 5 pt bracket labels, Quartz PDF device. From KaryoScope-paper `main` (`5c11d87`) `scripts/` |
 | `edfig5/supplementary_CHM13_benchmarking.R` | `587d359c…6b49b3bc` | the working-tree script, with the `tandem_repeat` category |
 | `edfig5/supplementary_CHM13_benchmarking_old.R` | `66069e78…582c6c87` | the earlier version, without `tandem_repeat`, that drew the first-submission figure |
@@ -77,4 +77,4 @@ has the same text tokens as the submitted PDF, differing only in spacing. The
 per-base concordance numbers themselves are reproduced by
 `revision/concordance/ks_concord.sh`.
 
-[^q]: Full sha256 `2799f1b0a1fcb889919c1ac5d5476358e1d424f19027ab5fa46c1c47c75dc4d5`; from KaryoScope-paper `main` (`5c11d87`) `scripts/`. The earlier Linux-rendered version differed only in the output device.
+[^q]: Full sha256 `2cc0fc3b0552bba15a3ec3698247e16c165c5c3eac0d3162348add6e394be83e`; from KaryoScope-paper PR #42 (`f8f87db`) `scripts/`: the panels are lettered across rows as in Fig. 2 (a, b RepeatMasker bars and matrix; c, d CenSat bars and matrix). Earlier versions differed only in the output device and the lettering.
