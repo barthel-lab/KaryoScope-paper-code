@@ -65,9 +65,11 @@ L.append(arrow(982, cy, 1020, cy))
 L += node(1022, ROW, 170, 100, "HKS database", ["base index", "one index per feature set", "manifest, hierarchy,", "colours"], stroke="#222222", sw=2)
 L += node(1022, QY, 170, 52, "Query assembly", [])
 bt, bb = ROW, QY + 52; bm = (bt + bb) / 2
-L.append(f'  <path d="M1204,{bt} L1212,{bt} L1212,{bb} L1204,{bb}" fill="none" stroke="#555555" stroke-width="1.4"/>')
-L += [arrow(1212, bm, 1279, bm), t(1244, bm - 9, "annotate", FS_SMALL, fill=BLUE, family=MONO)]
-L += node(1282, bm - 36, 110, 72, "Annotations", ["base-pair", "resolution BEDs"])
+# At 5 pt the monospace "annotate" is ~65 units wide, so the arrow spans 76 units to keep it clear of
+# the bracket and the Annotations box.
+L.append(f'  <path d="M1204,{bt} L1209,{bt} L1209,{bb} L1204,{bb}" fill="none" stroke="#555555" stroke-width="1.4"/>')
+L += [arrow(1209, bm, 1285, bm), t(1250, bm - 9, "annotate", FS_SMALL, fill=BLUE, family=MONO)]
+L += node(1288, bm - 36, 110, 72, "Annotations", ["base-pair", "resolution BEDs"])
 # panel B
 L += ['', '  <!-- ===================== Panel B: resolution example ===================== -->']
 y = lambda v: v + Y0

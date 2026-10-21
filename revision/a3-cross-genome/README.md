@@ -24,10 +24,11 @@ genome-view karyotype renders in `karyotype_ey15_2/` and `karyotype_colcen/`
 Run from this directory:
 
 ```bash
+mkdir -p figures/fig7
 python3 figure/make_build_panels_ab.py
 python3 figure/make_build_figure.py --a3-dir .
 ```
 
 Checked 2026-10-20: both outputs are byte-identical to `build_workflow_panelsAB.svg`
-and `build_workflow.svg` in KaryoScope-paper `main` (`605aa7f`), the submitted
+and `build_workflow.svg` in KaryoScope-paper `main` (`5c11d87`), the submitted
 Extended Data Fig. 4.
