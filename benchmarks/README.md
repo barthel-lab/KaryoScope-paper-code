@@ -3,7 +3,7 @@
 | directory | manuscript item | source |
 |---|---|---|
 | `tableS1/` | Supplementary Table 1 (runtime and memory by backend) | cluster job directory `ks_slurm/tableS1_cold/` (in no repository before this one), job 38434006, 2026-10-14 |
-| `figS6/` | Extended Data Fig. 6 (thread scaling) | cluster job directory `ks_slurm/threadsweep_cold/`, job 38373939, 2026-10-12; the two TSVs from `barthel-lab/KaryoScope-paper` `revision/nature-prep` `6166acf`, `figures/fig3/data/`; `plot_figS6.py` from `bf6b6c3`, the head of KaryoScope-paper PR #35 (`r1b/nature-figure-export`, not merged: Nature Extended Data size, 6-7 pt text, lowercase panel letters) |
+| `figS6/` | Extended Data Fig. 6 (thread scaling) | cluster job directory `ks_slurm/threadsweep_cold/`, job 38373939, 2026-10-12; `plot_figS6.py` (the Nature-size version, PR #35) and its two TSVs from `barthel-lab/KaryoScope-paper` `main` `605aa7f`, `figures/fig3/data/` |
 | `a1-comparator-runtimes/` | Extended Data Table 1 (comparator tools) | `barthel-lab/KaryoScope-revisions` `b7d2092` |
 | `fig2/` | Fig. 2 (concordance with RepeatMasker and CenSat, HG002) | KaryoScope-archive working tree, see below |
 | `edfig5/` | Extended Data Fig. 5 (CHM13 self-benchmark) | KaryoScope-archive working tree, see below |
@@ -31,8 +31,9 @@ cold run and a warm run. The tables report the warm runs; n = 3 per cell.
   table.
 - `plot_figS6.py --tsv figS6_phase_timings.tsv --out <file>.svg --summary <file>.tsv`
   draws the figure (`environment/figures.yml`). The summary it writes equals
-  `figS6_summary.tsv`, and the SVG has the same data elements and text (apart
-  from the panel-letter case) as the published `repeat_speedup_icelake.svg`.
+  `figS6_summary.tsv`, and the SVG has the same 116 shapes and 60 texts as
+  `figures/fig3/repeat_speedup_icelake.svg` at KaryoScope-paper `605aa7f`, the
+  submitted Extended Data Fig. 6.
 - `STATUS.md` and `HANDOFF-*.md` are the job notes written at the time.
 
 ## Fig. 2 and Extended Data Fig. 5

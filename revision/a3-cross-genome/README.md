@@ -29,5 +29,5 @@ python3 figure/make_build_figure.py --a3-dir .
 ```
 
 Checked 2026-10-20: both outputs are byte-identical to `build_workflow_panelsAB.svg`
-and `build_workflow.svg` in KaryoScope-paper PR #35 (`bf6b6c3`), the submitted
+and `build_workflow.svg` in KaryoScope-paper `main` (`605aa7f`), the submitted
 Extended Data Fig. 4.
