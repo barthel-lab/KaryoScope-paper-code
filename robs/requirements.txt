@@ -1,0 +1,7 @@
+# Pipeline wrapper (provides the `karyoscope` CLI).
+# Pinned to a specific SHA for reproducibility. Bump when you need a newer
+# conductor; keep in sync with the SHA used in scripts/setup.sh.
+git+ssh://git@github.com/barthel-lab/KaryoScope-conductor.git@0732e96adfb4fdfcdc5b2028c10c740c72273ed5#egg=karyoscope-conductor
+
+# Figure rendering (used by KaryoScope-ISCN scripts that conductor shells out to).
+drawsvg>=2.0

@@ -1,0 +1,404 @@
+# KaryoScope-ROBs configuration TEMPLATE (placeholders only).
+#
+# The per-sample values (scaffold names, breakpoint centres, display bounds,
+# SST1 array start/end) come from the dbGaP-approved ROB assemblies
+# (phs003920) and are not distributed here. Fill every <...> field from your
+# own KaryoScope annotation of those assemblies (robs/README.md, steps 2-4),
+# save as conf/robs.yaml (or point ROBS_CONFIG at the file), then run the
+# figure scripts (step 5).
+#
+# Structure as in KaryoScope-ROBs conf/robs.yaml at 1188850 (unchanged since
+# df5acf9), with `pipeline:` cut to the Fig. 3 step, plus `inputs:` and the
+# `sst1_arrays` section, which scripts/sst1_kmer_composition.py reads instead of
+# the table it previously held in code.
+#
+# Coordinates are in the SCAFFOLDED frame unless a key says otherwise.
+# Note: zoom_levels are half-widths (a 5,000,000 entry draws a 10 Mb window).
+# Layout: one top-level section per use, so further analyses can add their own
+# section (for example `a2_step3:`, `a6_rob:`, `a7_job3:`) without touching the
+# figure sections. Shared per-sample values live in `samples` and
+# `breakpoint_groups`; a new section should refer to those keys rather than
+# repeat coordinates.
+#   inputs                                    record of assembly/annotation paths
+#   pipeline, scripts, colors_dir, database,  conductor settings (Fig. 3)
+#     output_base_dir, bed_template, samples
+#   breakpoint_groups                         per-sample breakpoints and display windows
+#   defaults, *_analyses                      conductor analyses (Fig. 3 = the stacked one)
+#   sst1_arrays                               SST1 array bounds (ED Fig. 7 d)
+name: KaryoScope ROBs Analysis
+# Inputs, for the record: where your copies of the assemblies (dbGaP phs003920)
+# and of their KaryoScope annotations live. No script reads this section; the
+# commands in robs/README.md take these paths. The figure scripts read the
+# binned and per-base BEDs from data/robs/ (bed_dir below).
+inputs:
+  GM03417:
+    hap1_fasta: <path to the haplotype 1 assembly FASTA>
+    hap2_fasta: <path to the haplotype 2 assembly FASTA>
+    annotation_dir: <directory with the KS_human_CHM13 annotations of both haplotypes>
+  GM03786:
+    hap1_fasta: <path to the haplotype 1 assembly FASTA>
+    hap2_fasta: <path to the haplotype 2 assembly FASTA>
+    annotation_dir: <directory with the KS_human_CHM13 annotations of both haplotypes>
+  GM04890:
+    hap1_fasta: <path to the haplotype 1 assembly FASTA>
+    hap2_fasta: <path to the haplotype 2 assembly FASTA>
+    annotation_dir: <directory with the KS_human_CHM13 annotations of both haplotypes>
+pipeline:
+- iscn.assembly_contig_zoom_plot_stacked
+scripts:
+  iscn: <path to vendored/KaryoScope-ISCN>
+colors_dir: <directory with KS_human_CHM13.<featureset>.colors.txt>
+database: KS_human_CHM13
+output_base_dir: results
+bed_template: '{bed_dir}/{assembly_name}.{database}.{featureset}.presmoothed.scaffolded.binned{bin}.features.bed.gz'
+samples:
+  GM03417:
+    assembly_name: GM03417.assembly
+    bed_dir: data/robs
+    sex: XX
+    role: sample
+  GM03786:
+    assembly_name: GM03786.assembly
+    bed_dir: data/robs
+    sex: XX
+    role: sample
+  GM04890:
+    assembly_name: GM04890.assembly
+    bed_dir: data/robs
+    sex: XX
+    role: sample
+# --- breakpoint groups (Fig. 3, ED Fig. 7 a-c read *_robertsonian) ---
+breakpoint_groups:
+  gm03417_all:
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: breakpoint
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr21
+    chrom2: chr14
+    arm1: q
+    arm2: q
+    iscn_notation: rob(14;21)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  gm03417_breakpoints_only:
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: breakpoint
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr21
+    chrom2: chr14
+    arm1: q
+    arm2: q
+    iscn_notation: rob(14;21)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  gm03417_robertsonian:
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: breakpoint
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr21
+    chrom2: chr14
+    arm1: q
+    arm2: q
+    iscn_notation: rob(14;21)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  gm03786_all:
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: dicentric_cen1
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr14
+    chrom2: ''
+    arm1: ''
+    arm2: ''
+    iscn_notation: rob(13;14)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: dicentric_cen2
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr13
+    chrom2: ''
+    arm1: ''
+    arm2: ''
+    iscn_notation: rob(13;14)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: dicentric_cen1
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr10
+    chrom2: ''
+    arm1: ''
+    arm2: ''
+    iscn_notation: dic(10;X)(q;p)
+    original_scaffold: <scaffold name, original assembly>
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: dicentric_cen2
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chrX
+    chrom2: ''
+    arm1: ''
+    arm2: ''
+    iscn_notation: dic(10;X)(q;p)
+    original_scaffold: <scaffold name, original assembly>
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: breakpoint
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr14
+    chrom2: chr13
+    arm1: q
+    arm2: p
+    iscn_notation: rob(13;14)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: breakpoint
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr10
+    chrom2: chrX
+    arm1: q
+    arm2: p
+    iscn_notation: dic(10;X)(q;p)
+    original_scaffold: <scaffold name, original assembly>
+  gm03786_breakpoints_only:
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: breakpoint
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr14
+    chrom2: chr13
+    arm1: q
+    arm2: p
+    iscn_notation: rob(13;14)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: breakpoint
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr10
+    chrom2: chrX
+    arm1: q
+    arm2: p
+    iscn_notation: dic(10;X)(q;p)
+    original_scaffold: <scaffold name, original assembly>
+  gm03786_robertsonian:
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: breakpoint
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr14
+    chrom2: chr13
+    arm1: q
+    arm2: p
+    iscn_notation: rob(13;14)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  gm04890_all:
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: dicentric_cen1
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr14
+    chrom2: ''
+    arm1: ''
+    arm2: ''
+    iscn_notation: rob(13;14)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: dicentric_cen2
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr13
+    chrom2: ''
+    arm1: ''
+    arm2: ''
+    iscn_notation: rob(13;14)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: dicentric_cen1
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr3
+    chrom2: ''
+    arm1: ''
+    arm2: ''
+    iscn_notation: ''
+    original_scaffold: <scaffold name, original assembly>
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: dicentric_cen2
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr3
+    chrom2: ''
+    arm1: ''
+    arm2: ''
+    iscn_notation: ''
+    original_scaffold: <scaffold name, original assembly>
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: breakpoint
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr14
+    chrom2: chr13
+    arm1: q
+    arm2: p
+    iscn_notation: rob(13;14)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  gm04890_breakpoints_only:
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: breakpoint
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr14
+    chrom2: chr13
+    arm1: q
+    arm2: p
+    iscn_notation: rob(13;14)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+  gm04890_robertsonian:
+  - scaffold: <scaffold name, scaffolded frame>
+    region_type: breakpoint
+    center: <center, bp>
+    start: <start, bp>
+    end: <end, bp>
+    chrom1: chr14
+    chrom2: chr13
+    arm1: q
+    arm2: p
+    iscn_notation: rob(13;14)(q10;q10)
+    original_scaffold: <scaffold name, original assembly>
+# --- conductor defaults and analyses ---
+defaults:
+  merge_beds:
+    featuresets_to_merge:
+    - chromosome
+    - region
+    bin: 1000000
+  assembly_contig_zoom_plot:
+    background: white
+    featuresets: chromosome,gene,repeat,region,acrocentric
+  assembly_contig_zoom_plot_stacked:
+    background: white
+    featuresets: chromosome,gene,repeat,region,acrocentric
+  assembly_figure:
+    layout: grid
+assembly_contig_zoom_plot_analyses:
+- name: GM03417 breakpoints
+  sample: GM03417
+  breakpoint_group: gm03417_breakpoints_only
+  output_dir: results/contig_zoom_plots/GM03417
+- name: GM03786 breakpoints
+  sample: GM03786
+  breakpoint_group: gm03786_breakpoints_only
+  output_dir: results/contig_zoom_plots/GM03786
+- name: GM04890 breakpoints
+  sample: GM04890
+  breakpoint_group: gm04890_breakpoints_only
+  output_dir: results/contig_zoom_plots/GM04890
+assembly_contig_zoom_plot_stacked_analyses:
+- name: Robertsonian integrated (3 samples)
+  output: results/contig_zoom_plots/robertsonian_integrated.svg
+  entries:
+  - sample: GM03417
+    breakpoint_group: gm03417_robertsonian
+  - sample: GM03786
+    breakpoint_group: gm03786_robertsonian
+  - sample: GM04890
+    breakpoint_group: gm04890_robertsonian
+  stacked_args:
+    no_refine: true
+    panel_letters: true
+    hide_scale_bars: true
+    zoom_levels: 5000000,500000,100000
+assembly_figure_analyses:
+- name: GM03417 assembly figure
+  sample: GM03417
+  output: results/assembly_figure/GM03417_figure_grid.svg
+  figure_args:
+    layout: grid
+    bed_dir: data/robs
+    colors_dir: <colors_dir>
+    centromeres: data/robs/GM03417.assembly.KS_human_CHM13.region.presmoothed.scaffolded.centromeres.bed.gz
+    database: KS_human_CHM13
+- name: GM03786 assembly figure
+  sample: GM03786
+  output: results/assembly_figure/GM03786_figure_grid.svg
+  figure_args:
+    layout: grid
+    bed_dir: data/robs
+    colors_dir: <colors_dir>
+    centromeres: data/robs/GM03786.assembly.KS_human_CHM13.region.presmoothed.scaffolded.centromeres.bed.gz
+    database: KS_human_CHM13
+- name: GM04890 assembly figure
+  sample: GM04890
+  output: results/assembly_figure/GM04890_figure_grid.svg
+  figure_args:
+    layout: grid
+    bed_dir: data/robs
+    colors_dir: <colors_dir>
+    centromeres: data/robs/GM04890.assembly.KS_human_CHM13.region.presmoothed.scaffolded.centromeres.bed.gz
+    database: KS_human_CHM13
+# --- SST1 arrays (ED Fig. 7 d) ---
+sst1_arrays:
+- sample: GM03417
+  asm: GM03417.assembly
+  scaffold: <scaffold name, scaffolded frame>
+  iscn: rob(14;21)
+  arrays:
+  - - Upstream partial
+    - <start, bp>
+    - <end, bp>
+  - - Main array
+    - <start, bp>
+    - <end, bp>
+  - - Downstream partial
+    - <start, bp>
+    - <end, bp>
+- sample: GM03786
+  asm: GM03786.assembly
+  scaffold: <scaffold name, scaffolded frame>
+  iscn: rob(13;14)
+  arrays:
+  - - Upstream partial
+    - <start, bp>
+    - <end, bp>
+  - - Main array
+    - <start, bp>
+    - <end, bp>
+  - - Downstream partial
+    - <start, bp>
+    - <end, bp>
+- sample: GM04890
+  asm: GM04890.assembly
+  scaffold: <scaffold name, scaffolded frame>
+  iscn: rob(13;14)
+  arrays:
+  - - Upstream partial
+    - <start, bp>
+    - <end, bp>
+  - - Main array
+    - <start, bp>
+    - <end, bp>
+  - - Downstream partial
+    - <start, bp>
+    - <end, bp>
