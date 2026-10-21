@@ -16,21 +16,21 @@ Numbering as in the revised manuscript.
 
 | item | code | reproduced from this repository |
 |---|---|---|
-| Fig. 1b-e | `hg002/conf/hg002.yaml` -> `vendored/KaryoScope-ISCN/KaryoScope_assembly_figure.py`; centromere windows `hg002/scripts/make_centromeres_v1coords.py` | no: the published figure is an Illustrator composition. Its centromere window file (`centromeres_v1coords.bed`) is rebuilt from the v1 and v2 centromere BEDs (`hg002/data/`); all 46 window lengths match Fig. 1b |
-| Fig. 2 | `benchmarks/fig2/figure2_benchmarking.R`; numbers: `revision/concordance/ks_concord.sh` | data yes; final artwork edited in Illustrator |
-| Fig. 3 | `robs/` (configuration template) -> `vendored/KaryoScope-ISCN/KaryoScope_assembly_contig_zoom_plot.py` via `vendored/KaryoScope-conductor` | with dbGaP access, from fresh v1.1.0 annotations (see `robs/README.md`): on the tested sample the SVG is byte-identical to the submitted figure |
+| Fig. 1b-e | `hg002/conf/hg002.yaml` -> `vendored/KaryoScope-ISCN/KaryoScope_assembly_figure.py`; centromere windows `hg002/scripts/make_centromeres_v1coords.py`; submitted file from the Illustrator composition with `illustrator/nature_ai_export.py` | panels yes; the layout is an Illustrator composition. Its centromere window file (`centromeres_v1coords.bed`) is rebuilt from the v1 and v2 centromere BEDs (`hg002/data/`); all 46 window lengths match Fig. 1b |
+| Fig. 2 | `benchmarks/fig2/figure2_benchmarking.nature.R` (submitted figure; the original `figure2_benchmarking.R` beside it); numbers: `revision/concordance/ks_concord.sh` | yes. The submitted PDF was drawn on macOS with the Quartz device; elsewhere the script falls back to `cairo_pdf` (same text and data, different glyph spacing) |
+| Fig. 3 | `robs/` (configuration template) -> `vendored/KaryoScope-ISCN/KaryoScope_assembly_contig_zoom_plot.py` via `vendored/KaryoScope-conductor` | with dbGaP access, from fresh v1.1.0 annotations (see `robs/README.md`): on the tested sample the render is byte-identical to the submitted figure before a 4-unit headroom edit, which `robs/scripts/fig3_headroom.py` applies |
 | Fig. 4 | `d4z4/make_figures.py` | yes, given the D4Z4 inputs (two are not public, see `d4z4/`) |
 | Fig. 5a, 5c, 5d | `centromere/scripts/HPRC2_centromere_analysis.sh` | yes |
-| Fig. 5b | none (FISH images) | n/a |
-| ED Fig. 1-3 | none (Illustrator) | no |
+| Fig. 5b | none (FISH images); the submitted Fig. 5 file from the Illustrator composition with `illustrator/nature_ai_export.py` | n/a |
+| ED Fig. 1-3 | Illustrator; submitted files from `illustrator/nature_ai_export.py` (ED Fig. 2 with `--max-pt 7`) | artwork no |
 | ED Fig. 4 | `revision/a3-cross-genome/figure/make_build_panels_ab.py` (a, b), `make_build_figure.py` (c); data `revision/a3-cross-genome/` | yes |
 | ED Fig. 5 | `benchmarks/edfig5/supplementary_CHM13_benchmarking.nature.R` | yes |
 | ED Fig. 6 | `benchmarks/figS6/` | yes |
 | ED Fig. 7 | `robs/scripts/` (configuration template) | with dbGaP access, from fresh v1.1.0 annotations (see `robs/README.md`) |
 | ED Fig. 8 | `d4z4/make_figures.py` | yes, as Fig. 4 |
-| ED Fig. 9 | none (Illustrator); QC table `centromere/qc/`, counts from `centromere/` steps 1-2 | artwork no; the QC table and the 6,138 / 4,650 counts yes, from the public HPRC QC calls |
+| ED Fig. 9 | Illustrator, exported with `illustrator/nature_ai_export.py --max-pt 7 --anchor center --drop-small`; QC table `centromere/qc/`, counts from `centromere/` steps 1-2 | artwork no; the QC table and the 6,138 / 4,650 counts yes, from the public HPRC QC calls |
 | ED Table 1 | `benchmarks/a1-comparator-runtimes/`, KaryoScope rows from `benchmarks/tableS1/` | scripts only; comparator logs were not kept |
-| Supp. Fig. 1 | none (Illustrator) | no |
+| Supp. Fig. 1 | Illustrator, exported with `illustrator/nature_ai_export.py` | artwork no |
 | Supp. Fig. 2 | `d4z4/make_figures.py` | yes, as Fig. 4 |
 | Supp. Table 1 | `benchmarks/tableS1/` | yes, from the shipped run logs |
 | Supp. Tables 2, 3 | `revision/a6-parameter-sweeps/`, `revision/a2-k-sensitivity/step4/` | sweep results included; the ROB rows are withheld |
@@ -73,6 +73,7 @@ centromere/    centromere clustering and gating (Fig. 5); qc/: the assembly QC t
 hg002/         HG002 assembly figure configuration (Fig. 1b-e)
 robs/          Robertsonian translocation figure code and configuration template (Fig. 3, ED Fig. 7)
 benchmarks/    Supp. Table 1, ED Fig. 6, ED Table 1, Fig. 2 and ED Fig. 5 scripts
+illustrator/   export of the Illustrator-composed figures to the Nature specification
 revision/      the revision analyses A2-A7 and the concordance harness
 vendored/      the KaryoScope-ISCN and KaryoScope-conductor files the figure code imports, and the
                KaryoScope-archive binning script (bin_features.py)
