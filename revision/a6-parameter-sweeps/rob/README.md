@@ -36,7 +36,10 @@ Supplementary Table 2 (`tab:S3_parameters_core`):
 | plateau threshold | 99% | identical over 90-100%, and plateau width moves from 30.2 Mb to 3.3 kb | B, `plateau_threshold` |
 
 The grid row comes from this sweep (`resolution` in sweep B), not from the
-A2 Step 3 binned analyses. The result table (`rob_param_sweep.tsv`, 108 rows)
+A2 Step 3 binned analyses. The result table (`rob_param_sweep.tsv`, 108 rows: sweep A, 39 rows, window,
+minimum window fraction and specificity, 13 settings per sample; sweep B, 30 rows,
+cumulative-curve grid and plateau threshold, 10 settings per sample; sweep C, 39 rows,
+sweep A's settings with the earlier 1 Mb cumulative window)
 contains Robertsonian (ROB) coordinates and is not distributed.
 
 ## Run
