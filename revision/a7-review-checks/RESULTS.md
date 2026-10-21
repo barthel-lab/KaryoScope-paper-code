@@ -120,8 +120,9 @@ denominator 3,117,274,781).
 
 `rc_symmetry_hks.tsv`. Queries: HG002 hap1 `chr21_hap1` (44,312,598 bp, acrocentric), `chr20_hap1` (67,035,379 bp,
 ordinary autosome), and the rob(14;21) fusion scaffold of one Robertsonian sample. [Snapshot note: the fusion
-scaffold's name and length, its rows in the `rc_symmetry_*` tables and the Job 3 scripts are withheld pending the
-dbGaP ruling on the ROB assemblies; the HG002 rows are complete.] Reverse-complemented with `seqtk seq -r`; verified that
+scaffold's name and length and its rows in the `rc_symmetry_*` tables are withheld pending the dbGaP ruling on the
+ROB assemblies; the HG002 rows are complete. The Job 3 scripts are in `job3/`; they read the fusion contig from the
+ROB configuration and run the HG002 part without it.] Reverse-complemented with `seqtk seq -r`; verified that
 rc(rc(x)) = x AND that the RC head equals the RC of the forward tail (i.e. the file really was reversed). Both
 orientations annotated in one `karyoscope annotate` run, HKS_human_CHM13_v2, k = 31, all six feature sets,
 `hks smooth --max-gap 1000` (annotate's default; **on the HKS backend the smoother is `hks smooth`, src/smooth.rs,

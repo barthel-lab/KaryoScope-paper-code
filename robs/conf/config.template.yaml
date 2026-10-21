@@ -25,6 +25,8 @@
 #   breakpoint_groups                         per-sample breakpoints and display windows
 #   defaults, *_analyses                      conductor analyses (Fig. 3 = the stacked one)
 #   sst1_arrays                               SST1 array bounds (ED Fig. 7 d)
+#   a2_step3, a6_rob, a7_job3                 revision analyses (revision/a2-k-sensitivity/step3,
+#                                             revision/a6-parameter-sweeps/rob, revision/a7-review-checks/job3)
 name: KaryoScope ROBs Analysis
 # Inputs, for the record: where your copies of the assemblies (dbGaP phs003920)
 # and of their KaryoScope annotations live. No script reads this section; the
@@ -402,3 +404,56 @@ sst1_arrays:
   - - Downstream partial
     - <start, bp>
     - <end, bp>
+# --- A2 Step 3 (revision/a2-k-sensitivity/step3/): the ROB breakpoint as a function of k ---
+# Per-sample values the Step 3 scripts pin. The fusion scaffold, the ISCN window
+# (start, end) and the two partner chromosomes (chrom1 = upstream/left,
+# chrom2 = downstream/right) are read from the breakpoint group named here.
+# Scaffolded frame throughout.
+a2_step3:
+  samples:
+    GM03417:
+      breakpoint_group: gm03417_robertsonian
+      detected_pos: <breakpoint position detected at k = 31 (karyoscope-iscn), bp>
+      up_band: 21p11.2
+      down_band: 14p11.2
+      scaffold_length: <fusion scaffold length in the k = 31 scaffold map, bp>
+      sst1_mid: <SST1 block midpoint from your acrocentric annotation (sst1_blocks.sh), bp>
+      cytoband_pivot_breakpoint: <breakpoint reported by the k = 31 cytoband-pivot run (run_step1_verify.sh, iscn_regions.tsv), bp>
+      corrected_window: [<last left-dominant window start, bp>, <first sustained right-dominant window end, bp>]
+      published_ci_width_mb: <99% interval width of the submitted manuscript, Mb>
+      published_delta_kb: <distance to the SST1 midpoint read from the submitted figure, kb>
+    GM03786:
+      breakpoint_group: gm03786_robertsonian
+      detected_pos: <breakpoint position detected at k = 31 (karyoscope-iscn), bp>
+      up_band: 14p11.2
+      down_band: 13p11.2
+      scaffold_length: <fusion scaffold length in the k = 31 scaffold map, bp>
+      sst1_mid: <SST1 block midpoint from your acrocentric annotation (sst1_blocks.sh), bp>
+      cytoband_pivot_breakpoint: <breakpoint reported by the k = 31 cytoband-pivot run (run_step1_verify.sh, iscn_regions.tsv), bp>
+      corrected_window: [<last left-dominant window start, bp>, <first sustained right-dominant window end, bp>]
+      published_ci_width_mb: <99% interval width of the submitted manuscript, Mb>
+      published_delta_kb: <distance to the SST1 midpoint read from the submitted figure, kb>
+    GM04890:
+      breakpoint_group: gm04890_robertsonian
+      detected_pos: <breakpoint position detected at k = 31 (karyoscope-iscn), bp>
+      up_band: 14p11.2
+      down_band: 13p11.2
+      scaffold_length: <fusion scaffold length in the k = 31 scaffold map, bp>
+      sst1_mid: <SST1 block midpoint from your acrocentric annotation (sst1_blocks.sh), bp>
+      cytoband_pivot_breakpoint: <breakpoint reported by the k = 31 cytoband-pivot run (run_step1_verify.sh, iscn_regions.tsv), bp>
+      corrected_window: [<last left-dominant window start, bp>, <first sustained right-dominant window end, bp>]
+      published_ci_width_mb: <99% interval width of the submitted manuscript, Mb>
+      published_delta_kb: <distance to the SST1 midpoint read from the submitted figure, kb>
+# --- A6 ROB sweep (revision/a6-parameter-sweeps/rob/) ---
+# sweep_rob.py pins the same detected events and SST1 midpoints as A2 Step 3.
+a6_rob:
+  samples_from: a2_step3
+# --- A7 Job 3 (revision/a7-review-checks/job3/): reverse-complement symmetry ---
+# The fusion scaffold annotated in both orientations, as a contig of the
+# original (unscaffolded) assembly.
+a7_job3:
+  sample: GM03417
+  haplotype: haplotype1
+  contig: <fusion contig name in the original haplotype 1 FASTA>
+  stem: <file stem for the extracted contig>
+  description: <one-line description written to the result tables>
