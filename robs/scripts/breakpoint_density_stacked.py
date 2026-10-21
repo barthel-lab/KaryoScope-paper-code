@@ -959,10 +959,10 @@ def main():
                              "true fractional coverage. Use 0 for every bin with "
                              "any coverage.")
     parser.add_argument("--db-root", type=str,
-                        default="/tgen_labs/barthel/software/github/barthel/"
-                                "KaryoScope/resources/registry",
-                        help="Registry root, used only to find the database's "
-                             "hierarchy.tsv for legend grouping.")
+                        default=os.path.expanduser(
+                            os.environ.get("KS_DB_ROOT", "~/.karyoscope/db")),
+                        help="Registry root ($KS_DB_ROOT, else ~/.karyoscope/db), used only "
+                             "to find the database's hierarchy.tsv for legend grouping.")
     parser.add_argument("--colors-dir", type=str, default=None,
                         help="Override conf/robs.yaml colors_dir. That default is "
                              "a macOS path; load_colors() skips a missing colors "

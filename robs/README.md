@@ -185,6 +185,7 @@ conda activate ks-paper-figures; export PYTHONNOUSERSITE=1 ROBS_CONFIG=conf/robs
 C=../vendored/KaryoScope-archive-resources/resources/databases/KS_human_CHM13
 # Fig. 3 -> results/contig_zoom_plots/robertsonian_integrated.svg
 PYTHONPATH=../vendored/KaryoScope-conductor python -m karyoscope_conductor --config $ROBS_CONFIG
+python scripts/fig3_headroom.py results/contig_zoom_plots/robertsonian_integrated.svg out/Fig3.svg   # submitted Fig. 3
 # Extended Data Fig. 7 a-c, then the a-e composition
 python scripts/breakpoint_density_stacked.py --resolution 100 --colors-dir $C --no-legend \
     --emit-anchors out/panelABC_anchors.json --output-dir out/abc
@@ -194,7 +195,8 @@ python scripts/figure5_assemble.py --abc-svg out/abc/breakpoint_density_stacked.
     --output out/figure5_assembled.svg
 ```
 
-Panels a-c take about 8 min and 19 GB. The CHM13 region BED for panel e is
+`--db-root` (default `$KS_DB_ROOT`, else `~/.karyoscope/db`) is read only for legend grouping, which `--no-legend`
+turns off. Panels a-c take about 8 min and 19 GB. The CHM13 region BED for panel e is
 T2T-CHM13 v2.0 annotated with the same database:
 `karyoscope annotate -i chm13v2.0.fasta -o <dir> --db KS_human_CHM13 --db-root <root> --feature-set region -t 16`
 (the `.presmoothed.bed.gz` output).
@@ -217,7 +219,12 @@ haplotype FASTAs, with the commands above (step 2 a run as
 - **Fig. 3:** rendered through `vendored/KaryoScope-conductor` and
   `vendored/KaryoScope-ISCN` with these inputs for that sample (and, for the other
   two samples, the archive pipeline's per-base BEDs binned the same way), the SVG is
-  byte-identical to the submitted Fig. 3: all 3,250 drawn shapes and 92 texts.
+  byte-identical to the submitted Fig. 3 before one edit: all 3,250 drawn shapes
+  and 92 texts. The submitted SVG then has 4 units of headroom added (the top scale
+  labels were drawn above the canvas): `viewBox="0 -4 647 809"`, height 809, and
+  the background rect at y = -4. `scripts/fig3_headroom.py <render.svg> <out.svg>`
+  applies it; render plus this edit equals KaryoScope-paper `main` (`5c11d87`)
+  `figures/fig4/robertsonian_integrated.svg` byte for byte.
   The published panel's own annotation files were not kept; this reproduces
   its data and its pixels.
 - **Extended Data Fig. 7:** these scripts with the filled configuration
