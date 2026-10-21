@@ -9,6 +9,10 @@
 # Panel B: CenSat concordance (stacked bars)
 # Panel C: RepeatMasker confusion matrix
 # Panel D: CenSat confusion matrix
+#
+# Nature version (Extended Data Fig. 5) of KaryoScope-archive
+# workflow/scripts/supplementary_CHM13_benchmarking_old.R, the version that drew the published
+# figure, with the cluster's Nature size constants and the Quartz PDF device.
 # ===========================================================================
 
 suppressPackageStartupMessages({
@@ -285,8 +289,17 @@ FIG_HEIGHT_MM <- as.numeric(Sys.getenv("FIG_HEIGHT_MM", "160.25"))
 
 message("Saving figures...")
 
+# cairo_pdf rounds glyph advances to whole points, which spaces 5-7 pt labels unevenly ("S INE").
+# The macOS Quartz device places glyphs at the font's true widths and embeds Arial.
+pdf_device <- if (capabilities("aqua")) {
+  function(filename, ...) grDevices::quartz(file = filename, type = "pdf", ...)
+} else {
+  warning("Quartz unavailable: falling back to cairo_pdf, whose glyph spacing is uneven at small sizes")
+  cairo_pdf
+}
+
 ggsave(file.path(OUT_DIR, "supplementary_CHM13_benchmarking.pdf"),
-       figure, width = 183, height = FIG_HEIGHT_MM, units = "mm", device = cairo_pdf)
+       figure, width = 183, height = FIG_HEIGHT_MM, units = "mm", device = pdf_device)
 
 ggsave(file.path(OUT_DIR, "supplementary_CHM13_benchmarking.png"),
        figure, width = 183, height = FIG_HEIGHT_MM, units = "mm", dpi = 600)

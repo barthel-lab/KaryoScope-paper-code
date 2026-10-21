@@ -44,7 +44,8 @@ Snakemake pipeline at commit `7c976e04`, where they were never committed:
 | file | sha256 (as copied) | note |
 |---|---|---|
 | `fig2/figure2_benchmarking.R` | `19f39bd6…34d28346` | rule `figure2_benchmarking` |
-| `edfig5/supplementary_CHM13_benchmarking.nature.R` | `b8a05656…d1ead3a0a9bf` | draws the submitted ED Fig. 5: `supplementary_CHM13_benchmarking.R` with Nature styling (Arial, 5–7 pt text, 8 pt lowercase panel letters, 183 × 160 mm, legend and tile-label layout, no overall title). Plotted data identical to the unmodified script |
+| `edfig5/supplementary_CHM13_benchmarking.nature.R` | `2799f1b0…4c75dc4d5`[^q] | draws the submitted ED Fig. 5: `supplementary_CHM13_benchmarking.R` with Nature styling (Arial, 5–7 pt text, 8 pt lowercase panel letters, 183 × 160 mm, legend and tile-label layout, no overall title), Quartz PDF device. Plotted data identical to the unmodified script |
+| `fig2/figure2_benchmarking.nature.R` | `8c3121f2…ae1b8aca` | draws the submitted Fig. 2: `figure2_benchmarking.R` at 183 mm, Arial, the published layout and lettering (a, c bars; b, d matrices), cells in percent, 5 pt bracket labels, Quartz PDF device. From KaryoScope-paper `main` (`5c11d87`) `scripts/` |
 | `edfig5/supplementary_CHM13_benchmarking.R` | `587d359c…6b49b3bc` | the working-tree script, with the `tandem_repeat` category |
 | `edfig5/supplementary_CHM13_benchmarking_old.R` | `66069e78…582c6c87` | the earlier version, without `tandem_repeat`, that drew the first-submission figure |
 | `fig2/benchmark.smk` | `b41cf884…1a55aa90` | the working-tree rules file (uncommitted changes), for the rule definitions |
@@ -59,7 +60,7 @@ Inputs are the `*.repeatmasker.vs.presmoothed.vs.smoothed.contrast.tsv` and
 ```bash
 Rscript edfig5/supplementary_CHM13_benchmarking.nature.R --rm <CHM13 repeatmasker contrast.tsv> \
     --cs <CHM13 censat contrast.tsv> --hierarchy <KS_human_CHM13_v2.hierarchy.txt> --outdir out/
-Rscript fig2/figure2_benchmarking.R --rm_hap1 ... --rm_hap2 ... --cs_hap1 ... --cs_hap2 ... \
+Rscript fig2/figure2_benchmarking.nature.R --rm_hap1 ... --rm_hap2 ... --cs_hap1 ... --cs_hap2 ... \
     --hierarchy <KS_human_CHM13_v2.hierarchy.txt> --outdir out/
 ```
 
@@ -68,7 +69,12 @@ first-submission PDF. The `.nature.R` render plots the same data as the
 unmodified `.R` (271 cells); against `_old.R` it adds the `tandem_repeat` bar
 (panel a) and row and column (panel c), and every shared cell keeps its printed
 label.
-The re-rendered Fig. 2 PDF has the same text as the R output kept in the paper
-repository; the published Fig. 2 is that output edited in Illustrator. The
+Both `.nature.R` scripts write PDFs with the macOS Quartz device, which places
+glyphs at the font's true widths; `cairo_pdf` rounds advances to whole points and
+spaces 5–7 pt labels unevenly. Where Quartz is not available (e.g. Linux) they fall
+back to `cairo_pdf` with a warning. Checked 2026-10-20 on Linux: the fallback Fig. 2
+has the same text tokens as the submitted PDF, differing only in spacing. The
 per-base concordance numbers themselves are reproduced by
 `revision/concordance/ks_concord.sh`.
+
+[^q]: Full sha256 `2799f1b0a1fcb889919c1ac5d5476358e1d424f19027ab5fa46c1c47c75dc4d5`; from KaryoScope-paper `main` (`5c11d87`) `scripts/`. The earlier Linux-rendered version differed only in the output device.
