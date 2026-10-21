@@ -25,8 +25,7 @@ regenerates it.
 identical, field for field, to the published table for all three samples. The
 *k* = 11, 21, 41, 51 and 61 rows are from the original 2026-08 runs; those
 databases were not retained. They were built on 2026-08-03 with `karyoscope
-build` at KaryoScope `9ccba0b` and hks `c5fecf8` (see the repository README,
-Versions), from the six CHM13 v2 feature-set BEDs and priority files with a
+build` at KaryoScope `9ccba0b` and hks `c5fecf8` (see `PROVENANCE.md` at the repository root), from the six CHM13 v2 feature-set BEDs and priority files with a
 fixed *k* per database. The spec generator used then was not kept. The public
 recipe for the shipped database, KaryoScope `docs/recipes/human-chm13v2.md`
 (`kmer: s: 31`), builds the same feature sets; setting `s` to 11, 21, 41, 51
@@ -58,8 +57,8 @@ ROB configuration, the *k* = 31 rows above are reproduced.
 - The shipped databases `HKS_human_CHM13_v2`, `HKS_human_CHM13_cytoband` and
   `KS_human_CHM13` (v1) in the KaryoScope database registry, and the six
   *k*-length databases of Step 2 under
-  `$KS_WORK/ks_build_sources/chm13v2_ksweep/db` (see the repository README,
-  Versions).
+  `$KS_WORK/ks_build_sources/chm13v2_ksweep/db` (see `PROVENANCE.md` at the
+  repository root).
 - The KaryoScope-ISCN analysis modules vendored in this repository
   (`../../../vendored/KaryoScope-ISCN/src`, commit `5507369`), via
   `$KS_ISCN_SRC`. The as-run `analyze` scripts (steps 1, 1b, 2) also need the

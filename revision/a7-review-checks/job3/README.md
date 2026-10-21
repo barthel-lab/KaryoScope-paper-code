@@ -43,7 +43,7 @@ sbatch --dependency=afterok:$jid job3_kmc.sh  # about 25 min, 19 GB
 The fusion contig is read from `$ROBS_CONFIG` instead of being written in the
 scripts, and the ROB sequence is optional; cluster paths are replaced by the
 variables in the repository README (Paths). Checked 2026-10-20 (see the
-repository README, Withheld).
+repository README, Controlled-access data).
 
 ## Checked 2026-10-20
 
