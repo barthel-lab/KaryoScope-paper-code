@@ -140,6 +140,12 @@ the 100 kb bins of the clustering input), but it is close:
 - over all 6,138 chromosome-level centromeres, 11 change status (6 pass to
   fail, 5 fail to pass), so 4,650 would become 4,649.
 
+These counts use the same calls and the same overlap rule as step 1, over the
+min/max of each contig's rows in the step 1 BED of
+`../scripts/HPRC2_centromere_analysis.sh`. The script that computed them read
+the per-region BEDs of the 2025 run and is not included; the same rule over
+`inputs/regions.tsv` reproduces the 4,650 exactly.
+
 `sensitivity/` compares the gap-masked Flagger calls used here with the
 released ones.
 
