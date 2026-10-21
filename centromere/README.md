@@ -54,14 +54,17 @@ environment file pins the versions that give the published counts.
   is described in the manuscript Methods. On the TGen cluster they are
   `$KS_PROJECTS/KaryoScope_guarracino/results/pangenome/KaryoScope/KS_human_CHM13/presmoothed/`
   (93,452 rows, 6,138 contigs).
-- **QC table**: `aggregate_qc_v4.manual_curation (3).tsv`, one row per
+- **QC table**: `qc/tables/aggregate_qc_v4.curated.tsv`, one row per
   (sample, haplotype, chromosome, region, contig) with the per-region counts of
   each Flagger/NucFlag flag (`_n_Col`, `_n_Dup`, `_n_Err`, `_n_NNN`, `_n_COLLAPSE`,
-  `_n_COLLAPSE_OTHER`, `_n_COLLAPSE_VAR`, `_n_MISJOIN`, `_n_HET`). 18,413 data
-  rows, 6,138 of them `centromere`; sha256
-  `e149eed58c72cfecc832f9feaf93455fc6b23c66cadcdc636cd41f6cc033f64e`. **It is
-  not distributed here**: its provenance is being confirmed with its author
-  (Yi-An Chen). It records no Flagger or NucFlag version.
+  `_n_COLLAPSE_OTHER`, `_n_COLLAPSE_VAR`, `_n_MISJOIN`, `_n_HET`). 18,414 data
+  rows, 6,138 of them `centromere`. `qc/` rebuilds it from the HPRC Release 2
+  QC calls (HMM-Flagger v1.2.0 conservative calls in their per-haplotype,
+  gap-masked form, and NucFlag v0.3.3) and describes each step. The run used
+  Yi-An Chen's copy, `aggregate_qc_v4.manual_curation (3).tsv` (sha256
+  `e149eed58c72cfecc832f9feaf93455fc6b23c66cadcdc636cd41f6cc033f64e`), which
+  differs from the committed table only in line endings (CRLF); both give the
+  same `*.pass.bed`.
 - **Colour palettes**: only the SVG colours depend on them.
 
 ## Expected output
@@ -83,3 +86,14 @@ R 4.4.1):
 
 The gated per-haplotype assignments are held in memory only; no step writes
 them to disk.
+
+## Note: one chromosome passed QC without being evaluated
+
+HG02965 hap1 chr14 (`HG02965#1#CM087353.1`) is chromosome-level, but its three
+QC regions are empty (the step that wrote the regions did not treat it as
+chromosome-level, while the step that wrote the table did). Its rows in the QC
+table are therefore all `.`, which counts as zero flags, and it passes. It is
+in the 4,650 QC-passed and the 4,646 clustered centromeres, and not in the
+4,551 analysed, because chr14 is excluded downstream. Over its clustering
+interval it has 1 `COLLAPSE_VAR` call. The QC filter is left as it ran, so the
+4,650 is what the pipeline produced.
