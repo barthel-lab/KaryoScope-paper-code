@@ -18,7 +18,7 @@ its inputs by path under the variables described in the repository README
 | comment | question | analysis | headline |
 |---|---|---|---|
 | R1/R3 runtime | how does KaryoScope compare to the tools it is measured against? | [`../benchmarks/a1-comparator-runtimes`](../benchmarks/a1-comparator-runtimes) | RepeatMasker 43 h 54 m, HumAS-HMMER 53.10 h, Tiberius 2 h 16 m, against 13.71 min (KMC) / 7.91 min (HKS) for all six feature sets |
-| R3-major-3 | is the annotation robust to *k*? | [`a2-k-sensitivity`](a2-k-sensitivity) (Step 3 withheld, see below) | across *k* = 21–61 the Robertsonian breakpoint moves at most 900 bp; *k* = 11 is the control that breaks, and does |
+| R3-major-3 | is the annotation robust to *k*? | [`a2-k-sensitivity`](a2-k-sensitivity), [`step3`](a2-k-sensitivity/step3) (result table withheld, see below) | across *k* = 21–61 the Robertsonian breakpoint moves at most 900 bp; *k* = 11 is the control that breaks, and does |
 | R3-major-3 | …and are the other biological applications? | [`a2-k-sensitivity/step4`](a2-k-sensitivity/step4) | **no.** The D4Z4 census fails at *k* = 51 (zero arrays) though it is salvageable by scaling the caller's thresholds with *k*; the centromere clustering keeps only 67.9% of calls between *k* = 21 and 51. Novel fraction and the divergence series are measured here too |
 | R3-major-1 | does this work on genomes other than human? | [`a3-cross-genome`](a3-cross-genome) | Arabidopsis Col-CEN and Ey15-2; label composition per feature set |
 | R2/R3 smoothing | what does smoothing actually do, and to how much? | [`a4-smoothing-accounting`](a4-smoothing-accounting) | novel and multilabel accounting per feature set; 2.5643% of positions carry `novel` before smoothing, identical across all six sets |
@@ -36,7 +36,7 @@ Everything in [`a6-parameter-sweeps`](a6-parameter-sweeps). Each has its own
 |---|---|---|
 | [`maxgap`](a6-parameter-sweeps/maxgap) | smoothing `max_gap` = 1000 bp | concordance is **flat to 0.0136 points** from 0 to 10,000 bp, so concordance cannot be what selected the value; justified instead from the gap-length distribution (99.4% of novel bases in runs <= 1 kb, median novel run exactly 31 bp = *k*) |
 | [`tar1-its`](a6-parameter-sweeps/tar1-its) | TAR1/ITS merge distance = 1 kb | **no knee** in fragment count; the evidence is the bridging ceiling, stable to d = 2000 then doubling, so 1 kb sits in a wide safe band |
-| `rob` (withheld, see below) | ROB window / coverage / dominance | the three parameters named in the response letter control the ISCN *interval*, not the breakpoint: **the published breakpoint is identical across all 39 configurations**. The two that do reach it move it by at most 9.1 kb over a 100-fold range |
+| [`rob`](a6-parameter-sweeps/rob) (result table withheld, see below) | ROB window / coverage / dominance | the three parameters named in the response letter control the ISCN *interval*, not the breakpoint: **the published breakpoint is identical across all 39 configurations**. The two that do reach it move it by at most 9.1 kb over a 100-fold range |
 | [`centromere-clustering`](a6-parameter-sweeps/centromere-clustering) | `--sil-threshold` 0.5, `--centroid-sd` 5 | **13 chromosomes retain a split at all 30 settings**; the four chromosomes in the allele heatmap are invariant at all 30; 0.5 sits on a plateau with 0.6 |
 | [`d4z4`](a6-parameter-sweeps/d4z4) | ten merge thresholds | **the published repeat count is 28,580 in all 51 runs** — bit-identical under every threshold; five of the ten are completely inert, and the one exposed parameter is undisclosed |
 
@@ -75,7 +75,8 @@ recorded without duplicating it:
 ## Layout
 
 ```
-a2-k-sensitivity/           the k sweep (Steps 0-2); Step 3 withheld
+a2-k-sensitivity/           the k sweep (Steps 0-2)
+a2-k-sensitivity/step3/     the Robertsonian breakpoint vs k (ROB configuration needed)
 a2-k-sensitivity/step4/     novel fraction, divergence, D4Z4 and centromere clustering vs k
 a3-cross-genome/            Arabidopsis Col-CEN and Ey15-2
 a4-smoothing-accounting/    novel and multilabel accounting per feature set
@@ -97,18 +98,25 @@ first.
   and 3), `figures/figS6/` (the August thread sweep, superseded by
   `../benchmarks/figS6/`), `docs/briefs/` and `docs/write-ups/` (internal task
   briefs and hand-offs).
-- **Withheld pending the dbGaP ruling on the Robertsonian (ROB) assemblies
-  (phs003920):** every file that holds per-sample ROB coordinates or scaffold
-  names. These are
-  - A2 Step 3 (the SST1 breakpoint *k* sweep): `a2-k-sensitivity/README.md`,
-    `results/sst1_breakpoints_by_k.tsv` and the Step 3 scripts. Steps 0-2
-    (`scripts/run_step01.sh`, `run_a2_step2*.sh`, `run_a2_concord.sh`) and Step 4
-    are included;
-  - A6 `rob/` (the ROB window, coverage and dominance sweep);
-  - A7 Job 3 scripts and provenance, and the ROB rows of
-    `a7-review-checks/results/rc_symmetry_*.tsv`. The HG002 rows are complete.
-    The Job 3 paragraph in `a7-review-checks/RESULTS.md` no longer names the
-    fusion scaffold.
+- **The Robertsonian (ROB) analyses read their per-sample values from the ROB
+  configuration.** The scripts of A2 Step 3 (`a2-k-sensitivity/step3/`), the A6
+  ROB sweep (`a6-parameter-sweeps/rob/`) and A7 Job 3 (`a7-review-checks/job3/`)
+  read every ROB scaffold name, coordinate and sample-specific value from
+  `$ROBS_CONFIG`, sections `a2_step3`, `a6_rob` and `a7_job3` of
+  `../robs/conf/config.template.yaml`; at `b7d2092` these values are written in
+  the scripts. With the filled configuration (dbGaP phs003920) each script gives
+  byte-identical output to the original on the same inputs. `a2-k-sensitivity/step3/README.md`
+  replaces the Step 3 part of `a2-k-sensitivity/README.md`, and
+  `a6-parameter-sweeps/rob/README.md` summarises `rob/RESULTS.md` without
+  coordinates.
+- **Withheld pending the dbGaP ruling on the ROB assemblies:** the result
+  tables and write-ups that hold ROB coordinates or scaffold names:
+  `a2-k-sensitivity/results/sst1_breakpoints_by_k.tsv`, the Step 3 part of
+  `a2-k-sensitivity/README.md`, `a6-parameter-sweeps/rob/results/rob_param_sweep.tsv`
+  and `rob/RESULTS.md`, the A7 Job 3 provenance logs, and the ROB rows of
+  `a7-review-checks/results/rc_symmetry_*.tsv` (the HG002 rows are complete).
+  The Job 3 paragraph in `a7-review-checks/RESULTS.md` does not name the fusion
+  scaffold.
 - `a6-parameter-sweeps/d4z4/base_dir.patch` is dropped (see External code).
 - Cluster paths are replaced by the variables in the repository README (Paths).
   Result tables that recorded input paths (`a2-k-sensitivity/step4/results/*_windows.tsv`)

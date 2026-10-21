@@ -1,6 +1,6 @@
 # A2: sensitivity to *k*
 
-This directory holds Steps 0-2 of the *k* sweep and Step 4.
+This directory holds Steps 0-4 of the *k* sweep.
 
 - `scripts/run_step01.sh`: Step 0 (pre-flight) and Step 1, the k-mer uniqueness
   sweep on the `repeat` feature set (`hks node-stats`).
@@ -12,8 +12,9 @@ This directory holds Steps 0-2 of the *k* sweep and Step 4.
 - `step4/`: novel fraction, divergence, the D4Z4 census and the centromere
   clustering as a function of *k*. Read `step4/RESULTS.md`.
 
-Step 3, the Robertsonian breakpoint re-derived at every *k*, is withheld from
-this snapshot until the dbGaP ruling on the Robertsonian assemblies: its
-scripts, result table and write-up carry per-sample scaffold names and
-coordinates. The result (the breakpoint moves at most 900 bp across *k* = 21-61)
-is stated in the manuscript.
+- `step3/`: the Robertsonian breakpoint re-derived at every *k*. The scripts
+  read every per-sample scaffold name and coordinate from the ROB configuration
+  (`$ROBS_CONFIG`, see `../../robs/README.md`), and run with dbGaP access to the
+  ROB assemblies. Its result table is withheld (it holds ROB coordinates); the
+  result, that the breakpoint moves at most 900 bp across *k* = 21-61, is stated
+  in the manuscript. Read `step3/README.md`.

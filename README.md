@@ -33,7 +33,7 @@ Numbering as in the revised manuscript.
 | Supp. Fig. 1 | Illustrator, exported with `illustrator/nature_ai_export.py` | artwork no |
 | Supp. Fig. 2 | `d4z4/make_figures.py` | yes, as Fig. 4 |
 | Supp. Table 1 | `benchmarks/tableS1/` | yes, from the shipped run logs |
-| Supp. Tables 2, 3 | `revision/a6-parameter-sweeps/`, `revision/a2-k-sensitivity/step4/` | sweep results included; the ROB rows are withheld |
+| Supp. Tables 2, 3 | `revision/a6-parameter-sweeps/` (ROB block of Supp. Table 2: `rob/`), `revision/a2-k-sensitivity/step4/` | sweep results included; the ROB rows with dbGaP access, from the ROB configuration (the ROB result table is withheld) |
 | Supp. Notes 1, 2 | `revision/concordance/`, `revision/a4-smoothing-accounting/`, `benchmarks/` | scripts and result tables |
 
 ## Versions
@@ -108,12 +108,16 @@ public `barthel-lab/KaryoScope-archive` repository. It is reachable in the priva
 ## Withheld
 
 The Robertsonian (ROB) cell-line assemblies are controlled-access (dbGaP
-phs003920). Everything that holds ROB scaffold names or coordinates is left
-out: the per-sample values of the KaryoScope-ROBs configuration (`robs/` ships
-a template with placeholders and the steps to fill it), A2 Step 3, A6 `rob/`,
-and A7 Job 3 (details in `revision/README.md`). Their values come from the
-dbGaP-approved assemblies. No sequence, read or per-sample BED is in this
-repository.
+phs003920). ROB scaffold names and coordinates are not in this repository.
+The code that needs them reads them from the ROB configuration
+(`$ROBS_CONFIG`): `robs/conf/config.template.yaml` has a placeholder for each
+value and `robs/README.md` gives the steps to fill it. This covers the ROB
+figures (`robs/`), A2 Step 3 (`revision/a2-k-sensitivity/step3/`), the A6 ROB
+sweep (`revision/a6-parameter-sweeps/rob/`) and A7 Job 3
+(`revision/a7-review-checks/job3/`). Withheld are only the result tables and
+write-ups that hold ROB values (listed in `revision/README.md`, Changes in this
+snapshot); a run with dbGaP access regenerates them. No sequence, read or
+ROB per-sample BED is in this repository.
 
 ## Paths
 

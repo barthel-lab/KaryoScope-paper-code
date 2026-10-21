@@ -7,7 +7,7 @@ lowercase panel letters). Only the files the two figures use are copied:
 
 | file | role |
 |---|---|
-| `conf/config.template.yaml` | the figure configuration, with every per-sample value replaced by a placeholder |
+| `conf/config.template.yaml` | the figure configuration, with every per-sample value replaced by a placeholder; its `a2_step3`, `a6_rob` and `a7_job3` sections are read by the revision analyses in `../revision/` |
 | `scripts/breakpoint_density_stacked.py` | Extended Data Fig. 7 a-c (breakpoint refinement per sample) |
 | `scripts/sst1_kmer_composition.py` | Extended Data Fig. 7 d (chromosome-specific k-mers in the SST1 arrays) |
 | `scripts/chm13_kmer_lollipop.py` | Extended Data Fig. 7 e (positions of those k-mers in T2T-CHM13; CHM13 coordinates) |
@@ -23,7 +23,8 @@ through the vendored conductor (`vendored/KaryoScope-conductor`), from the
 Changes from `1188850`:
 
 - `breakpoint_density_stacked.py` reads the configuration from `$ROBS_CONFIG`
-  when set (default `conf/robs.yaml`);
+  when set (default `conf/robs.yaml`), and its `--db-root` default is the
+  registry under `$KS_SOFTWARE` instead of a cluster path;
 - `sst1_kmer_composition.py` reads its SST1 array table from the configuration's
   `sst1_arrays` section; at `1188850` the table is written in the script;
 - `check_data.sh`: comments and the failure message point at `data/robs/`
