@@ -16,7 +16,7 @@ Numbering as in the revised manuscript.
 
 | item | code | reproduced from this repository |
 |---|---|---|
-| Fig. 1b-e | `hg002/conf/hg002.yaml` -> `vendored/KaryoScope-ISCN/KaryoScope_assembly_figure.py` | no: the published figure is an Illustrator composition, and its centromere file (`centromeres_v1coords.bed`) was not found |
+| Fig. 1b-e | `hg002/conf/hg002.yaml` -> `vendored/KaryoScope-ISCN/KaryoScope_assembly_figure.py`; centromere windows `hg002/scripts/make_centromeres_v1coords.py` | no: the published figure is an Illustrator composition. Its centromere window file (`centromeres_v1coords.bed`) is rebuilt from the v1 and v2 centromere BEDs (`hg002/data/`); all 46 window lengths match Fig. 1b |
 | Fig. 2 | `benchmarks/fig2/figure2_benchmarking.R`; numbers: `revision/concordance/ks_concord.sh` | data yes; final artwork edited in Illustrator |
 | Fig. 3 | `robs/` (configuration template) -> `vendored/KaryoScope-ISCN/KaryoScope_assembly_contig_zoom_plot.py` via `vendored/KaryoScope-conductor` | with dbGaP access, from fresh v1.1.0 annotations (see `robs/README.md`): on the tested sample the SVG is byte-identical to the submitted figure |
 | Fig. 4 | `d4z4/make_figures.py` | yes, given the D4Z4 inputs (two are not public, see `d4z4/`) |
@@ -28,7 +28,7 @@ Numbering as in the revised manuscript.
 | ED Fig. 6 | `benchmarks/figS6/` | yes |
 | ED Fig. 7 | `robs/scripts/` (configuration template) | with dbGaP access, from fresh v1.1.0 annotations (see `robs/README.md`) |
 | ED Fig. 8 | `d4z4/make_figures.py` | yes, as Fig. 4 |
-| ED Fig. 9 | none (Illustrator); QC counts from `centromere/` steps 1-2 | no |
+| ED Fig. 9 | none (Illustrator); QC table `centromere/qc/`, counts from `centromere/` steps 1-2 | artwork no; the QC table and the 6,138 / 4,650 counts yes, from the public HPRC QC calls |
 | ED Table 1 | `benchmarks/a1-comparator-runtimes/`, KaryoScope rows from `benchmarks/tableS1/` | scripts only; comparator logs were not kept |
 | Supp. Fig. 1 | none (Illustrator) | no |
 | Supp. Fig. 2 | `d4z4/make_figures.py` | yes, as Fig. 4 |
@@ -69,7 +69,7 @@ Numbering as in the revised manuscript.
 README.md, LICENSE (GPL-3.0), CITATION.cff
 environment/   one conda environment per analysis, exported from the environment it was run in
 d4z4/          D4Z4 pipeline and figure code (Fig. 4, ED Fig. 8, Supp. Fig. 2)
-centromere/    centromere clustering and gating (Fig. 5)
+centromere/    centromere clustering and gating (Fig. 5); qc/: the assembly QC table (ED Fig. 9)
 hg002/         HG002 assembly figure configuration (Fig. 1b-e)
 robs/          Robertsonian translocation figure code and configuration template (Fig. 3, ED Fig. 7)
 benchmarks/    Supp. Table 1, ED Fig. 6, ED Table 1, Fig. 2 and ED Fig. 5 scripts
@@ -86,6 +86,8 @@ vendored/      the KaryoScope-ISCN and KaryoScope-conductor files the figure cod
 | `robs/` | barthel-lab/KaryoScope-ROBs | `1188850` | head of PR #2 (`nature/ed-spec`, on `fig5/assemble-panels`), not merged; configuration replaced by a template |
 | `centromere/scripts/` | barthel-lab/KaryoScope-analysis | `90e2874` | branch `pangenome_structure_V2`, `scripts/` only |
 | `hg002/` | barthel-lab/KaryoScope-HG002 | `27885ba` | `conf/`, `scripts/check_data.sh`, `requirements.txt` |
+| `hg002/scripts/make_centromeres_v1coords.py`, `hg002/data/` | written for this snapshot | n/a | rebuilds the Fig. 1b centromere window file |
+| `centromere/qc/` | KaryoScope-archive `0bf3a7d` (`workflow/rules/pangenome.smk`, `get_regions.py`) and two files that were never committed (`aggregate_master_qc.py`, `aggregate_qc_v2.awk`) | n/a | originals in `centromere/qc/original/`; the runnable scripts were written for this snapshot and reproduce the 2025 tables byte for byte |
 | `revision/` | barthel-lab/KaryoScope-revisions | `b7d2092` | see `revision/README.md`, Changes in this snapshot |
 | `benchmarks/a1-comparator-runtimes/` | barthel-lab/KaryoScope-revisions | `b7d2092` | |
 | `benchmarks/tableS1/`, `benchmarks/figS6/` | TGen cluster job directories `ks_slurm/tableS1_cold/`, `ks_slurm/threadsweep_cold/` | n/a | jobs 38434006 and 38373939; not previously in a repository |

@@ -23,7 +23,8 @@ v1.1 diploid assembly with the `KS_human_CHM13_v2` database:
   for `chromosome region repeat gene acrocentric subtelomeric`;
 - the centromere BED named in `conf/hg002.yaml`
   (`...centromeres_v1coords.bed`: v1 centromere coordinates mapped onto the v2
-  scaffold names).
+  scaffold names). It is committed here, in
+  `data/KS_human_CHM13_v2/` (see Centromere windows).
 
 `scripts/check_data.sh` lists what is missing. On the TGen cluster the BEDs were
 under `$KS_PROJECTS/KaryoScope/results/HG002/assembly/combined/KaryoScope/`.
@@ -40,13 +41,36 @@ PYTHONPATH=../vendored/KaryoScope-conductor python -m karyoscope_conductor --con
 
 Output: `results/assembly_figure/HG002_figure_v2_v1cen_grid.{svg,png}`.
 
+## Centromere windows (Fig. 1b)
+
+The Fig. 1b zoom windows are the rows of
+`data/KS_human_CHM13_v2/HG002.assembly.KS_human_CHM13_v2.region.presmoothed.scaffolded.centromeres_v1coords.bed`
+(46 rows, sha256 `b7390b9381d49a6c3f0f4e4e4583f8813aefc2c00c1fe97da1af7b2a33d29080`).
+The original file was not found; this one was rebuilt with
+`scripts/make_centromeres_v1coords.py` from the two scaffolded centromere BEDs
+of the same assembly:
+
+| input | database | sha256 |
+|---|---|---|
+| `HG002.assembly.KS_human_CHM13.region.presmoothed.scaffolded.centromeres.bed` | `KS_human_CHM13` (v1) | `151b0a121cbfd92c08fa0ee8397707828dcef7a162ae41856c0963e798502754` |
+| `HG002.assembly.KS_human_CHM13_v2.region.presmoothed.scaffolded.centromeres.bed.gz` | `KS_human_CHM13_v2` | `8243e6bd036cd27474f56cc9a2de878458e3f58ecefe634d9c3ac6855c6eac64` (uncompressed `0e9a7c26def1d979024bbf0a4e391874c7f0fd88d19a8fbb625b8f0cdf18fb63`) |
+
+```bash
+python3 scripts/make_centromeres_v1coords.py <v1 centromeres.bed> <v2 centromeres.bed.gz> \
+    > data/KS_human_CHM13_v2/HG002.assembly.KS_human_CHM13_v2.region.presmoothed.scaffolded.centromeres_v1coords.bed
+```
+
+The two inputs list the same 46 chromosomes in the same order; each output row
+takes the v2 scaffold name (`chr1_hap1_chr1_PATERNAL`) and the v1 coordinates
+(row of `chr1_hap1_chr1_hap1`). All 46 window lengths equal the 46 zoom-window
+lengths printed in Fig. 1b.
+
 ## Status
 
 The published Fig. 1 is an Illustrator composition built on this render. The
-`centromeres_v1coords.bed` file used for it was not found on the cluster, and
-the render committed in KaryoScope-HG002 was made with KaryoScope-ISCN
-`4d1b086`. Run with the standard
+render committed in KaryoScope-HG002 was made with KaryoScope-ISCN `4d1b086`.
+Run with the standard
 `HG002.assembly.KS_human_CHM13_v2.region.presmoothed.scaffolded.centromeres.bed.gz`
-instead, the vendored code produces output byte-identical to the
-un-vendored KaryoScope-ISCN `4e42a98` and conductor `0732e96` (the Fig. 1 files are
-unchanged from `4e42a98` to the vendored `68a9816`).
+instead of the window file, the vendored code produces output byte-identical
+to the un-vendored KaryoScope-ISCN `4e42a98` and conductor `0732e96` (the
+Fig. 1 files are unchanged from `4e42a98` to the vendored `68a9816`).
