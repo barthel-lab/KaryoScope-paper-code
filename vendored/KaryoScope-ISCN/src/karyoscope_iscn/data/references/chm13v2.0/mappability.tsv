@@ -1,0 +1,48 @@
+# Per-chromosome mappable fraction for copy-number estimation.
+#
+# Copy number is covered_bp / expected_bp. Taking expected_bp as the chromosome's
+# full reference length assumes every base is reachable by the k-mer index, which
+# is false: rDNA, satellite and other sequence that does not resolve to a single
+# chromosome in a one-individual reference never gets counted. The acrocentrics
+# lose 13-19% of their length that way, so a normal diploid chr21 measures ~1.6
+# copies, not 2.0 -- and `round()` then reports monosomy whenever noise pushes it
+# under 1.5. Two of 115 release-2 samples lost that coin flip (NA18940 chr21 at
+# 1.49, HG02818 chr22 at 1.43).
+#
+# `factor` is the observed ratio divided by the sample's own median autosome
+# ratio, so it is a property of the DATABASE (its k and feature set), not of any
+# assembly. Dividing expected_bp by it restores a 2.0 scale and, unlike a
+# dead-band around the rounding boundary, stays sensitive in BOTH directions: a
+# real trisomy 21 measures ~2.4 raw, which is 3.0 once calibrated.
+#
+# Derived: median over 105 HPRC release-3 samples (the better assemblies), all
+# with normal autosome complements, annotated with HKS_human_CHM13_v2 at k=31.
+# 230 release-2 samples give the same values within 0.02 (chr21 0.809 vs 0.826,
+# chr13 0.867 vs 0.869, chr9 0.915 vs 0.915) -- independent assembly generations
+# agreeing is what shows the factor belongs to the database.
+#
+# chrX / chrY are absent on purpose: their expected copy number depends on sex,
+# so they are never rescaled here. A chromosome missing from this file gets 1.0.
+chrom	factor
+chr1	1.000
+chr2	1.003
+chr3	1.000
+chr4	0.997
+chr5	1.010
+chr6	1.005
+chr7	1.008
+chr8	1.003
+chr9	0.915
+chr10	1.010
+chr11	1.003
+chr12	1.008
+chr13	0.869
+chr14	0.945
+chr15	0.930
+chr16	0.955
+chr17	1.000
+chr18	1.000
+chr19	1.000
+chr20	1.010
+chr21	0.826
+chr22	0.859

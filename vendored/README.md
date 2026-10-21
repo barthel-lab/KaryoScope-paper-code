@@ -68,3 +68,14 @@ ties broken alphabetically) and does not reproduce these windows.
 `revision/a2-k-sensitivity/step4/scripts/v1-region-rebuild/bin_features_feb2026.py`
 is the same code under a different header.
 
+
+## KaryoScope-ISCN analysis modules (`KaryoScope-ISCN/src/`, at `5507369`)
+
+The A6 Robertsonian parameter sweep and the A2 step 3 k-sweep import
+`karyoscope_iscn.core.{bedio,cumulative,detect,refine}` and `karyoscope_iscn.reference`.
+`KaryoScope-ISCN/src/karyoscope_iscn/` holds those modules, the modules they import in
+turn, and the `chm13v2.0` reference tables, unmodified, from commit `5507369` (branch
+`feat/refine-pivot-and-k-sweep`; merged into `main` as `fd2aab0`). This is a different commit
+from the four figure files above. Point `$KS_ISCN_SRC` at `KaryoScope-ISCN/src` to use them.
+`KaryoScope-ISCN/src/PROVENANCE.md` lists each file's sha256, the authors, and why the
+commit is pinned.
