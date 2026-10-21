@@ -13,7 +13,7 @@ what these sweeps supply.
 |---|---|---|
 | [`maxgap`](maxgap) | 9–28 s per point | value fine, **stated reason was wrong** — rewritten to justify from the gap-length distribution |
 | [`tar1-its`](tar1-its) | minutes | no knee; the bridging ceiling is the evidence |
-| `rob` (withheld from this snapshot) | **44 s total** | the brief named the wrong parameters; the published breakpoint is invariant |
+| [`rob`](rob) (scripts; result table withheld) | **44 s total** | the brief named the wrong parameters; the published breakpoint is invariant |
 | [`centromere-clustering`](centromere-clustering) | **84 s total** | structure survives; one open question on chr19 |
 | [`d4z4`](d4z4) | ~16 s per point | published repeat count invariant across all 51 runs; 5 of 10 thresholds inert; recommends disclosing `MIN_ARRAY_ELEMENT_SIZE` |
 
