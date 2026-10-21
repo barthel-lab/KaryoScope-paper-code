@@ -3,7 +3,7 @@
 | directory | manuscript item | source |
 |---|---|---|
 | `tableS1/` | Supplementary Table 1 (runtime and memory by backend) | cluster job directory `ks_slurm/tableS1_cold/` (in no repository before this one), job 38434006, 2026-10-14 |
-| `figS6/` | Extended Data Fig. 6 (thread scaling) | cluster job directory `ks_slurm/threadsweep_cold/`, job 38373939, 2026-10-12; `plot_figS6.py` (the Nature-size version, PR #35) and its two TSVs from `barthel-lab/KaryoScope-paper` `main` `605aa7f`, `figures/fig3/data/` |
+| `figS6/` | Extended Data Fig. 6 (thread scaling) | cluster job directory `ks_slurm/threadsweep_cold/`, job 38373939, 2026-10-12, and `plot_figS6.py` (the Nature-size version, PR #35) and its two TSVs from `barthel-lab/KaryoScope-paper` `main` `605aa7f`, `figures/fig3/data/` |
 | `a1-comparator-runtimes/` | Extended Data Table 1 (comparator tools) | `barthel-lab/KaryoScope-revisions` `b7d2092` |
 | `fig2/` | Fig. 2 (concordance with RepeatMasker and CenSat, HG002) | KaryoScope-archive working tree, see below |
 | `edfig5/` | Extended Data Fig. 5 (CHM13 self-benchmark) | KaryoScope-archive working tree, see below |
@@ -11,20 +11,20 @@
 ## Table S1 and Extended Data Fig. 6
 
 Both used the same protocol: one job on one Intel Xeon Gold 6342 node (Ice
-Lake, 2.80 GHz), points in a fixed random order (`manifest.tsv`; seeds 20261013
-and 20261012), and before each point the database, input, binaries and source
-evicted from the page cache (`evict.py`, checked with `resident.sh`), then a
-cold run and a warm run. The tables report the warm runs; n = 3 per cell.
+Lake, 2.80 GHz), points in a fixed random order (`manifest.tsv`, with seeds
+20261013 and 20261012), and before each point the database, input, binaries,
+and source evicted from the page cache (`evict.py`, checked with `resident.sh`),
+then a cold run and a warm run. We report the warm runs, with n = 3 per cell.
 
 - `run_tableS1.sh`, `run_sweep.sh`: the SLURM drivers as run. They call
   KaryoScope v2.3.0 (tag commit `124f84a`) with `hks` 0.4.0 (HKS commit
   `04bbc52`) and `get_featureIDs` from v2.3.0. Those two binaries are not
-  included; build them from the tagged sources.
+  included. Build them from the tagged sources.
 - `runs/`: the per-run logs and `runs/index.tsv`. Cluster paths inside the logs
   are replaced by the variables in the repository README.
 - `extract_tableS1.py` reads `runs/` and writes `tableS1_runs.tsv` and
   `tableS1_summary.tsv`. Re-running it on the shipped logs reproduces both
-  files byte for byte.
+  files.
 - `extract_phases.sh {warm,cold}` reads `runs/` and prints the per-phase
   timings. Its output equals `figS6_phase_timings.{warm,cold}.tsv`.
   `figS6_phase_timings.tsv` (the file the paper repository plots) is the warm
@@ -38,14 +38,16 @@ cold run and a warm run. The tables report the warm runs; n = 3 per cell.
 
 ## Fig. 2 and Extended Data Fig. 5
 
-These R scripts were run from a working tree of the KaryoScope-archive
-Snakemake pipeline at commit `7c976e04`, where they were never committed:
+The original R scripts (`.R`, `_old.R`) were run from a working tree of the
+KaryoScope-archive Snakemake pipeline at commit `7c976e04`, where they were never
+committed. The `.nature.R` versions, which draw the submitted figures, come from
+KaryoScope-paper `scripts/`:
 
 | file | sha256 (as copied) | note |
 |---|---|---|
 | `fig2/figure2_benchmarking.R` | `19f39bd6…34d28346` | rule `figure2_benchmarking` |
 | `edfig5/supplementary_CHM13_benchmarking.nature.R` | `2cc0fc3b…e394be83e`[^q] | draws the submitted ED Fig. 5: `supplementary_CHM13_benchmarking.R` with Nature styling (Arial, 5–7 pt text, 8 pt lowercase panel letters, 183 × 160 mm, legend and tile-label layout, no overall title), Quartz PDF device. Plotted data identical to the unmodified script |
-| `fig2/figure2_benchmarking.nature.R` | `8c3121f2…ae1b8aca` | draws the submitted Fig. 2: `figure2_benchmarking.R` at 183 mm, Arial, the published layout and lettering (a, c bars; b, d matrices), cells in percent, 5 pt bracket labels, Quartz PDF device. From KaryoScope-paper `main` (`5c11d87`) `scripts/` |
+| `fig2/figure2_benchmarking.nature.R` | `8c3121f2…ae1b8aca` | draws the submitted Fig. 2: `figure2_benchmarking.R` at 183 mm, Arial, the published layout and lettering (bars in a and c, matrices in b and d), cells in percent, 5 pt bracket labels, Quartz PDF device. From KaryoScope-paper `main` (`5c11d87`) `scripts/` |
 | `edfig5/supplementary_CHM13_benchmarking.R` | `587d359c…6b49b3bc` | the working-tree script, with the `tandem_repeat` category |
 | `edfig5/supplementary_CHM13_benchmarking_old.R` | `66069e78…582c6c87` | the earlier version, without `tandem_repeat`, that drew the first-submission figure |
 | `fig2/benchmark.smk` | `b41cf884…1a55aa90` | the working-tree rules file (uncommitted changes), for the rule definitions |
@@ -66,15 +68,15 @@ Rscript fig2/figure2_benchmarking.nature.R --rm_hap1 ... --rm_hap2 ... --cs_hap1
 
 Checked 2026-10-20: the `_old.R` render reproduces every number printed in the
 first-submission PDF. The `.nature.R` render plots the same data as the
-unmodified `.R` (271 cells); against `_old.R` it adds the `tandem_repeat` bar
-(panel a) and row and column (panel c), and every shared cell keeps its printed
+unmodified `.R` (271 cells). Compared with `_old.R`, it adds the `tandem_repeat` bar
+(panel a) and row and column (panel b), and every shared cell keeps its printed
 label.
 Both `.nature.R` scripts write PDFs with the macOS Quartz device, which places
-glyphs at the font's true widths; `cairo_pdf` rounds advances to whole points and
-spaces 5–7 pt labels unevenly. Where Quartz is not available (e.g. Linux) they fall
+glyphs at the font's true widths. `cairo_pdf` rounds advances to whole points,
+which spaces 5–7 pt labels unevenly. Where Quartz is not available (e.g. Linux) they fall
 back to `cairo_pdf` with a warning. Checked 2026-10-20 on Linux: the fallback Fig. 2
 has the same text tokens as the submitted PDF, differing only in spacing. The
 per-base concordance numbers themselves are reproduced by
 `revision/concordance/ks_concord.sh`.
 
-[^q]: Full sha256 `2cc0fc3b0552bba15a3ec3698247e16c165c5c3eac0d3162348add6e394be83e`; from KaryoScope-paper PR #42 (`f8f87db`) `scripts/`: the panels are lettered across rows as in Fig. 2 (a, b RepeatMasker bars and matrix; c, d CenSat bars and matrix). Earlier versions differed only in the output device and the lettering.
+[^q]: Full sha256 `2cc0fc3b0552bba15a3ec3698247e16c165c5c3eac0d3162348add6e394be83e`, from KaryoScope-paper PR #42 (`f8f87db`, merged into `main` as `f208768`) `scripts/`: the panels are lettered across rows as in Fig. 2 (RepeatMasker bars and matrix in a and b, CenSat bars and matrix in c and d). Earlier versions differed only in the output device and the lettering.

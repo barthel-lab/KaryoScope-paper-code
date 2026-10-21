@@ -32,8 +32,9 @@ published results. The changes made to each directory are listed in its README.
 - **Robertsonian figures** (Fig. 3, ED Fig. 7): the assemblies were first
   annotated, scaffolded, and binned with the KaryoScope-archive pipeline (commit
   not recorded). KaryoScope v1.1.0 (annotate and scaffold) with `karyoscope bin`
-  reproduces the submitted Fig. 3 on all three samples, before the 4-unit
-  headroom edit applied by `robs/scripts/fig3_headroom.py` (see
+  reproduces the submitted Fig. 3 on the tested sample (the Fig. 3a assembly),
+  before the 4-unit headroom edit applied by `robs/scripts/fig3_headroom.py`.
+  Binning with v1.1.0 or v2.3.0 gives the same Fig. 3 on all three samples (see
   `robs/README.md`).
 - **KaryoScope-ISCN analysis modules** used by the A2 and A6 Robertsonian
   analyses: commit `5507369`, vendored in `vendored/KaryoScope-ISCN/src/`

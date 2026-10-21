@@ -3,7 +3,7 @@
 Only the files that the Fig. 1b-e and Fig. 3 code paths import are copied. The
 set was found by running both figures with an import tracer (every module file
 loaded by the conductor process and by the figure script it launches). Each
-Python file starts with a header naming its source repository, commit and
+Python file starts with a header naming its source repository, commit, and
 authors.
 
 ## KaryoScope-ISCN (`barthel-lab/KaryoScope-ISCN` at `68a9816`, PR #87)
@@ -21,7 +21,7 @@ in `KaryoScope_assembly_contig_zoom_plot.py`: `--panel-letters` draws lowercase
 a, b, c (it drew A, B, C), as in the revised manuscript. The other three files
 are unchanged from `4e42a98`, the commit the first Fig. 3 render used
 (2026-08-28), to `68a9816`. KaryoScope-ISCN is
-GPL-3.0-or-later; its `LICENSE` is included.
+GPL-3.0-or-later, and its `LICENSE` is included.
 
 One change: `plot_featureset_tree_bars.py` reads its resource directory from
 `$KS_RESOURCES` when set (the original fixes it to a directory under `$HOME`).
@@ -35,15 +35,15 @@ commit that KaryoScope-HG002 and KaryoScope-ROBs pin. Copied: the package
 two steps the figures use, `steps/iscn/assembly_figure.py` and
 `steps/iscn/assembly_contig_zoom_plot_stacked.py`. Steps are imported by name
 from the config's `pipeline:` list, so a config that names any other step
-fails here. Unmodified.
+fails here. These files are unmodified.
 
 ## KaryoScope-archive-resources
 
 Colour palettes, per-feature k-mer counts (`*.database.info.txt`), priority
-files and the v2 hierarchy for the `KS_human_CHM13` (v1) and
+files, and the v2 hierarchy for the `KS_human_CHM13` (v1) and
 `KS_human_CHM13_v2` databases, from the KaryoScope-archive pipeline at commit
-`7c976e04` (`resources/`), the commit the HG002 and ROB setups pinned. The later
-history of that repository carries an MIT licence (`LICENSE.MIT`).
+`7c976e04` (`resources/`), the commit the HG002 and ROB setups pinned. Later
+commits of that repository add an MIT licence (`LICENSE.MIT`).
 
 The figure scripts also import `karyoplot`
 (`barthel-lab/KaryoScope-plotlib`, public, GPL-3.0), installed by
@@ -52,7 +52,7 @@ The figure scripts also import `karyoplot`
 ## Check
 
 On the same inputs, the vendored copy and the original repositories at the
-commits above give byte-identical SVG and PNG output, for Fig. 3 and for the
+commits above give identical SVG and PNG output, for Fig. 3 and for the
 HG002 figure.
 
 ## KaryoScope-archive `bin_features.py` (`barthel-lab/KaryoScope-archive` at `4434885`)
@@ -63,8 +63,8 @@ HG002 figure.
 
 The script assigns each bin the feature with the largest overlap, ties going to
 the first feature seen. It is unchanged below its header. KaryoScope v1.1.0
-`karyoscope bin` uses a different rule (a bin is novel only above 50 % novel;
-ties broken alphabetically) and does not reproduce these windows.
+`karyoscope bin` uses a different rule (a bin is novel only above 50 % novel,
+and ties are broken alphabetically), so it does not reproduce these windows.
 `revision/a2-k-sensitivity/step4/scripts/v1-region-rebuild/bin_features_feb2026.py`
 is the same code under a different header.
 
@@ -73,9 +73,9 @@ is the same code under a different header.
 
 The A6 Robertsonian parameter sweep and the A2 step 3 k-sweep import
 `karyoscope_iscn.core.{bedio,cumulative,detect,refine}` and `karyoscope_iscn.reference`.
-`KaryoScope-ISCN/src/karyoscope_iscn/` holds those modules, the modules they import in
+`KaryoScope-ISCN/src/karyoscope_iscn/` contains those modules, the modules they import in
 turn, and the `chm13v2.0` reference tables, unmodified, from commit `5507369` (branch
-`feat/refine-pivot-and-k-sweep`; merged into `main` as `fd2aab0`). This is a different commit
+`feat/refine-pivot-and-k-sweep`, merged into `main` as `fd2aab0`). This is a different commit
 from the four figure files above. Point `$KS_ISCN_SRC` at `KaryoScope-ISCN/src` to use them.
-`KaryoScope-ISCN/src/PROVENANCE.md` lists each file's sha256, the authors, and why the
-commit is pinned.
+Each file's sha256, the authors, and the reason the commit is pinned are listed
+in `KaryoScope-ISCN/src/PROVENANCE.md`.

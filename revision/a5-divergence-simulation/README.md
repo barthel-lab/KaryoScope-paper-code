@@ -1,8 +1,8 @@
 # A5 — divergence simulation
 
-How far a query can diverge from the reference before annotation degrades.
-`mutate_fasta.py` introduces substitutions at a controlled rate; 13 conditions
-were run to completion with 100% coverage.
+We measured how far a query can diverge from the reference before annotation
+degrades. `mutate_fasta.py` introduces substitutions at a set rate. All 13
+conditions ran to completion with 100% coverage.
 
-The driver is the same concordance harness as `../concordance`, so the numbers
-are directly comparable to the manuscript's accuracy figures.
+The driver is the concordance harness in `../concordance`, so the numbers are
+comparable with the accuracy figures in the manuscript.
