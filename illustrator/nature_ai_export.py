@@ -12,7 +12,8 @@ For a figure that exists only as an Illustrator file, this script:
 
 The .ai file itself is never modified.
 
-Usage: nature_ai_export.py FIGURE.ai OUT_PREFIX [--max-pt 7] [--letter-min-size 9] [--relabel C=E,E=C]
+Usage: nature_ai_export.py FIGURE.ai OUT_PREFIX [--max-pt 7] [--min-pt 5] [--width-mm 180]
+       [--height-mm 170] [--letter-min-size 9] [--relabel C=E,E=C]
 """
 
 import argparse
@@ -90,6 +91,13 @@ def main():
                     help="keep each shrunk label's left edge or its centre (centred titles)")
     ap.add_argument("--drop-small", action="store_true",
                     help="remove text that would print under 5 pt (only where it repeats other content)")
+    ap.add_argument("--min-pt", type=float, default=None,
+                    help="enlarge text that would print under this size (e.g. 5); a label that would "
+                         "then overlap its neighbour in a stack of tick labels is removed")
+    ap.add_argument("--width-mm", type=float, default=WIDTH_MM,
+                    help="final width (183 for Extended Data; main figures are at most 180)")
+    ap.add_argument("--height-mm", type=float, default=HEIGHT_MM,
+                    help="final height limit (247 for Extended Data; main figures are at most 170)")
     ap.add_argument("--letter-min-size", type=float, default=9,
                     help="nominal size above which a bold single capital counts as a panel letter")
     ap.add_argument("--relabel", default="",
@@ -101,7 +109,7 @@ def main():
     page = doc[0]
     hidden = strip_hidden_layers(doc, page)
     clip = content_rect(page)
-    scale = min(WIDTH_MM * MM / clip.width, HEIGHT_MM * MM / clip.height)
+    scale = min(a.width_mm * MM / clip.width, a.height_mm * MM / clip.height)
 
     # Panel letters: bold, single capital A-H, large.
     letters = [s for s in spans(page)
@@ -130,24 +138,95 @@ def main():
                 x0, y0, x1, y1 = s["bbox"]
                 h = y1 - y0
                 page.add_redact_annot(fitz.Rect(x0, y0 + 0.35 * h, x1, y1 - 0.35 * h))
+    # Undersized text, if asked: remove and re-insert at --min-pt, keeping the label's alignment.
+    grow, thinned = [], []
+    if a.min_pt:
+        small = [s for s in spans(page) if s not in letters and s not in dropped
+                 and s["size"] * scale < a.min_pt]
+        size = a.min_pt / scale
+        horiz = lambda s: s["dir"] == (1.0, 0.0)
+        for s in small:
+            # Alignment: labels that share a left (or right) edge with two others are a
+            # left- (right-) aligned column of tick labels; anything else is centred.
+            lo, hi = (0, 2) if horiz(s) else (1, 3)
+            same = lambda k: sum(abs(o["bbox"][k] - s["bbox"][k]) < 0.3 and o["dir"] == s["dir"]
+                                 for o in small)
+            s["anchor"] = ("center" if not horiz(s) else
+                           "start" if same(lo) >= 3 else "end" if same(hi) >= 3 else "center")
+            font = "hebo" if "Bold" in s["font"] else "helv"
+            s["newlen"] = fitz.get_text_length(s["text"], fontname=font, fontsize=size)
+        # A stack of tick labels that would overlap at the new size: keep every other one.
+        keep = []
+        for s in sorted(small, key=lambda s: (round(s["bbox"][0]), -s["origin"][1])):
+            # (only text well under the limit: a label within 10% of it grows too little to collide)
+            if s["size"] * scale < 0.9 * a.min_pt and horiz(s) and s["anchor"] != "center" \
+                    and keep and horiz(keep[-1]) \
+                    and abs(keep[-1]["bbox"][0] - s["bbox"][0]) < 0.3 \
+                    and keep[-1]["origin"][1] - s["origin"][1] < size * 1.2:
+                thinned.append(s)
+            else:
+                keep.append(s)
+        grow, grow_obstacles = keep, []
+        # New origin of each enlarged label, then two nudges so enlarged labels stay clear:
+        # a centred horizontal label moves down if it would touch the label above it, and a
+        # vertical label moves right if it would touch horizontal labels on its left.
+        for s in grow:
+            x, y = s["origin"]
+            old = (s["bbox"][2] - s["bbox"][0]) if horiz(s) else (s["bbox"][3] - s["bbox"][1])
+            shift = {"start": 0, "center": (s["newlen"] - old) / 2, "end": s["newlen"] - old}[s["anchor"]]
+            s["new"] = (x - shift, y) if horiz(s) else (x, y + shift)
+        for o in spans(page):  # labels that keep their size are obstacles too
+            if not any(o["bbox"] == g["bbox"] and o["text"] == g["text"] for g in small) and horiz(o):
+                grow_obstacles.append(dict(o, new=o["origin"], newlen=o["bbox"][2] - o["bbox"][0]))
+        for s in grow:
+            x, y = s["new"]
+            if horiz(s) and s["anchor"] == "center":
+                above = [o["new"][1] for o in grow + grow_obstacles if o is not s and horiz(o)
+                         and 0 < y - o["new"][1] < size * 1.15
+                         and o["new"][0] < x + s["newlen"] and x < o["new"][0] + o["newlen"]]
+                if above:
+                    s["new"] = (x, max(above) + size * 1.15)
+            elif not horiz(s):
+                left = [o["new"][0] + o["newlen"] for o in grow if horiz(o)
+                        and o["new"][0] < x and o["new"][0] + o["newlen"] > x - 0.75 * size
+                        and y - s["newlen"] < o["new"][1] and o["new"][1] - 0.72 * size < y]
+                if left:
+                    s["new"] = (max(left) + 0.75 * size + 0.1 * size, y)
+        for s in small:
+            x0, y0, x1, y1 = s["bbox"]
+            if horiz(s):
+                h = y1 - y0
+                page.add_redact_annot(fitz.Rect(x0, y0 + 0.35 * h, x1, y1 - 0.35 * h))
+            else:
+                w = x1 - x0
+                page.add_redact_annot(fitz.Rect(x0 + 0.35 * w, y0, x1 - 0.35 * w, y1))
     # Text that a redaction box touches is removed too (stacked labels overlap); put it back.
     rects = [annot.rect for annot in page.annots(types=[fitz.PDF_ANNOT_REDACT])]
     collateral = [s for s in spans(page)
                   if not any(s["bbox"] == t["bbox"] and s["text"] == t["text"]
-                             for t in letters + shrink + dropped)
+                             for t in letters + shrink + dropped + grow + thinned)
                   and any(fitz.Rect(s["bbox"]).intersects(r) for r in rects)]
     page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
                           graphics=fitz.PDF_REDACT_LINE_ART_NONE,
                           text=fitz.PDF_REDACT_TEXT_REMOVE)
+    # A redaction box can touch a glyph box without removing the text; re-insert only what is gone.
+    left = {(s["text"], tuple(round(v) for v in s["bbox"])) for s in spans(page)}
+    collateral = [s for s in collateral
+                  if (s["text"], tuple(round(v) for v in s["bbox"])) not in left]
     page.insert_font(fontname="AB", fontfile=ARIAL_BOLD)
     for s in letters:
         letter = s["text"].strip()
         page.insert_text(fitz.Point(s["origin"]), relabel.get(letter, letter).lower(),
                          fontname="AB", fontsize=8 / scale, color=(0, 0, 0))
     for s in collateral:
+        x, y = s["origin"]
+        if s["dir"] == (0.0, -1.0):  # reading upwards
+            page.insert_text(fitz.Point(x, y), s["text"],
+                             fontname="hebo" if "Bold" in s["font"] else "helv",
+                             fontsize=s["size"], color=fitz.sRGB_to_pdf(s["color"]), rotate=90)
+            continue
         if s["dir"] != (1.0, 0.0):
             sys.exit(f"rotated text {s['text']!r} touches a redaction; re-inserting it is not supported")
-        x, y = s["origin"]
         # If the line stacked under this one was dropped, recentre this one in the freed space.
         below = [d for d in dropped if d["origin"][1] > y and
                  min(d["bbox"][2], s["bbox"][2]) > max(d["bbox"][0], s["bbox"][0])]
@@ -165,6 +244,22 @@ def main():
             x = centre - fitz.get_text_length(s["text"], fontname=font, fontsize=size) / 2
         page.insert_text(fitz.Point(x, y), s["text"], fontname=font, fontsize=size,
                          color=fitz.sRGB_to_pdf(s["color"]))
+
+    for s in grow:
+        font = "hebo" if "Bold" in s["font"] else "helv"
+        size = a.min_pt / scale
+        x, y = s["new"]
+        if s["dir"] == (1.0, 0.0):
+            page.insert_text(fitz.Point(x, y), s["text"], fontname=font, fontsize=size,
+                             color=fitz.sRGB_to_pdf(s["color"]))
+        elif s["dir"] == (0.0, -1.0):  # reading upwards
+            page.insert_text(fitz.Point(x, y), s["text"], fontname=font, fontsize=size,
+                             color=fitz.sRGB_to_pdf(s["color"]), rotate=90)
+        else:
+            sys.exit(f"text direction {s['dir']} of {s['text']!r} is not supported by --min-pt")
+    if grow:  # enlarged labels can reach past the first crop
+        clip = content_rect(page)
+        scale = min(a.width_mm * MM / clip.width, a.height_mm * MM / clip.height)
 
     # RGB TIFF at 300 ppi, alpha flattened onto white. Render before set_cropbox(): after it, page
     # coordinates are relative to the crop box, and `clip` would cut off the top and left edges.
@@ -189,6 +284,8 @@ def main():
           f"{''.join(sorted(s['text'].strip() for s in letters))}"
           + (f" (relabelled {a.relabel})" if relabel else "") + f"; text shrunk: {len(shrink)}"
           + (f"; dropped under 5 pt: {len(dropped)}" if a.drop_small else "")
+          + (f"; enlarged to {a.min_pt} pt: {len(grow)}, tick labels removed: "
+             f"{[s['text'] for s in thinned]}" if a.min_pt else "")
           + (f"; re-inserted (collateral): {len(collateral)}" if collateral else "")
           + (f"; hidden layers removed: {', '.join(hidden)}" if hidden else ""))
     if sizes:

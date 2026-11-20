@@ -19,6 +19,9 @@ PR sets Extended Data Fig. 7 at the Nature size (183 mm wide, 5-7 pt text, and
 Fig. 3 is drawn by `vendored/KaryoScope-ISCN/KaryoScope_assembly_contig_zoom_plot.py`
 through the vendored conductor (`vendored/KaryoScope-conductor`), from the
 `assembly_contig_zoom_plot_stacked_analyses` section of the configuration.
+`scripts/fig3_nature_layout.py IN.svg OUT.svg` then sets that drawing to the journal's
+main-figure size (171 x 168 mm): it shortens every track from 200 to 160 units, scaling
+positions linearly, closes the rows up, and sets the text to Arial at 6.75 to 8 pt.
 
 Changes from `1188850`:
 

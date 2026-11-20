@@ -47,7 +47,7 @@ KaryoScope-paper `scripts/`:
 |---|---|---|
 | `fig2/figure2_benchmarking.R` | `19f39bd6…34d28346` | rule `figure2_benchmarking` |
 | `edfig5/supplementary_CHM13_benchmarking.nature.R` | `2cc0fc3b…e394be83e`[^q] | draws the submitted ED Fig. 5: `supplementary_CHM13_benchmarking.R` with Nature styling (Arial, 5–7 pt text, 8 pt lowercase panel letters, 183 × 160 mm, legend and tile-label layout, no overall title), Quartz PDF device. Plotted data identical to the unmodified script |
-| `fig2/figure2_benchmarking.nature.R` | `8c3121f2…ae1b8aca` | draws the submitted Fig. 2: `figure2_benchmarking.R` at 183 mm, Arial, the published layout and lettering (bars in a and c, matrices in b and d), cells in percent, 5 pt bracket labels, Quartz PDF device. From KaryoScope-paper `main` (`5c11d87`) `scripts/` |
+| `fig2/figure2_benchmarking.nature.R` | `bfac6415…85d1a451` | draws the submitted Fig. 2: `figure2_benchmarking.R` at 180 x 168 mm (the journal's main-figure limit is 180 x 170 mm), Arial, the published layout and lettering (bars in a and c, matrices in b and d), cells in percent, 5 pt bracket labels, Quartz PDF device. From KaryoScope-paper `main` (`5c11d87`) `scripts/` |
 | `edfig5/supplementary_CHM13_benchmarking.R` | `587d359c…6b49b3bc` | the working-tree script, with the `tandem_repeat` category |
 | `edfig5/supplementary_CHM13_benchmarking_old.R` | `66069e78…582c6c87` | the earlier version, without `tandem_repeat`, that drew the first-submission figure |
 | `fig2/benchmark.smk` | `b41cf884…1a55aa90` | the working-tree rules file (uncommitted changes), for the rule definitions |
