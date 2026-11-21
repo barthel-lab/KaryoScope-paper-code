@@ -26,9 +26,12 @@ import fitz  # PyMuPDF
 from PIL import Image
 
 MM = 72 / 25.4
-# Arial for the text this script sets; macOS locations by default, override with $ARIAL_BOLD and $ARIAL.
-ARIAL_BOLD = os.environ.get("ARIAL_BOLD", "/System/Library/Fonts/Supplemental/Arial Bold.ttf")
-ARIAL = os.environ.get("ARIAL", "/System/Library/Fonts/Supplemental/Arial.ttf")
+# Arial for the text this script sets; macOS locations by default, each with an environment override.
+_FONTS = os.environ.get("ARIAL_DIR", "/System/Library/Fonts/Supplemental")
+ARIAL_BOLD = os.environ.get("ARIAL_BOLD", f"{_FONTS}/Arial Bold.ttf")
+ARIAL = os.environ.get("ARIAL", f"{_FONTS}/Arial.ttf")
+ARIAL_ITALIC = os.environ.get("ARIAL_ITALIC", f"{_FONTS}/Arial Italic.ttf")
+ARIAL_BOLD_ITALIC = os.environ.get("ARIAL_BOLD_ITALIC", f"{_FONTS}/Arial Bold Italic.ttf")
 WIDTH_MM, HEIGHT_MM, PPI = 183, 247, 300
 
 
@@ -103,6 +106,9 @@ def main():
                     help="nominal size above which a bold single capital counts as a panel letter")
     ap.add_argument("--relabel", default="",
                     help="re-letter panels, e.g. C=E,E=C (the .ai keeps its original letters)")
+    ap.add_argument("--arial", action="store_true",
+                    help="set all remaining text that is not Arial again in embedded Arial "
+                         "(same origin, size, colour and direction)")
     a = ap.parse_args()
     relabel = dict(pair.split("=") for pair in a.relabel.split(",")) if a.relabel else {}
 
@@ -266,6 +272,33 @@ def main():
                              color=fitz.sRGB_to_pdf(s["color"]), rotate=90)
         else:
             sys.exit(f"text direction {s['dir']} of {s['text']!r} is not supported by --min-pt")
+    # Any text still in another typeface (Helvetica from Illustrator): the same string in Arial at
+    # the same origin. Arial has Helvetica's advance widths, so labels keep their extent.
+    converted = []
+    if a.arial:
+        # All text comes off and goes back, including text that is Arial already: a redaction box
+        # also removes single characters of neighbouring labels, which would then be left in part.
+        before = list(spans(page))
+        converted = [s for s in before if "Arial" not in s["font"]]
+        for s in before:
+            page.add_redact_annot(fitz.Rect(s["bbox"]))
+        page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
+                              graphics=fitz.PDF_REDACT_LINE_ART_NONE,
+                              text=fitz.PDF_REDACT_TEXT_REMOVE)
+        if list(spans(page)):
+            sys.exit(f"--arial: text left after removal: {[s['text'] for s in spans(page)][:5]}")
+        faces = {"AR": ARIAL, "AB": ARIAL_BOLD, "AI": ARIAL_ITALIC, "ABI": ARIAL_BOLD_ITALIC}
+        for name, path in faces.items():
+            page.insert_font(fontname=name, fontfile=path)
+        for s in before:
+            bold = "Bold" in s["font"]
+            ital = "Italic" in s["font"] or "Oblique" in s["font"]
+            name = {(0, 0): "AR", (1, 0): "AB", (0, 1): "AI", (1, 1): "ABI"}[(bold, ital)]
+            turn = {(1.0, 0.0): 0, (0.0, -1.0): 90, (-1.0, 0.0): 180, (0.0, 1.0): 270}.get(s["dir"])
+            if turn is None:
+                sys.exit(f"--arial: text direction {s['dir']} of {s['text']!r} is not supported")
+            page.insert_text(fitz.Point(s["origin"]), s["text"], fontname=name, fontsize=s["size"],
+                             color=fitz.sRGB_to_pdf(s["color"]), rotate=turn)
     if grow:  # enlarged labels can reach past the first crop
         clip = content_rect(page)
         scale = min(a.width_mm * MM / clip.width, a.height_mm * MM / clip.height)
@@ -296,6 +329,7 @@ def main():
           + (f"; enlarged to {a.min_pt} pt: {len(grow)}, tick labels removed: "
              f"{[s['text'] for s in thinned]}" if a.min_pt else "")
           + (f"; re-inserted (collateral): {len(collateral)}" if collateral else "")
+          + (f"; set again in Arial: {len(converted)}" if a.arial else "")
           + (f"; hidden layers removed: {', '.join(hidden)}" if hidden else ""))
     if sizes:
         print(f"  text at final size: {min(sizes)}-{max(sizes)} pt; "

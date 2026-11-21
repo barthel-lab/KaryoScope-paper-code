@@ -24,14 +24,17 @@ python3 nature_ai_export.py FIGURE.ai OUT_PREFIX [flags]
 | figure | flags |
 |---|---|
 | Fig. 1 | `--relabel C=E,E=C` (the chromosome tree becomes c and the subtelomeric tree e, so panels are cited in order, while the `.ai` keeps its letters) |
-| Fig. 5 | `--min-pt 5 --width-mm 180 --height-mm 170` |
-| ED Fig. 1 | `--min-pt 5` (the scale-bar label "10 Mbp") |
-| ED Fig. 3, Supp. Fig. 1 | none |
-| ED Fig. 2 | `--max-pt 7` |
-| ED Fig. 9 | `--max-pt 7 --anchor center --drop-small` |
+| Fig. 5 | `--min-pt 5 --width-mm 180 --height-mm 170 --arial` |
+| ED Fig. 1 | `--min-pt 5 --arial` (the scale-bar label "10 Mbp") |
+| ED Fig. 3, Supp. Fig. 1 | `--arial` |
+| ED Fig. 2 | `--max-pt 7 --arial` |
+| ED Fig. 9 | `--max-pt 7 --anchor center --drop-small --arial` |
 
-The script requires PyMuPDF and Pillow. The replacement letters use Arial Bold,
-and with `--min-pt` all text the script sets is embedded Arial. Both fonts are
-read from the macOS locations by default. On other systems, set `ARIAL_BOLD` and
-`ARIAL` to the paths of `Arial Bold.ttf` and `Arial.ttf`. These overrides are the
-only change from the copy in the paper repository.
+`--arial` removes all text and sets the same strings again in embedded Arial
+(the Illustrator files carry Helvetica labels, and Nature asks for Arial).
+
+The script requires PyMuPDF and Pillow. The Arial files are read from the macOS
+font folder by default. On other systems, set `ARIAL_DIR` to the folder holding
+`Arial.ttf`, `Arial Bold.ttf`, `Arial Italic.ttf`, and `Arial Bold Italic.ttf`
+(or set `ARIAL`, `ARIAL_BOLD`, `ARIAL_ITALIC`, and `ARIAL_BOLD_ITALIC` one by one).
+These overrides are the only change from the copy in the paper repository.
