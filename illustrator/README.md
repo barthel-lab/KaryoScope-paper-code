@@ -25,7 +25,8 @@ python3 nature_ai_export.py FIGURE.ai OUT_PREFIX [flags]
 |---|---|
 | Fig. 1 | `--relabel C=E,E=C` (the chromosome tree becomes c and the subtelomeric tree e, so panels are cited in order, while the `.ai` keeps its letters) |
 | Fig. 5 | `--min-pt 5 --width-mm 180 --height-mm 170` |
-| ED Fig. 1, ED Fig. 3, Supp. Fig. 1 | none |
+| ED Fig. 1 | `--min-pt 5` (the scale-bar label "10 Mbp") |
+| ED Fig. 3, Supp. Fig. 1 | none |
 | ED Fig. 2 | `--max-pt 7` |
 | ED Fig. 9 | `--max-pt 7 --anchor center --drop-small` |
 
