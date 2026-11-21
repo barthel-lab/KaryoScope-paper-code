@@ -8,7 +8,7 @@
 # Panel d: CenSat confusion matrix with hierarchy brackets
 #
 # Nature version of KaryoScope-archive workflow/scripts/figure2_benchmarking.R (rule
-# figure2_benchmarking in benchmark.smk): 183 mm wide, Arial, published layout and lettering,
+# figure2_benchmarking in benchmark.smk): 180 x 168 mm, Arial, published layout and lettering,
 # Quartz PDF device. Writes the Fig. 2 PDF used for submission.
 #
 # Nature Biotechnology figure specs:
@@ -495,7 +495,7 @@ figure2 <- (
     (wrap_elements(full = pC) + labs(tag = "b") + tag_theme |
        wrap_elements(full = pD) + labs(tag = "d") + tag_theme)
 ) +
-  plot_layout(heights = c(1, 1.3))
+  plot_layout(heights = c(1, 1.45))
 
 
 # -- Save outputs ------------------------------------------------------------
@@ -510,13 +510,15 @@ pdf_device <- if (capabilities("aqua")) {
   warning("Quartz unavailable: falling back to cairo_pdf, whose glyph spacing is uneven at small sizes")
   cairo_pdf
 }
-FIG_HEIGHT_MM <- as.numeric(Sys.getenv("FIG_HEIGHT_MM", "200"))
+# Nature main figures: at most 180 mm wide and 170 mm high.
+FIG_WIDTH_MM  <- as.numeric(Sys.getenv("FIG_WIDTH_MM", "180"))
+FIG_HEIGHT_MM <- as.numeric(Sys.getenv("FIG_HEIGHT_MM", "168"))
 
 ggsave(file.path(OUT_DIR, "figure2_benchmarking.pdf"),
-       figure2, width = 183, height = FIG_HEIGHT_MM, units = "mm", device = pdf_device)
+       figure2, width = FIG_WIDTH_MM, height = FIG_HEIGHT_MM, units = "mm", device = pdf_device)
 
 ggsave(file.path(OUT_DIR, "figure2_benchmarking.png"),
-       figure2, width = 183, height = FIG_HEIGHT_MM, units = "mm", dpi = 600)
+       figure2, width = FIG_WIDTH_MM, height = FIG_HEIGHT_MM, units = "mm", dpi = 600)
 
 ggsave(file.path(OUT_DIR, "figure2A_repeatmasker_concordance.pdf"),
        pA, width = 120, height = 70, units = "mm", device = cairo_pdf)
