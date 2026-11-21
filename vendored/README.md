@@ -1,6 +1,6 @@
 # Vendored code
 
-Only the files that the Fig. 1b-e and Fig. 3 code paths import are copied. The
+Only the files that the Fig. 1b and Fig. 3 code paths import are copied. The
 set was found by running both figures with an import tracer (every module file
 loaded by the conductor process and by the figure script it launches). Each
 Python file starts with a header naming its source repository, commit, and
@@ -11,7 +11,7 @@ authors.
 | file | used by |
 |---|---|
 | `KaryoScope_assembly_contig_zoom_plot.py` | Fig. 3 (stacked zoom plot, `--panel-letters --hide-scale-bars --no-refine --zoom-levels 5000000,500000,100000`) |
-| `KaryoScope_assembly_figure.py` | Fig. 1b-e |
+| `KaryoScope_assembly_figure.py` | Fig. 1b (and the three-row render with the hierarchy trees) |
 | `KaryoScope_assembly_genome_plot.py` | imported by `KaryoScope_assembly_figure.py` |
 | `plot_featureset_tree_bars.py` | imported by `KaryoScope_assembly_figure.py` (hierarchy trees) |
 
@@ -23,9 +23,16 @@ are unchanged from `4e42a98`, the commit the first Fig. 3 render used
 (2026-08-28), to `68a9816`. KaryoScope-ISCN is
 GPL-3.0-or-later, and its `LICENSE` is included.
 
-One change: `plot_featureset_tree_bars.py` reads its resource directory from
-`$KS_RESOURCES` when set (the original fixes it to a directory under `$HOME`).
-Set it to `vendored/KaryoScope-archive-resources/resources`.
+Two changes:
+
+- `plot_featureset_tree_bars.py` reads its resource directory from
+  `$KS_RESOURCES` when set (the original fixes it to a directory under `$HOME`).
+  Set it to `vendored/KaryoScope-archive-resources/resources`.
+- `KaryoScope_assembly_figure.py` has the options that draw Fig. 1b at its final
+  size: `--chroms-per-row`, `--no-trees`, `--no-legend-colons`, `--chrom-gap`,
+  `--margin`, and `--width-mm` with `--chrom-pt`, `--hap-pt`, `--size-pt`, and
+  `--legend-pt` (see `hg002/README.md`). Without them its output is byte-identical
+  to that of the original (grid and packed layouts checked).
 
 ## karyoscope_conductor (`barthel-lab/KaryoScope-conductor` at `0732e96`)
 

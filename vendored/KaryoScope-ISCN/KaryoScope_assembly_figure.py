@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # Vendored from barthel-lab/KaryoScope-ISCN at commit 68a9816baab659c5b710f265c3713844cc2729d2, file KaryoScope_assembly_figure.py.
-# Copied unmodified. Authors (git log): Floris Barthel <fbarthel@tgen.org>.
+# Authors (git log): Floris Barthel <fbarthel@tgen.org>.
 # Part of the KaryoScope-paper-code snapshot; see vendored/README.md.
+# Changed in KaryoScope-paper-code (2026-11-21), for Fig. 1b at the Nature main-figure size:
+# --chroms-per-row, --no-trees and --width-mm (with the --*-pt text sizes). Without these
+# options the output is unchanged.
 """
 KaryoScope Assembly Figure - Combined letter-format visualization.
 
@@ -39,6 +42,32 @@ sys.path.insert(0, str(PROJECT_DIR))
 import KaryoScope_assembly_genome_plot as gp
 import plot_featureset_tree_bars as tp
 
+# Text sizes in drawing units (px). --width-mm replaces them with sizes that print at the
+# requested points at that width (see apply_final_size()).
+CHROM_FONT = 14        # chromosome names
+HAP_FONT = 14          # h1 / h2
+SIZE_FONT = 10         # Mb labels under the genome and centromere tracks
+LEGEND_FONT = 9        # scale legend
+LEGEND_LINE_H = 18
+LEGEND_LABEL_W = 70    # space reserved for the legend row labels
+LEGEND_BAR_H = 2
+LEGEND_TICK_H = 5
+LEGEND_TICK_SW = 0.8
+LEGEND_LABEL_PAD = 8
+LEGEND_COLONS = True    # 'Genome:' (False: 'Genome', as in the published Fig. 1b)
+LEGEND_BASELINE_DY = 3   # legend text baseline below the bar's top
+ROW_LABEL_SPACE = 40   # space below each row's tallest track for its Mb labels
+
+# Advance widths of Arial glyphs (em) for the characters of the Mb labels, to size the space
+# the rotated labels need
+_ARIAL_EM = {**{c: 0.556 for c in "0123456789"}, ".": 0.278, " ": 0.278, "M": 0.833,
+             "b": 0.556, "k": 0.5, "p": 0.556}
+
+
+def text_length(s, font_px):
+    return sum(_ARIAL_EM.get(c, 0.6) for c in s) * font_px
+
+
 # plot_featureset_tree_bars.py's built-in defaults point to sibling directories
 # in KaryoScope-ISCN (featuresets-hierarchy/, databases/KS_human_CHM13_v2/, ...)
 # which is where this script also lives -- so no path overrides are needed.
@@ -54,11 +83,11 @@ def draw_scale_legend(d, x, y, pixels_per_bp_genome, cen_ppb_fixed,
         Centromere: [====] 10 Mb  (4.9x zoom)
         Telomere:   [====] 25 kb  (2157x zoom)
     """
-    label_font = 9
-    bar_h = 2
-    tick_h = 5
-    label_x_pad = 8
-    line_height = 18
+    label_font = LEGEND_FONT
+    bar_h = LEGEND_BAR_H
+    tick_h = LEGEND_TICK_H
+    label_x_pad = LEGEND_LABEL_PAD
+    line_height = LEGEND_LINE_H
 
     rows = [
         ("Genome:", 50_000_000, pixels_per_bp_genome, "Mb", False),
@@ -66,22 +95,22 @@ def draw_scale_legend(d, x, y, pixels_per_bp_genome, cen_ppb_fixed,
         ("Telomere:", 25_000, telo_ppb_fixed, "kb", True),
     ]
 
-    label_width = 70  # space reserved for the row labels
+    label_width = LEGEND_LABEL_W  # space reserved for the row labels
     bar_x = x + label_width
 
     for i, (row_label, length_bp, ppb, unit, show_zoom) in enumerate(rows):
         ry = y + i * line_height
-        d.append(draw.Text(row_label, font_size=label_font, x=x, y=ry + 3,
+        d.append(draw.Text(row_label if LEGEND_COLONS else row_label.rstrip(":"), font_size=label_font, x=x, y=ry + LEGEND_BASELINE_DY,
                            fill=text_color, font_family="sans-serif",
                            text_anchor="start"))
         bar_w = length_bp * ppb
         d.append(draw.Rectangle(bar_x, ry, bar_w, bar_h, fill=text_color))
         d.append(draw.Line(bar_x, ry - tick_h / 2 + bar_h / 2,
                            bar_x, ry + tick_h / 2 + bar_h / 2,
-                           stroke=text_color, stroke_width=0.8))
+                           stroke=text_color, stroke_width=LEGEND_TICK_SW))
         d.append(draw.Line(bar_x + bar_w, ry - tick_h / 2 + bar_h / 2,
                            bar_x + bar_w, ry + tick_h / 2 + bar_h / 2,
-                           stroke=text_color, stroke_width=0.8))
+                           stroke=text_color, stroke_width=LEGEND_TICK_SW))
         if unit == "Mb":
             length_str = f"{length_bp // 1_000_000} Mb"
         else:
@@ -93,7 +122,7 @@ def draw_scale_legend(d, x, y, pixels_per_bp_genome, cen_ppb_fixed,
         else:
             label = length_str
         d.append(draw.Text(label, font_size=label_font,
-                           x=bar_x + bar_w + label_x_pad, y=ry + 3,
+                           x=bar_x + bar_w + label_x_pad, y=ry + LEGEND_BASELINE_DY,
                            fill=text_color, font_family="sans-serif",
                            text_anchor="start"))
 
@@ -125,6 +154,29 @@ def parse_args():
     parser.add_argument("--subtelo-span", type=int, default=25_000)
     parser.add_argument("--layout", default="grid", choices=["grid", "packed"],
                         help="Layout: grid (3 rows + trees) or packed (shelf bin-packing)")
+    # Final-size options (grid layout)
+    parser.add_argument("--chroms-per-row", type=int, default=None,
+                        help="grid: chromosomes per row (default: 8, 8, then the rest)")
+    parser.add_argument("--no-trees", action="store_true",
+                        help="grid: leave out the hierarchy trees (the scale legend goes "
+                             "below the last row)")
+    parser.add_argument("--chrom-gap", type=float, default=None,
+                        help="grid: gap between chromosomes, drawing units (default: 30)")
+    parser.add_argument("--margin", type=float, default=None,
+                        help="grid: page margin, drawing units (default: 30)")
+    parser.add_argument("--width-mm", type=float, default=None,
+                        help="grid: write the page this many mm wide, with text sized in "
+                             "printed points by the --*-pt options")
+    parser.add_argument("--no-legend-colons", action="store_true",
+                        help="scale legend rows read 'Genome', not 'Genome:'")
+    parser.add_argument("--chrom-pt", type=float, default=6.5,
+                        help="with --width-mm: chromosome names (pt)")
+    parser.add_argument("--hap-pt", type=float, default=5.5,
+                        help="with --width-mm: h1/h2 labels (pt)")
+    parser.add_argument("--size-pt", type=float, default=5.0,
+                        help="with --width-mm: Mb labels (pt)")
+    parser.add_argument("--legend-pt", type=float, default=6.0,
+                        help="with --width-mm: scale legend (pt)")
     # Hierarchy tree data overrides (default: ISCN's built-in data)
     parser.add_argument("--hierarchy-dir", default=None,
                         help="Override hierarchy (v1) directory (default: ISCN built-in)")
@@ -249,7 +301,7 @@ def draw_genome_row(d, chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths
 
         d.append(draw.Rectangle(cl_x, y_offset + gp.CHROM_LINE_Y, cl_w, 1,
                                 fill=text_color))
-        d.append(draw.Text(chrom, font_size=14,
+        d.append(draw.Text(chrom, font_size=CHROM_FONT,
                            x=cl_x + cl_w / 2, y=y_offset + gp.CHROM_LABEL_Y,
                            fill=text_color, font_family="sans-serif",
                            text_anchor="middle"))
@@ -259,7 +311,7 @@ def draw_genome_row(d, chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths
             d.append(draw.Rectangle(lx, y_offset + gp.HAP_LINE_Y, lw, 1,
                                     fill=text_color))
             hap_text = f"h{hap[3:]}" if hap.startswith("hap") else hap
-            d.append(draw.Text(hap_text, font_size=14,
+            d.append(draw.Text(hap_text, font_size=HAP_FONT,
                                x=lx + lw / 2, y=y_offset + gp.HAP_LABEL_Y,
                                fill=text_color, font_family="sans-serif",
                                text_anchor="middle"))
@@ -417,7 +469,7 @@ def draw_genome_row(d, chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths
             genome_label = gp.format_size_label(scaf_len)
             glx = pos["genome_x"] + gp.GENOME_TRACK_W / 2
             gly = gy0 + scaf_h + label_pad
-            d.append(draw.Text(genome_label, font_size=10, x=glx, y=gly,
+            d.append(draw.Text(genome_label, font_size=SIZE_FONT, x=glx, y=gly,
                                fill=text_color, font_family="sans-serif",
                                text_anchor="end", dominant_baseline="middle",
                                transform=f"rotate(-90 {glx} {gly})"))
@@ -426,7 +478,7 @@ def draw_genome_row(d, chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths
                 cen_label = gp.format_size_label(cen_span)
                 clx = pos["cen_x"] + gp.TRACK_W / 2
                 cly = pos["cen_panel_y"] + this_cen_h + label_pad
-                d.append(draw.Text(cen_label, font_size=10, x=clx, y=cly,
+                d.append(draw.Text(cen_label, font_size=SIZE_FONT, x=clx, y=cly,
                                    fill=text_color, font_family="sans-serif",
                                    text_anchor="end", dominant_baseline="middle",
                                    transform=f"rotate(-90 {clx} {cly})"))
@@ -500,6 +552,9 @@ def main():
         tp.V2_OUTPUT_DIR = Path(args.v2_output_dir)
 
     pixels_per_bp_genome = args.scale / 1_000_000
+    if args.no_legend_colons:
+        global LEGEND_COLONS
+        LEGEND_COLONS = False
     background = args.background
     text_color = "black" if background == "white" else "white"
     sex = gp.normalize_sex(args.sex)
@@ -569,18 +624,19 @@ def main():
         all_chrom_features[chrom] = chrom_feats
 
     # Load hierarchy trees
-    print("Loading hierarchy trees...")
-    if args.hierarchy_version == "v2":
-        tree_fs = tp.load_all_featuresets_v2()
-    else:
-        tree_fs = tp.load_all_featuresets()
-    for root in tree_fs.values():
-        tp._apply_color_overrides(root)
-
     tree_panels = {}
-    for fs_name in ["chromosome", "region", "subtelomeric"]:
-        if fs_name in tree_fs:
-            tree_panels[fs_name] = tp.draw_panel(tree_fs[fs_name], fs_name)
+    if not args.no_trees:
+        print("Loading hierarchy trees...")
+        if args.hierarchy_version == "v2":
+            tree_fs = tp.load_all_featuresets_v2()
+        else:
+            tree_fs = tp.load_all_featuresets()
+        for root in tree_fs.values():
+            tp._apply_color_overrides(root)
+
+        for fs_name in ["chromosome", "region", "subtelomeric"]:
+            if fs_name in tree_fs:
+                tree_panels[fs_name] = tp.draw_panel(tree_fs[fs_name], fs_name)
 
     MARGIN = 30
 
@@ -618,17 +674,28 @@ def draw_grid_layout(d, args, chrom_draw_haps, chrom_map, scaffold_lengths,
     pixels_per_bp_genome = args.scale / 1_000_000
     text_color = "black" if background == "white" else "white"
 
-    # Layout: 3 rows of chromosomes + 1 row of hierarchies
-    rows = [
-        [c for c in all_chroms if c in chrom_draw_haps][:8],
-        [c for c in all_chroms if c in chrom_draw_haps][8:16],
-        [c for c in all_chroms if c in chrom_draw_haps][16:],
-    ]
+    drawable_all = [c for c in all_chroms if c in chrom_draw_haps]
+    if args.chroms_per_row:
+        n = args.chroms_per_row
+        rows = [drawable_all[i:i + n] for i in range(0, len(drawable_all), n)]
+    else:
+        # Layout: 3 rows of chromosomes + 1 row of hierarchies
+        rows = [
+            drawable_all[:8],
+            drawable_all[8:16],
+            drawable_all[16:],
+        ]
 
-    CHROM_GAP_FIG = 30
-    MARGIN = 30
+    CHROM_GAP_FIG = 30 if args.chrom_gap is None else args.chrom_gap
+    MARGIN = 30 if args.margin is None else args.margin
     ROW_GAP = 15
     TREE_GAP = 20
+
+    def hap_box_h(scaf):
+        scaf_h = scaffold_lengths[scaf] * pixels_per_bp_genome
+        cen_s, cen_e = centromere_coords.get(scaf, (None, None))
+        this_cen_h = (cen_e - cen_s) * cen_ppb_fixed if cen_s is not None else 0
+        return max(scaf_h, this_cen_h)
 
     # Compute genome row heights (max scaffold height per row)
     row_heights = []
@@ -638,20 +705,8 @@ def draw_grid_layout(d, args, chrom_draw_haps, chrom_map, scaffold_lengths,
             for h in chrom_draw_haps.get(c, []):
                 scaf = chrom_map.get(c, {}).get(h)
                 if scaf and scaf in scaffold_lengths:
-                    scaf_len = scaffold_lengths[scaf]
-                    scaf_h = scaf_len * pixels_per_bp_genome
-                    cen_s, cen_e = centromere_coords.get(scaf, (None, None))
-                    this_cen_h = (cen_e - cen_s) * cen_ppb_fixed if cen_s is not None else 0
-                    max_h = max(max_h, scaf_h, this_cen_h)
+                    max_h = max(max_h, hap_box_h(scaf))
         row_heights.append(max_h)
-
-    # Tree panel heights
-    tree_max_h = max(tp_h for _, _, tp_h in tree_panels.values()) if tree_panels else 0
-
-    # Total image dimensions (extra ~50px for the scale legend below trees)
-    SCALE_LEGEND_H = 70
-    total_height = (MARGIN + sum(gp.INITIAL_Y + rh + 40 for rh in row_heights) +
-                    len(rows) * ROW_GAP + tree_max_h + SCALE_LEGEND_H + MARGIN + 20)
 
     # Compute actual row widths accounting for multi-scaffold chroms
     # (each chrom width depends on its number of haplotypes)
@@ -669,12 +724,7 @@ def draw_grid_layout(d, args, chrom_draw_haps, chrom_map, scaffold_lengths,
             scaf = chrom_map.get(chrom, {}).get(hap)
             if not scaf or scaf not in scaffold_lengths:
                 continue
-            scaf_len = scaffold_lengths[scaf]
-            scaf_h = scaf_len * pixels_per_bp_genome
-            cen_s, cen_e = centromere_coords.get(scaf, (None, None))
-            this_cen_h = (cen_e - cen_s) * cen_ppb_fixed if cen_s is not None else 0
-            eff_h = max(scaf_h, this_cen_h)
-            if subtelo_h * 2 > eff_h:
+            if subtelo_h * 2 > hap_box_h(scaf):
                 extra += gp.TRACK_W + gp.SUBTELO_OFFSET_GAP
         return base_w + extra
 
@@ -689,8 +739,31 @@ def draw_grid_layout(d, args, chrom_draw_haps, chrom_map, scaffold_lengths,
             else:
                 rw += CHROM_GAP_FIG
         max_row_width = max(max_row_width, rw)
-    tree_total_w = sum(tw for _, tw, _ in tree_panels.values()) + TREE_GAP * 2
+    tree_total_w = sum(tw for _, tw, _ in tree_panels.values()) + TREE_GAP * 2 if tree_panels else 0
     total_width = max(max_row_width, tree_total_w) + MARGIN * 2
+
+    # --width-mm: text sizes in printed points at that page width
+    row_label_space = [ROW_LABEL_SPACE] * len(rows)
+    if args.width_mm:
+        apply_final_size(args, total_width)
+        row_label_space = [label_space(r, chrom_draw_haps, chrom_map, scaffold_lengths,
+                                       centromere_coords, pixels_per_bp_genome,
+                                       cen_ppb_fixed, genome_height, rh)
+                           for r, rh in zip(rows, row_heights)]
+
+    # Tree panel heights
+    tree_max_h = max(tp_h for _, _, tp_h in tree_panels.values()) if tree_panels else 0
+
+    # Total image dimensions (extra ~50px for the scale legend below trees)
+    if tree_panels:
+        SCALE_LEGEND_H = 70
+        total_height = (MARGIN + sum(gp.INITIAL_Y + rh + ls for rh, ls in zip(row_heights, row_label_space)) +
+                        len(rows) * ROW_GAP + tree_max_h + SCALE_LEGEND_H + MARGIN + 20)
+    else:
+        # legend: first bar one text height below the last row, three rows, then the margin
+        total_height = (MARGIN + sum(gp.INITIAL_Y + rh + ls for rh, ls in zip(row_heights, row_label_space)) +
+                        (len(rows) - 1) * ROW_GAP + LEGEND_FONT + 2 * LEGEND_LINE_H +
+                        max(LEGEND_BAR_H, LEGEND_TICK_H) + 0.3 * LEGEND_FONT + MARGIN)
 
     # Create drawing
     d = draw.Drawing(total_width, total_height, id_prefix="fig")
@@ -709,8 +782,17 @@ def draw_grid_layout(d, args, chrom_draw_haps, chrom_map, scaffold_lengths,
             x_offset=MARGIN, y_offset=current_y, chrom_gap=CHROM_GAP_FIG,
             gbanding_dir=gbanding_dir, gbanding_position=gbanding_position,
         )
-        current_y += gp.INITIAL_Y + row_heights[row_idx] + 40 + ROW_GAP
+        current_y += gp.INITIAL_Y + row_heights[row_idx] + row_label_space[row_idx] + ROW_GAP
         print(f"  Row {row_idx + 1}: {', '.join(row_chroms)}")
+
+    telo_ppb_fixed = subtelo_h / args.subtelo_span if args.subtelo_span > 0 else 0
+    if not tree_panels:
+        legend_y = current_y - ROW_GAP + LEGEND_FONT
+        draw_scale_legend(d, MARGIN, legend_y, pixels_per_bp_genome, cen_ppb_fixed,
+                          telo_ppb_fixed, text_color)
+        report_zoom(pixels_per_bp_genome, cen_ppb_fixed, telo_ppb_fixed)
+        save_drawing(d, args.output, total_width, total_height, args.width_mm)
+        return
 
     # Draw hierarchy trees
     print("Drawing hierarchy trees...")
@@ -729,18 +811,82 @@ def draw_grid_layout(d, args, chrom_draw_haps, chrom_map, scaffold_lengths,
         max_tree_bottom = max(max_tree_bottom, tree_y + th)
 
     # Scale legend below the trees
-    telo_ppb_fixed = subtelo_h / args.subtelo_span if args.subtelo_span > 0 else 0
     draw_scale_legend(d, MARGIN, max_tree_bottom + 20,
                       pixels_per_bp_genome, cen_ppb_fixed,
                       telo_ppb_fixed, text_color)
+    report_zoom(pixels_per_bp_genome, cen_ppb_fixed, telo_ppb_fixed)
 
-    save_drawing(d, args.output, total_width, total_height)
+    save_drawing(d, args.output, total_width, total_height, args.width_mm)
 
 
-def save_drawing(d, output, total_width, total_height):
+def report_zoom(pixels_per_bp_genome, cen_ppb_fixed, telo_ppb_fixed):
+    """Print the zoom factors the scale legend shows."""
+    if pixels_per_bp_genome > 0:
+        print(f"Zoom factors: centromere {cen_ppb_fixed / pixels_per_bp_genome:.1f}x, "
+              f"telomere {telo_ppb_fixed / pixels_per_bp_genome:.0f}x")
+
+
+def apply_final_size(args, total_width):
+    """Set every text size so it prints at the requested points on a page args.width_mm wide,
+    and fit the chromosome/haplotype header rows to those sizes."""
+    global CHROM_FONT, HAP_FONT, SIZE_FONT, LEGEND_FONT, LEGEND_LINE_H, LEGEND_LABEL_W
+    global LEGEND_BAR_H, LEGEND_TICK_H, LEGEND_TICK_SW, LEGEND_LABEL_PAD, LEGEND_BASELINE_DY
+    px_per_pt = total_width / (args.width_mm * 72 / 25.4)
+    CHROM_FONT = round(args.chrom_pt * px_per_pt, 3)
+    HAP_FONT = round(args.hap_pt * px_per_pt, 3)
+    SIZE_FONT = round(args.size_pt * px_per_pt, 3)
+    LEGEND_FONT = round(args.legend_pt * px_per_pt, 3)
+    LEGEND_LINE_H = round(1.5 * LEGEND_FONT, 3)
+    LEGEND_LABEL_W = round(6.0 * LEGEND_FONT, 3)
+    LEGEND_BAR_H = round(0.8 * px_per_pt, 3)       # 0.8 pt bar, 0.4 pt end ticks
+    LEGEND_TICK_SW = round(0.4 * px_per_pt, 3)
+    LEGEND_TICK_H = round(0.6 * LEGEND_FONT, 3)
+    LEGEND_LABEL_PAD = round(0.6 * LEGEND_FONT, 3)
+    LEGEND_BASELINE_DY = round(LEGEND_BAR_H / 2 + 0.36 * LEGEND_FONT, 3)
+    # Header: chromosome name, its rule, h1/h2, their rule, then the tracks (cap height 0.72 em)
+    gp.CHROM_LABEL_Y = round(0.75 * CHROM_FONT, 3)
+    gp.CHROM_LINE_Y = round(gp.CHROM_LABEL_Y + 0.3 * CHROM_FONT, 3)
+    gp.HAP_LABEL_Y = round(gp.CHROM_LINE_Y + 1 + 0.3 * HAP_FONT + 0.75 * HAP_FONT, 3)
+    gp.HAP_LINE_Y = round(gp.HAP_LABEL_Y + 0.3 * HAP_FONT, 3)
+    gp.INITIAL_Y = round(gp.HAP_LINE_Y + 12, 3)
+    print(f"Final size: {args.width_mm} mm wide; {px_per_pt:.3f} drawing units per printed pt")
+
+
+def label_space(row_chroms, chrom_draw_haps, chrom_map, scaffold_lengths, centromere_coords,
+                pixels_per_bp_genome, cen_ppb_fixed, genome_height, row_h):
+    """Room below a row's tallest track for the rotated Mb labels (positions as in
+    draw_genome_row: genome label under the genome track, centromere label under its panel)."""
+    pad = 4
+    bottom = row_h
+    for c in row_chroms:
+        for h in chrom_draw_haps.get(c, []):
+            scaf = chrom_map.get(c, {}).get(h)
+            if not scaf or scaf not in scaffold_lengths:
+                continue
+            scaf_len = scaffold_lengths[scaf]
+            scaf_h = scaf_len * pixels_per_bp_genome
+            cen_s, cen_e = centromere_coords.get(scaf, (None, None))
+            cen_h = (cen_e - cen_s) * cen_ppb_fixed if cen_s is not None else 0
+            gy_off = (cen_h - scaf_h) / 2 if cen_h > scaf_h else 0
+            bottom = max(bottom, gy_off + scaf_h + pad +
+                         text_length(gp.format_size_label(scaf_len), SIZE_FONT))
+            if cen_s is not None and cen_h > 0:
+                cen_mid = gy_off + (cen_s + cen_e) / 2 * pixels_per_bp_genome
+                cpy = max(0, min(genome_height - cen_h, cen_mid - cen_h / 2))
+                bottom = max(bottom, cpy + cen_h + pad +
+                             text_length(gp.format_size_label(cen_e - cen_s), SIZE_FONT))
+    return bottom - row_h + 6
+
+
+def save_drawing(d, output, total_width, total_height, width_mm=None):
+    if width_mm:
+        # print size in mm; the viewBox keeps the drawing units
+        d.set_render_size(f"{width_mm}mm", f"{round(width_mm * total_height / total_width, 4)}mm")
     d.save_svg(output)
     print(f"\nSaved: {output}")
     print(f"Image size: {total_width:.0f} x {total_height:.0f} px")
+    if width_mm:
+        print(f"Print size: {width_mm} x {width_mm * total_height / total_width:.1f} mm")
     out_png = Path(output).with_suffix(".png")
     from karyoplot.svg.export import svg_to_png
     if svg_to_png(output, str(out_png), dpi=300, quiet=True):

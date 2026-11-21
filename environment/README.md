@@ -7,7 +7,7 @@ exported file and the check re-run (2026-10-20, Linux x86_64).
 | file | analysis | check run in it |
 |---|---|---|
 | `centromere.yml` | `centromere/` (Fig. 5a, 5c, 5d) | steps 1-7 (48-row outlier table identical, 4,551 haplotypes, 821 minor) |
-| `figures.yml` | `vendored/` + `hg002/` (Fig. 1b-e), Fig. 3, `benchmarks/figS6/plot_figS6.py` (Extended Data (ED) Fig. 6), and the ED Fig. 4 panel scripts | renders compared with the original code and the published files |
+| `figures.yml` | `vendored/` + `hg002/` (Fig. 1b), Fig. 3, `benchmarks/figS6/plot_figS6.py` (Extended Data (ED) Fig. 6), and the ED Fig. 4 panel scripts | renders compared with the original code and the published files |
 | `benchmarks-r.yml` | `benchmarks/fig2/`, `benchmarks/edfig5/` (R) | ED Fig. 5 and Fig. 2 re-rendered |
 | `d4z4.yml` | `d4z4/` (Fig. 4, ED Fig. 8, Supplementary Fig. 2) | `make_figures.py` (SVGs identical to the HPRC-D4Z4 `77e804b` render) |
 

@@ -8,6 +8,17 @@
 > `.`), `plot_d4z4_arrays.py`, `plot_hmm_correlation.py`, and
 > `generate_notable_samples_report.py` are relative to the working directory, and
 > cluster paths use the variables in the repository README.
+> Fig. 4 is a main figure (at most 180 x 170 mm). Its block in `figures_layout.yaml` has its
+> own `output: {width_mm: 180}` and `track_view: {height_ratio: 2.2}`, which override the
+> shared blocks (183 mm and 3.0), so its page is 180 x 167.1 mm with text at 5.1-6.8 pt. The
+> track views are 81.5 points tall instead of 106.6, panels c-f, the colour legend, b, and g
+> move up by the height saved, and the axes of h are 150 points square instead of 194.86
+> (centred in the panel, with the outlier labels and legend moved with them). The ruler tick
+> labels and array captions keep the sizes they have at height ratio 3.0 (`tick_font: 24`,
+> `array_label_font: 27` in the fig4 `track_style`). Every panel, haplotype, and label of the
+> submitted Fig. 4 is kept, and `figure_data.tsv` is unchanged. Extended Data Fig. 8 and
+> Supplementary Fig. 2 are unchanged (same SVG files, and the same PNG pixels as the submitted
+> files).
 > Two inputs of the figures are not in a public location: the HMM repeat counts
 > (`Hailey-notes/HPRC_chr4_counts.xlsx`) and the pLAM BLAST calls behind
 > `results/d4z4_array_coordinates.plam.tsv`. With them, `make_figures.py` run in
@@ -151,6 +162,8 @@ cell, n per panel, r, the labelled outliers, each shown haplotype's category).
   arrangement, in points from the top-left of the figure. These were read with PyMuPDF from the
   published Illustrator files (`KaryoScope-paper/figures/fig5/D4Z4-*.ai`), including the few
   element-number labels that were removed there to avoid crowding (`hidden_element_labels`).
+  A figure's block may hold its own `output:` and `track_view:` entries, which override the
+  shared ones (Fig. 4 uses this for the main-figure size).
 - The SVGs keep text as text (`svg.fonttype = none`). Fonts are Helvetica for track views,
   legends and the schematic and Arial for the matplotlib plots, as in the published files.
 - Colours are the generators' RGB colours. The published files were exported from a CMYK

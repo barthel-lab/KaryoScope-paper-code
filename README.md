@@ -33,8 +33,8 @@ Supplementary.
 
 | item | directory | reproducible from here |
 |---|---|---|
-| Fig. 1a | — | no: schematic |
-| Fig. 1b–e | `hg002/` | panels yes (final layout assembled in Illustrator¹) |
+| Fig. 1a | — | no: schematic (placed from the Illustrator file by `hg002/scripts/compose_fig1.py`) |
+| Fig. 1b | `hg002/` | yes |
 | Fig. 2 | `benchmarks/fig2/` | yes |
 | Fig. 3 | `robs/` | yes, with dbGaP access² |
 | Fig. 4 | `d4z4/` | yes³ |

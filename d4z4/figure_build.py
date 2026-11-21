@@ -81,18 +81,22 @@ class FigureContext:
         self.sans = layout['fonts']['sans']
         self.plot_font = layout['fonts']['plot']
         self.df = fd.with_config(cfg)
-        tv = layout['track_view']
+        # A figure's own output: and track_view: blocks override the shared ones (Fig. 4 is a
+        # main figure: 180 mm wide, and its tracks are shorter so the page fits 170 mm)
+        self.output = {**layout.get('output', {}), **self.L.get('output', {})}
+        self.tv = {**layout['track_view'], **self.L.get('track_view', {})}
+        tv = self.tv
         self.track_style = dict(tv['style'], font_family=self.sans, **self.L.get('track_style', {}))
         self.renderer = TrackRenderer(cfg, self.df, self.track_style)
         # output.width_mm: the page is written at that width (the layout stays in published-page
         # points), so every size in the layout prints at `scale` times its value
         w_pt = self.L['size_pt'][0]
-        width_mm = layout.get('output', {}).get('width_mm')
+        width_mm = self.output.get('width_mm')
         self.scale = width_mm / (w_pt / 72 * 25.4) if width_mm else 1.0
 
     # -- track views --------------------------------------------------------------------
     def track_view(self, contig, column, ruler_y, tag):
-        tv = self.layout['track_view']
+        tv = self.tv
         hap = fd.haplotype_id(self.df, contig)
         hidden = self.layout.get('hidden_element_labels', {}).get(contig, [])
         # The drawing is scaled by s so that its track box spans the column
@@ -167,7 +171,7 @@ class FigureContext:
     def letters(self):
         fonts = self.layout['fonts']
         size = fonts['letter_size']
-        if 'output' in self.layout and fonts.get('letter_size_final'):
+        if self.output and fonts.get('letter_size_final'):
             size = round(fonts['letter_size_final'] / self.scale, 3)
         printed = self.L.get('printed_letters', {})
         for letter, (x, y) in self.L['letters'].items():
@@ -177,7 +181,7 @@ class FigureContext:
         w, h = self.L['size_pt']
         stem = self.out / self.name
         png_px = self.L['png_px']
-        ppi = self.layout.get('output', {}).get('ppi')
+        ppi = self.output.get('ppi')
         if ppi:
             png_px = [round(w * self.scale / 72 * ppi), round(h * self.scale / 72 * ppi)]
         fc.compose(self.items, w, h, f'{stem}.svg', scale=self.scale)
