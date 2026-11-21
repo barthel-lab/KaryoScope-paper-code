@@ -196,7 +196,7 @@ def build(all_data, present_feats, draw_title=False):
     assembled figure gets its panel letter instead.
     """
     n_feats = len(present_feats)
-    font_family = "sans-serif"
+    font_family = "Arial"
     font_size_title = 10
     font_size_label = 10
     font_size_axis = 10    # the 0.01%/0.1%/1%/10% ticks

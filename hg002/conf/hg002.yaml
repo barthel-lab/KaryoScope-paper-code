@@ -55,8 +55,10 @@ assembly_figure_analyses:
       layout: grid
 
   # Fig. 1b at the Nature main-figure size (2026-11-21): the same inputs and window file, drawn
-  # in two rows of 12 chromosomes without the hierarchy trees, 180 mm wide with text at 5-7 pt.
-  # scripts/compose_fig1.py places panel a above it.
+  # in two rows of 12 chromosomes without the hierarchy trees, 180 mm wide with text at 5-7 pt;
+  # rows justified to the full width, the scale legend in the free space of row 2, and tracks
+  # drawn at 1.76 px/Mb (1.4 above) so the figure fills 170 mm. scripts/compose_fig1.py places
+  # panel a above it.
   - name: "HG002 Fig 1b two rows"
     sample: HG002
     output: results/assembly_figure/HG002_fig1b_two_rows.svg
@@ -71,3 +73,6 @@ assembly_figure_analyses:
       no_legend_colons: true
       width_mm: 180
       margin: 6
+      scale: 1.76
+      justify_rows: true
+      legend_in_row: true

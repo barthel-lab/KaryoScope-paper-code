@@ -167,6 +167,13 @@ def parse_args():
     parser.add_argument("--width-mm", type=float, default=None,
                         help="grid: write the page this many mm wide, with text sized in "
                              "printed points by the --*-pt options")
+    parser.add_argument("--justify-rows", action="store_true",
+                        help="grid: spread each row's chromosomes so every row runs from the left "
+                             "margin to the right margin, with equal gaps between chromosomes")
+    parser.add_argument("--legend-in-row", action="store_true",
+                        help="grid, with --no-trees: put the scale legend in the free space of the "
+                             "last row (under the chromosomes that end highest) instead of a band "
+                             "below it; stops if it does not fit")
     parser.add_argument("--no-legend-colons", action="store_true",
                         help="scale legend rows read 'Genome', not 'Genome:'")
     parser.add_argument("--chrom-pt", type=float, default=6.5,
@@ -219,23 +226,19 @@ def get_gbanding_height(gbanding_path, display_width):
     return display_width * im.height / im.width
 
 
-def draw_genome_row(d, chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths,
-                    centromere_coords, all_chrom_features, colors,
-                    pixels_per_bp_genome, genome_height, subtelo_h, cen_ppb_fixed,
-                    max_cen_panel_h, subtelo_span, sex, background,
-                    x_offset, y_offset, chrom_gap,
-                    gbanding_dir=None, gbanding_position="above"):
-    """Draw a row of chromosomes at given position. Returns row width."""
-    text_color = "black" if background == "white" else "white"
-    haplotypes = ["hap1", "hap2"]
+def cen_on_right(sex, chrom, hap):
+    if sex == "male" and chrom == "chrX" and hap.startswith("hap2"):
+        return True
+    if sex == "male" and chrom == "chrY" and hap.startswith("hap1"):
+        return False
+    return hap.startswith("hap1")
 
-    def _cen_on_right(chrom, hap):
-        if sex == "male" and chrom == "chrX" and hap.startswith("hap2"):
-            return True
-        if sex == "male" and chrom == "chrY" and hap.startswith("hap1"):
-            return False
-        return hap.startswith("hap1")
 
+def row_positions(chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths,
+                  centromere_coords, pixels_per_bp_genome, subtelo_h, cen_ppb_fixed,
+                  sex, x_offset, chrom_gap):
+    """X positions of a row: chromosome starts, haplotype starts, and each haplotype's
+    header extent (label_x, label_w). Also returns the row width."""
     # Compute X positions for this row
     cx = x_offset
     chrom_positions = {}  # chrom -> x_start
@@ -251,7 +254,7 @@ def draw_genome_row(d, chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths
 
         hx = cx
         for i, hap in enumerate(draw_haps):
-            is_h1 = _cen_on_right(chrom, hap)
+            is_h1 = cen_on_right(sex, chrom, hap)
             # Check if offset needed
             scaf = chrom_map.get(chrom, {}).get(hap)
             has_off = False
@@ -288,6 +291,26 @@ def draw_genome_row(d, chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths
             cx = hx + chrom_gap
 
     row_width = cx - chrom_gap - x_offset
+    return chrom_positions, hap_positions, hap_label_info, row_width
+
+
+def draw_genome_row(d, chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths,
+                    centromere_coords, all_chrom_features, colors,
+                    pixels_per_bp_genome, genome_height, subtelo_h, cen_ppb_fixed,
+                    max_cen_panel_h, subtelo_span, sex, background,
+                    x_offset, y_offset, chrom_gap,
+                    gbanding_dir=None, gbanding_position="above"):
+    """Draw a row of chromosomes at given position. Returns row width."""
+    text_color = "black" if background == "white" else "white"
+    haplotypes = ["hap1", "hap2"]
+
+    def _cen_on_right(chrom, hap):
+        return cen_on_right(sex, chrom, hap)
+
+    chrom_positions, hap_positions, hap_label_info, row_width = row_positions(
+        chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths, centromere_coords,
+        pixels_per_bp_genome, subtelo_h, cen_ppb_fixed, sex, x_offset, chrom_gap)
+    offset_extra = gp.TRACK_W + gp.SUBTELO_OFFSET_GAP
 
     # Header labels
     for chrom in chromosomes:
@@ -751,6 +774,26 @@ def draw_grid_layout(d, args, chrom_draw_haps, chrom_map, scaffold_lengths,
                                        cen_ppb_fixed, genome_height, rh)
                            for r, rh in zip(rows, row_heights)]
 
+    # --justify-rows: per-row start and gap so each row spans MARGIN .. total_width - MARGIN
+    row_x = [MARGIN] * len(rows)
+    row_gap_x = [CHROM_GAP_FIG] * len(rows)
+    if args.justify_rows:
+        for i, row_chroms in enumerate(rows):
+            ext = []
+            for g in (0.0, 1.0):
+                _, _, info, _ = row_positions(row_chroms, chrom_draw_haps, chrom_map,
+                                              scaffold_lengths, centromere_coords,
+                                              pixels_per_bp_genome, subtelo_h, cen_ppb_fixed,
+                                              sex, 0.0, g)
+                ext.append((min(lx for lx, _ in info.values()),
+                            max(lx + lw for lx, lw in info.values())))
+            (left, right0), (_, right1) = ext
+            n_gaps = round(right1 - right0)
+            if n_gaps > 0:
+                row_gap_x[i] = (total_width - 2 * MARGIN - (right0 - left)) / n_gaps
+            row_x[i] = MARGIN - left
+            print(f"  Row {i + 1}: justified, gap {row_gap_x[i]:.1f} (default {CHROM_GAP_FIG})")
+
     # Tree panel heights
     tree_max_h = max(tp_h for _, _, tp_h in tree_panels.values()) if tree_panels else 0
 
@@ -759,6 +802,9 @@ def draw_grid_layout(d, args, chrom_draw_haps, chrom_map, scaffold_lengths,
         SCALE_LEGEND_H = 70
         total_height = (MARGIN + sum(gp.INITIAL_Y + rh + ls for rh, ls in zip(row_heights, row_label_space)) +
                         len(rows) * ROW_GAP + tree_max_h + SCALE_LEGEND_H + MARGIN + 20)
+    elif args.legend_in_row:
+        total_height = (MARGIN + sum(gp.INITIAL_Y + rh + ls for rh, ls in zip(row_heights, row_label_space)) +
+                        (len(rows) - 1) * ROW_GAP + MARGIN)
     else:
         # legend: first bar one text height below the last row, three rows, then the margin
         total_height = (MARGIN + sum(gp.INITIAL_Y + rh + ls for rh, ls in zip(row_heights, row_label_space)) +
@@ -779,13 +825,25 @@ def draw_grid_layout(d, args, chrom_draw_haps, chrom_map, scaffold_lengths,
             centromere_coords, all_chrom_features, colors,
             pixels_per_bp_genome, genome_height, subtelo_h, cen_ppb_fixed,
             max_cen_panel_h, args.subtelo_span, sex, background,
-            x_offset=MARGIN, y_offset=current_y, chrom_gap=CHROM_GAP_FIG,
+            x_offset=row_x[row_idx], y_offset=current_y, chrom_gap=row_gap_x[row_idx],
             gbanding_dir=gbanding_dir, gbanding_position=gbanding_position,
         )
+        row_top = current_y
         current_y += gp.INITIAL_Y + row_heights[row_idx] + row_label_space[row_idx] + ROW_GAP
         print(f"  Row {row_idx + 1}: {', '.join(row_chroms)}")
 
     telo_ppb_fixed = subtelo_h / args.subtelo_span if args.subtelo_span > 0 else 0
+    if not tree_panels and args.legend_in_row:
+        lx, ly = place_legend_in_row(
+            rows[-1], row_top, row_heights[-1], row_label_space[-1], row_x[-1], row_gap_x[-1],
+            chrom_draw_haps, chrom_map, scaffold_lengths, centromere_coords,
+            pixels_per_bp_genome, subtelo_h, cen_ppb_fixed, genome_height, sex,
+            MARGIN, total_width, telo_ppb_fixed)
+        draw_scale_legend(d, lx, ly, pixels_per_bp_genome, cen_ppb_fixed,
+                          telo_ppb_fixed, text_color)
+        report_zoom(pixels_per_bp_genome, cen_ppb_fixed, telo_ppb_fixed)
+        save_drawing(d, args.output, total_width, total_height, args.width_mm)
+        return
     if not tree_panels:
         legend_y = current_y - ROW_GAP + LEGEND_FONT
         draw_scale_legend(d, MARGIN, legend_y, pixels_per_bp_genome, cen_ppb_fixed,
@@ -876,6 +934,65 @@ def label_space(row_chroms, chrom_draw_haps, chrom_map, scaffold_lengths, centro
                 bottom = max(bottom, cpy + cen_h + pad +
                              text_length(gp.format_size_label(cen_e - cen_s), SIZE_FONT))
     return bottom - row_h + 6
+
+
+def legend_size(pixels_per_bp_genome, cen_ppb_fixed, telo_ppb_fixed):
+    """Width and height of the scale legend as draw_scale_legend() draws it, and the offset of
+    its top edge above the y it is given (the first bar). Text widths are Arial advances (0.6 em
+    for characters not in the table, which is at least Arial's width for them)."""
+    rows = [(50_000_000, pixels_per_bp_genome, "50 Mb"),
+            (10_000_000, cen_ppb_fixed, f"10 Mb  ({cen_ppb_fixed / pixels_per_bp_genome:.1f}\u00d7 zoom)"),
+            (25_000, telo_ppb_fixed, f"25 kb  ({telo_ppb_fixed / pixels_per_bp_genome:.0f}\u00d7 zoom)")]
+    width = LEGEND_LABEL_W + max(bp * ppb + LEGEND_LABEL_PAD + text_length(t, LEGEND_FONT)
+                                 for bp, ppb, t in rows)
+    top = max(0.75 * LEGEND_FONT - LEGEND_BASELINE_DY, LEGEND_TICK_H / 2)
+    bottom = 2 * LEGEND_LINE_H + max(LEGEND_BASELINE_DY + 0.22 * LEGEND_FONT, LEGEND_TICK_H / 2 + LEGEND_BAR_H)
+    return width, top + bottom, top
+
+
+def place_legend_in_row(row_chroms, row_top, row_h, row_label_h, x_offset, chrom_gap,
+                        chrom_draw_haps, chrom_map, scaffold_lengths, centromere_coords,
+                        pixels_per_bp_genome, subtelo_h, cen_ppb_fixed, genome_height, sex,
+                        margin, total_width, telo_ppb_fixed):
+    """Where the scale legend goes in the last row: in the widest stretch of chromosomes whose
+    tracks and Mb labels end high enough to leave the legend's height free above the row's
+    bottom, centred in that free rectangle. Returns the (x, y) for draw_scale_legend()."""
+    pad = 0.6 * LEGEND_FONT
+    w, h, top_off = legend_size(pixels_per_bp_genome, cen_ppb_fixed, telo_ppb_fixed)
+    _, _, info, _ = row_positions(row_chroms, chrom_draw_haps, chrom_map, scaffold_lengths,
+                                  centromere_coords, pixels_per_bp_genome, subtelo_h,
+                                  cen_ppb_fixed, sex, x_offset, chrom_gap)
+    y0 = row_top + gp.INITIAL_Y
+    row_bottom = y0 + row_h + row_label_h - 6
+    chroms = [c for c in row_chroms if c in chrom_draw_haps]
+    spans, bottoms = [], []
+    for c in chroms:
+        ext = [info[(c, h)] for h in chrom_draw_haps[c]]
+        spans.append((min(lx for lx, _ in ext), max(lx + lw for lx, lw in ext)))
+        # label_space() of this chromosome alone with row height 0: where its tracks and Mb
+        # labels end below y0, plus 6
+        bottoms.append(y0 + label_space([c], chrom_draw_haps, chrom_map, scaffold_lengths,
+                                        centromere_coords, pixels_per_bp_genome,
+                                        cen_ppb_fixed, genome_height, 0) - 6)
+    best = None
+    for i in range(len(chroms)):
+        for j in range(i, len(chroms)):
+            free_top = max(bottoms[i:j + 1]) + pad
+            if row_bottom - free_top < h:
+                break
+            x0 = spans[i - 1][1] + pad if i > 0 else margin
+            x1 = spans[j + 1][0] - pad if j + 1 < len(chroms) else total_width - margin
+            if x1 - x0 >= w and (best is None or (x1 - x0) * (row_bottom - free_top) > best[0]):
+                best = ((x1 - x0) * (row_bottom - free_top), x0, x1, free_top, chroms[i], chroms[j])
+    if best is None:
+        sys.exit(f"--legend-in-row: the scale legend ({w:.0f} x {h:.0f}) fits under no run of "
+                 f"chromosomes in the last row; leave out --legend-in-row")
+    _, x0, x1, free_top, c0, c1 = best
+    x = (x0 + x1 - w) / 2
+    y = (free_top + row_bottom - h) / 2 + top_off
+    print(f"  Scale legend in the last row under {c0}..{c1}: {w:.0f} x {h:.0f} in a free area "
+          f"{x1 - x0:.0f} x {row_bottom - free_top:.0f}")
+    return x, y
 
 
 def save_drawing(d, output, total_width, total_height, width_mm=None):

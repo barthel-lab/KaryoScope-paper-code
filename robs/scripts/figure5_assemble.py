@@ -95,7 +95,7 @@ def embed_svg(path, x, y, scale):
 
 def panel_letter(d, letter, x, y, size):
     d.append(draw.Text(letter, font_size=size, x=x, y=y, fill="#000000",
-                       font_family="sans-serif", font_weight="bold",
+                       font_family="Arial", font_weight="bold",
                        text_anchor="start", dominant_baseline="hanging"))
 
 

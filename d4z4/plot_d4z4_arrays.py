@@ -1180,8 +1180,9 @@ def plot_single_haplotype(d, hap_data, hap_name, analysis_row, y_offset,
     # Work on a copy to avoid mutating cached data when flipping coordinates
     hap_data = {k: list(v) for k, v in hap_data.items()}
 
-    track_height = int(15 * height_ratio)
-    track_spacing = max(1, int(3 * height_ratio))
+    # style track_height / track_spacing (drawing units) replace the sizes height_ratio gives
+    track_height = _style(style, 'track_height', int(15 * height_ratio))
+    track_spacing = _style(style, 'track_spacing', max(1, int(3 * height_ratio)))
     tracks = ['region', 'gene', 'repeat', 'subtelomeric']
     track_labels = {
         'region': 'Satellites',

@@ -59,15 +59,18 @@ Panel b is the second analysis in `conf/hg002.yaml`, which runs
 |---|---|
 | `--chroms-per-row 12` | two rows: chr1 to chr12, then chr13 to chr22, X, and Y |
 | `--no-trees` | no hierarchy trees (the scale legend goes below the last row) |
+| `--justify-rows` | each row spread from the left margin to the right margin, with equal gaps between chromosomes |
+| `--legend-in-row` | the scale legend in the free space of the last row (under chr17 to chr21, left of chrX) instead of a band below it; the script stops if it does not fit |
 | `--no-legend-colons` | legend rows read Genome, Centromere, and Telomere, as in the published panel |
 | `--width-mm 180` | page written 180 mm wide, with text sized in printed points: chromosome names 6.5 pt (`--chrom-pt`), h1 and h2 5.5 pt (`--hap-pt`), Mb labels 5 pt (`--size-pt`), and legend 6 pt (`--legend-pt`) |
 | `--margin 6` | 6-unit page margin |
+| `--scale 1.76` | genome tracks at 1.76 px/Mb (1.4 in the first submission): taller chromosomes, to fill the 170 mm page |
 
-The zoom factors do not depend on the arrangement: the legend prints 4.9x for the
-centromere windows and 2158x for the 25 kb telomere windows, as in the first
-submission. The inputs and the centromere window file are the same.
+The zoom factors do not depend on the arrangement or on `--scale`: the legend prints
+4.9x for the centromere windows and 2158x for the 25 kb telomere windows, as in the
+first submission. The inputs and the centromere window file are the same.
 
-`scripts/compose_fig1.py` places panel a above panel b and writes the figure. Panel
+`scripts/compose_fig1.py` places panel a, centred, above panel b and writes the figure. Panel
 a is cropped from the published Illustrator file
 (`KaryoScope-paper/figures/fig1/HG002_figure_v2_v1cen_grid.ai`, PDF-compatible, not
 modified) as vector artwork. Everything below panel a is deleted from the copy
@@ -87,7 +90,7 @@ python scripts/compose_fig1.py \
 ```
 
 Output: `results/Fig1.pdf` (vector, fonts embedded) and `results/Fig1.png` (300
-ppi), 180 x 164.5 mm, text 5.0 to 7.0 pt. The script stops if the PDF holds a
+ppi), 180 x 169.8 mm, text 5.0 to 7.0 pt. The script stops if the PDF holds a
 font other than Arial or if the page is taller than 170 mm.
 
 ## Centromere windows (Fig. 1b)

@@ -9,13 +9,17 @@
 > `generate_notable_samples_report.py` are relative to the working directory, and
 > cluster paths use the variables in the repository README.
 > Fig. 4 is a main figure (at most 180 x 170 mm). Its block in `figures_layout.yaml` has its
-> own `output: {width_mm: 180}` and `track_view: {height_ratio: 2.2}`, which override the
-> shared blocks (183 mm and 3.0), so its page is 180 x 167.1 mm with text at 5.1-6.8 pt. The
-> track views are 81.5 points tall instead of 106.6, panels c-f, the colour legend, b, and g
-> move up by the height saved, and the axes of h are 150 points square instead of 194.86
-> (centred in the panel, with the outlier labels and legend moved with them). The ruler tick
-> labels and array captions keep the sizes they have at height ratio 3.0 (`tick_font: 24`,
-> `array_label_font: 27` in the fig4 `track_style`). Every panel, haplotype, and label of the
+> own `output: {width_mm: 180}` and `track_view: {height_ratio: 2.2, line_width_pt: 1.0167}`,
+> which override the shared blocks (183 mm, 3.0, and 1.0), so its page is 180 x 167.8 mm with
+> text at 5.1-6.8 pt. Its `track_style` sets the track height and the space between tracks in
+> drawing units (`track_height: 31`, `track_spacing: 9.15`; without them both follow the height
+> ratio): tracks print 2.33 mm tall and 0.69 mm apart, the gap of the submitted figure, and the
+> borders print at its 0.88 pt. The track views are 83.4 points tall instead of 106.6, panels c-f,
+> the colour legend, b, and g move up by the height saved, and the axes of h are 150 points square
+> instead of 194.86 (centred in the panel, with the outlier labels and legend moved with them).
+> The ruler tick labels, array captions, and the space under the element numbers keep their
+> sizes at height ratio 3.0 or 2.2 (`tick_font: 24`, `array_label_font: 27`,
+> `element_label_offset: 22`, `bottom_pad: 2`). Every panel, haplotype, and label of the
 > submitted Fig. 4 is kept, and `figure_data.tsv` is unchanged. Extended Data Fig. 8 and
 > Supplementary Fig. 2 are unchanged (same SVG files, and the same PNG pixels as the submitted
 > files).
@@ -164,8 +168,10 @@ cell, n per panel, r, the labelled outliers, each shown haplotype's category).
   element-number labels that were removed there to avoid crowding (`hidden_element_labels`).
   A figure's block may hold its own `output:` and `track_view:` entries, which override the
   shared ones (Fig. 4 uses this for the main-figure size).
-- The SVGs keep text as text (`svg.fonttype = none`). Fonts are Helvetica for track views,
-  legends and the schematic and Arial for the matplotlib plots, as in the published files.
+- The SVGs keep text as text (`svg.fonttype = none`). They name Helvetica (then Arial) for track
+  views, legends and the schematic and Arial for the matplotlib plots, as in the published files.
+  The PDFs and PNGs are written with Arial only: fontconfig must map Helvetica and `sans-serif` to
+  Arial (`pdffonts` then lists only ArialMT and Arial-BoldMT).
 - Colours are the generators' RGB colours. The published files were exported from a CMYK
   Illustrator document, so their saturated colours (for example LINE `#00FF00`) look duller.
 

@@ -74,6 +74,8 @@ def main():
                     help="scale panel a so its smallest text prints at this size")
     ap.add_argument("--row-label-pt", type=float, default=7.0, help="FISH / KaryoScope row labels")
     ap.add_argument("--letter-pt", type=float, default=8.0)
+    ap.add_argument("--panel-a-align", choices=["center", "left"], default="center",
+                    help="horizontal position of panel a on the page (letter a stays at the left edge)")
     ap.add_argument("--gap-mm", type=float, default=1.5, help="space between panel a and letter b")
     ap.add_argument("--ppi", type=int, default=300)
     a = ap.parse_args()
@@ -119,6 +121,7 @@ def main():
     lp = a.letter_pt
     a_w, a_h = clip.width * scale_a, clip.height * scale_a
     a_top = 0.0
+    a_left = (W - a_w) / 2 if a.panel_a_align == "center" else 0.0
     letter_b_base = a_top + a_h + a.gap_mm * MM + 0.72 * lp
     b_top = letter_b_base + 0.6 * MM
     H = b_top + b_rect.height
@@ -127,13 +130,13 @@ def main():
 
     doc = fitz.open()
     page = doc.new_page(width=W, height=H)
-    page.show_pdf_page(fitz.Rect(0, a_top, a_w, a_top + a_h), ai, 0, clip=clip)
+    page.show_pdf_page(fitz.Rect(a_left, a_top, a_left + a_w, a_top + a_h), ai, 0, clip=clip)
     page.show_pdf_page(fitz.Rect(0, b_top, W, b_top + b_rect.height), pb, 0)
     page.insert_font(fontname="ArialBold", fontfile=a.arial_bold)
     font = fitz.Font(fontfile=a.arial_bold)
 
     def to_page(x, y):
-        return (x - clip.x0) * scale_a, a_top + (y - clip.y0) * scale_a
+        return a_left + (x - clip.x0) * scale_a, a_top + (y - clip.y0) * scale_a
 
     # Row labels: same centre, reading upwards, at --row-label-pt
     for s in rows:
@@ -144,8 +147,10 @@ def main():
         # origin of upward text: the baseline is the left side of the glyphs, the text starts at the bottom
         page.insert_text(fitz.Point(px + 0.36 * a.row_label_pt, py + n / 2), s["text"].strip(),
                          fontname="ArialBold", fontsize=a.row_label_pt, rotate=90)
-    # Panel letters: a at the .ai letter's baseline position, b above panel b's first header
+    # Panel letters at the page's left edge: a at the .ai letter's height, b above panel b's
+    # first header
     ax, ay = to_page(*letter_a["origin"])
+    ax -= a_left
     page.insert_text(fitz.Point(max(ax, 0.5), max(ay, 0.75 * lp)), "a", fontname="ArialBold", fontsize=lp)
     page.insert_text(fitz.Point(max(ax, 0.5), letter_b_base), "b", fontname="ArialBold", fontsize=lp)
     doc.subset_fonts()
@@ -166,7 +171,7 @@ def main():
     pix.set_dpi(a.ppi, a.ppi)
     pix.save(str(out.with_suffix(".png")))
     print(f"{out.with_suffix('.pdf')}: {W / MM:.1f} x {H / MM:.1f} mm; panel a {a_w / MM:.1f} x "
-          f"{a_h / MM:.1f} mm (scale {scale_a:.4f} of the .ai), panel b {b_rect.width / MM:.1f} x "
+          f"{a_h / MM:.1f} mm at x {a_left / MM:.1f} mm (scale {scale_a:.4f} of the .ai), panel b {b_rect.width / MM:.1f} x "
           f"{b_rect.height / MM:.1f} mm")
     print(f"  text: {min(s[0] for s in other)}-{max(s[0] for s in other)} pt over {len(other)} spans; "
           f"panel letters {sorted(set(s[0] for s in letters))} pt; fonts {sorted(base)}")

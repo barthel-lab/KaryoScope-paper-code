@@ -29,8 +29,8 @@ Two changes:
   `$KS_RESOURCES` when set (the original fixes it to a directory under `$HOME`).
   Set it to `vendored/KaryoScope-archive-resources/resources`.
 - `KaryoScope_assembly_figure.py` has the options that draw Fig. 1b at its final
-  size: `--chroms-per-row`, `--no-trees`, `--no-legend-colons`, `--chrom-gap`,
-  `--margin`, and `--width-mm` with `--chrom-pt`, `--hap-pt`, `--size-pt`, and
+  size: `--chroms-per-row`, `--no-trees`, `--justify-rows`, `--legend-in-row`,
+  `--no-legend-colons`, `--chrom-gap`, `--margin`, and `--width-mm` with `--chrom-pt`, `--hap-pt`, `--size-pt`, and
   `--legend-pt` (see `hg002/README.md`). Without them its output is byte-identical
   to that of the original (grid and packed layouts checked).
 

@@ -181,9 +181,9 @@ Copy `conf/config.template.yaml` to `conf/robs.yaml` (or anywhere, and set
 
 In `environment/figures.yml`, from this directory, with `data/robs/` filled as
 in step 2. Extended Data Fig. 7 d also needs `tabix` (htslib) on `PATH`. The
-figures were rendered with Arial: install it and let fontconfig resolve
-`sans-serif` and `Helvetica` to it, or the text falls back to DejaVu Sans and
-the layout shifts.
+scripts name Arial for every text (since 2026-11-21; before, the generic
+`sans-serif`): install it, or the renderer substitutes another face and the
+layout shifts.
 
 ```bash
 conda activate ks-paper-figures; export PYTHONNOUSERSITE=1 ROBS_CONFIG=conf/robs.yaml

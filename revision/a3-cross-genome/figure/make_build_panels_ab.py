@@ -13,7 +13,8 @@ OUT = ROOT / "figures" / "fig7" / "build_workflow_panelsAB.svg"
 Y0 = 400            # panel B offset
 ROW = 151           # top of the build-step and database row
 QY = 265            # top of the query assembly node
-MONO = 'Menlo, Consolas, Courier New, monospace'; BLUE = "#1F5FBF"; SUB = "#444444"; HEAD = "#777777"
+# Arial throughout (Nature: 5 pt Arial), command names included; they stand out by colour
+FONT = 'Arial'; CODE = FONT; BLUE = "#1F5FBF"; SUB = "#444444"; HEAD = "#777777"
 HX = ' letter-spacing="0.8"'
 # Font sizes (user units; x 0.3705 = pt at 183 mm)
 FS_LETTER = 21.6    # 8.0 pt, panel letters
@@ -39,14 +40,14 @@ def node(x, y, w, h, title, lines, fill="#ffffff", stroke="#555555", sw=1.4, tit
         out.append(t(x + w / 2, top + 38 + 16 * i, s, fill=SUB))
     return out
 
-L = ['<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="710" viewBox="0 0 1400 710" font-family="Helvetica, Arial, sans-serif">',
+L = [f'<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="710" viewBox="0 0 1400 710" font-family="{FONT}">',
      '  <defs>\n    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">\n      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555555"/>\n    </marker>\n  </defs>\n',
      '  <rect x="0" y="0" width="1400" height="710" fill="#ffffff"/>\n',
      '  <!-- ===================== Panel A: build workflow ===================== -->']
 L += [t(20, 36, "a", FS_LETTER, "bold", anchor="start"), t(50, 36, "Building a custom KaryoScope database", FS_TITLE, anchor="start")]
 # left column
 L += node(30, 86, 270, 100, "Raw annotation sources", ["RepeatMasker / EDTA tables,", "GFF3/GTF, cytobands,", "satellite monomer catalogues, .fai"])
-L += [arrow(165, 186, 165, 236), t(177, 216, "prep-bed", FS_EMPH, fill=BLUE, anchor="start", family=MONO)]
+L += [arrow(165, 186, 165, 236), t(177, 216, "prep-bed", FS_EMPH, fill=BLUE, anchor="start", family=CODE)]
 L += node(30, 238, 270, 78, "Feature-set BED(s)", ["4th column = feature label,", "one BED per set"])
 L += node(30, 330, 270, 52, "Genome FASTA", [])
 L.append('  <path d="M312,238 L320,238 L320,382 L312,382" fill="none" stroke="#555555" stroke-width="1.4"/>')
@@ -54,7 +55,7 @@ cy = ROW + 50   # centre line of the build row
 L.append(f'  <path d="M320,310 L338,310 L338,{cy} L358,{cy}" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>')
 # build row
 L += [f'  <path d="M362,{ROW-8} L362,{ROW-16} L982,{ROW-16} L982,{ROW-8}" fill="none" stroke="{BLUE}" stroke-width="1.4"/>',
-      t(672, ROW - 24, "build", FS_EMPH, fill=BLUE, family=MONO)]
+      t(672, ROW - 24, "build", FS_EMPH, fill=BLUE, family=CODE)]
 L += node(362, ROW, 170, 100, "Gap-fill", ["unannotated bases", "receive a background", "label"], fill="#F4F4F4")
 L.append(arrow(532, cy, 570, cy))
 L += node(572, ROW, 200, 100, "k-mer labels", ["a k-mer is recorded under", "every label where it occurs"], fill="#F4F4F4")
@@ -65,10 +66,10 @@ L.append(arrow(982, cy, 1020, cy))
 L += node(1022, ROW, 170, 100, "HKS database", ["base index", "one index per feature set", "manifest, hierarchy,", "colours"], stroke="#222222", sw=2)
 L += node(1022, QY, 170, 52, "Query assembly", [])
 bt, bb = ROW, QY + 52; bm = (bt + bb) / 2
-# At 5 pt the monospace "annotate" is ~65 units wide, so the arrow spans 76 units to keep it clear of
-# the bracket and the Annotations box.
+# The arrow spans 76 units, clear of the bracket and the Annotations box with "annotate" above it
+# (65 units wide when it was set in a monospace face, 53 in Arial).
 L.append(f'  <path d="M1204,{bt} L1209,{bt} L1209,{bb} L1204,{bb}" fill="none" stroke="#555555" stroke-width="1.4"/>')
-L += [arrow(1209, bm, 1285, bm), t(1250, bm - 9, "annotate", FS_SMALL, fill=BLUE, family=MONO)]
+L += [arrow(1209, bm, 1285, bm), t(1250, bm - 9, "annotate", FS_SMALL, fill=BLUE, family=CODE)]
 L += node(1288, bm - 36, 110, 72, "Annotations", ["base-pair", "resolution BEDs"])
 # panel B
 L += ['', '  <!-- ===================== Panel B: resolution example ===================== -->']
@@ -91,8 +92,11 @@ L += [f'  <rect x="420" y="{y(222)}" width="24" height="13" fill="#ffffff" strok
       f'  <rect x="420" y="{y(246)}" width="24" height="13" fill="#222222"/>',
       t(456, y(257), 'found in LINE and SINE &#8594; <tspan font-weight="bold">Transposon</tspan>, their lowest common ancestor', FS_EMPH, anchor="start")]
 L.append(rect(990, y(84), 380, 104, fill="#F4F4F4"))
-for i, s in enumerate(["LINE        1  Transposon", "SINE        2  Transposon", "Transposon  1  categorized"]):
-    L.append(t(1008, y(116 + 22 * i), s, FS_EMPH, anchor="start", family=MONO, extra=' xml:space="preserve"'))
+# The priority file's three columns, each at the x where it started in the monospace setting
+# (columns at characters 0, 12 and 15, 0.6 em = 9 units per character)
+for i, row in enumerate([("LINE", "1", "Transposon"), ("SINE", "2", "Transposon"), ("Transposon", "1", "categorized")]):
+    for col, s in zip((0, 12, 15), row):
+        L.append(t(1008 + col * 9, y(116 + 22 * i), s, FS_EMPH, anchor="start", family=CODE))
 L += [f'  <rect x="990" y="{y(206)}" width="24" height="13" fill="#222222"/>',
       t(1026, y(217), 'found in LINE and SINE &#8594; <tspan font-weight="bold">LINE</tspan>,', FS_EMPH, anchor="start"),
       t(1026, y(237), 'the higher-priority branch', FS_EMPH, anchor="start")]
