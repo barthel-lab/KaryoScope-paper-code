@@ -460,10 +460,10 @@ def draw_coordinate_labels(d, x, y_start, y_end, view_start, view_end,
     top_label = _format_genomic_pos(view_start)
     bot_label = _format_genomic_pos(view_end)
     d.append(draw.Text(top_label, font_size=font_size, x=x, y=y_start + 3,
-                       fill=text_color, font_family='sans-serif',
+                       fill=text_color, font_family='Arial',
                        text_anchor='end', dominant_baseline='hanging'))
     d.append(draw.Text(bot_label, font_size=font_size, x=x, y=y_end - 3,
-                       fill=text_color, font_family='sans-serif',
+                       fill=text_color, font_family='Arial',
                        text_anchor='end', dominant_baseline='auto'))
 
 
@@ -476,7 +476,7 @@ def draw_scale_bar(d, x, y, height, label, text_color='black'):
     label_x = x - 4
     label_y = y + height / 2
     d.append(draw.Text(label, font_size=11, x=label_x, y=label_y,
-                       fill=text_color, font_family='sans-serif',
+                       fill=text_color, font_family='Arial',
                        text_anchor='middle', dominant_baseline='middle',
                        transform=f"rotate(-90 {label_x} {label_y})"))
 
@@ -547,7 +547,7 @@ def draw_density_panel_coverage(d, x_start, y_start, panel_width, panel_height,
         d.append(draw.Rectangle(cx - w / 2, top, w, 9,
                                 fill='#FFFFFF', fill_opacity=0.85))
         d.append(draw.Text(text, font_size=11, x=cx, y=cy, fill=colour,
-                           font_family='sans-serif', text_anchor='middle',
+                           font_family='Arial', text_anchor='middle',
                            dominant_baseline=baseline))
 
     _labelled(ll, lx, y_start + panel_height - 4, left_color, 'auto')
@@ -717,10 +717,11 @@ def _load_hier_depth(hier_path):
 # Text metrics
 # ---------------------------------------------------------------------------
 # The legend box used to be sized against a fixed column width, i.e. against
-# ASSUMED glyph widths. Both this SVG and the assembled figure declare only the
-# generic `sans-serif` family and embed no font, so each renderer is free to
-# resolve it differently: rsvg-convert picks DejaVu Sans here, which is wider
-# than the face the 118 px column was sized against, and the two longest
+# ASSUMED glyph widths. Both this SVG and the assembled figure name a font family
+# (now `Arial`, which Nature requires; it was the generic `sans-serif`) and embed
+# no font, so each renderer is free to resolve it differently: rsvg-convert picked
+# DejaVu Sans for `sans-serif` here, which is wider than the face the 118 px
+# column was sized against, and the two longest
 # Density Analysis labels crossed the border in the PNG while the SVG looked
 # fine. Measuring the strings and sizing the box from the result survives a
 # renderer swap; widening the box by a fixed margin does not, quite.
@@ -733,7 +734,7 @@ _FALLBACK_EM = {"upper": 0.73, "lower": 0.64, "digit": 0.70, "space": 0.35, "oth
 
 @lru_cache(maxsize=1)
 def _sans_advances():
-    """Advance widths (in em) keyed by character for the resolved `sans-serif`.
+    """Advance widths (in em) keyed by character for the font `Arial` resolves to.
 
     Returns None if fontconfig or fontTools is unavailable, in which case
     :func:`text_width` falls back to `_FALLBACK_EM`.
@@ -741,7 +742,7 @@ def _sans_advances():
     try:
         from fontTools.ttLib import TTFont
 
-        path = subprocess.run(["fc-match", "-f", "%{file}", "sans-serif"],
+        path = subprocess.run(["fc-match", "-f", "%{file}", "Arial"],
                               capture_output=True, text=True, check=True).stdout.strip()
         if not path:
             return None
@@ -865,7 +866,7 @@ def draw_legend(d, x, y, colors, featuresets, displayed_features,
                                stroke='#C4A9E8', stroke_width=2, stroke_dasharray='4,2'))
         d.append(draw.Text(label, font_size=item_size,
                            x=cx + item_indent, y=cy + swatch_size / 2,
-                           fill=text_color, font_family='sans-serif',
+                           fill=text_color, font_family='Arial',
                            text_anchor='start', dominant_baseline='middle'))
 
     col1 = [fs for fs in ('chromosome', 'acrocentric', 'region') if fs in featuresets]
@@ -903,7 +904,7 @@ def draw_legend(d, x, y, colors, featuresets, displayed_features,
             if not rows:
                 continue
             d.append(draw.Text(featureset_names.get(fs, fs), font_size=header_size, x=cx, y=cy,
-                               fill=text_color, font_family='sans-serif',
+                               fill=text_color, font_family='Arial',
                                font_weight='bold', dominant_baseline='hanging'))
             cy += item_height + 2
             for label, colour in rows:
@@ -912,7 +913,7 @@ def draw_legend(d, x, y, colors, featuresets, displayed_features,
             cy += section_gap
         if with_density:
             d.append(draw.Text("Density Analysis", font_size=header_size, x=cx, y=cy,
-                               fill=text_color, font_family='sans-serif',
+                               fill=text_color, font_family='Arial',
                                font_weight='bold', dominant_baseline='hanging'))
             cy += item_height + 2
             for colour, opacity, label in density_items:
@@ -1107,7 +1108,7 @@ def main():
         label_x = margin_left - 34
         label_y_mid = panel_y + zoom_panel_height / 2
         d.append(draw.Text(side_label, font_size=11, x=label_x, y=label_y_mid,
-                           fill=text_color, font_family='sans-serif',
+                           fill=text_color, font_family='Arial',
                            text_anchor='middle', dominant_baseline='middle',
                            font_weight='bold',
                            transform=f'rotate(-90 {label_x} {label_y_mid})'))
@@ -1120,7 +1121,7 @@ def main():
         d.append(draw.Text(zoom_label, font_size=11,
                            x=margin_left + track_block_width / 2,
                            y=panel_y - 6,
-                           fill=text_color, font_family='sans-serif',
+                           fill=text_color, font_family='Arial',
                            text_anchor='middle'))
 
         # --- Draw feature tracks ---
@@ -1154,7 +1155,7 @@ def main():
                 x = track_x + i * (bar_width + bar_spacing) + bar_width / 2
                 label = featureset_names.get(fs, fs[:6])
                 d.append(draw.Text(label, font_size=11, x=x, y=label_y_bottom,
-                                   fill=text_color, font_family='sans-serif',
+                                   fill=text_color, font_family='Arial',
                                    text_anchor='end', dominant_baseline='middle',
                                    transform=f"rotate(-90 {x} {label_y_bottom})"))
 
@@ -1262,19 +1263,19 @@ def main():
             for tick_val, tick_x in ((0, comb_x), (1, comb_x + density_panel_width)):
                 d.append(draw.Text(str(tick_val), font_size=9, x=tick_x,
                                    y=panel_y + zoom_panel_height + 2,
-                                   fill=text_color, font_family='sans-serif',
+                                   fill=text_color, font_family='Arial',
                                    text_anchor='middle',
                                    dominant_baseline='hanging'))
             for px, lines in wide_labels:
                 for li, line in enumerate(lines):
                     d.append(draw.Text(line, font_size=11, x=px,
                                        y=label_y_bottom + li * 12,
-                                       fill=text_color, font_family='sans-serif',
+                                       fill=text_color, font_family='Arial',
                                        text_anchor='middle',
                                        dominant_baseline='hanging'))
             sx = sst1_x + sst1_panel_width / 2
             d.append(draw.Text('SST1', font_size=11, x=sx, y=label_y_bottom,
-                               fill='#00AA00', font_family='sans-serif',
+                               fill='#00AA00', font_family='Arial',
                                text_anchor='end', dominant_baseline='middle',
                                transform=f"rotate(-90 {sx} {label_y_bottom})"))
 

@@ -72,45 +72,58 @@ hidden_element_labels:
 fig4:
   source: D4Z4-fig-1-v2.ai
   page_origin: [15.85, 11.76]
-  size_pt: [590.4, 654.72]
-  png_px: [2460, 2728]
+  # Nature main figure (at most 180 x 170 mm): written 180 mm wide (text prints at 0.864 of the
+  # sizes here) and compressed from the published 654.72 pt: shorter tracks (track_style below;
+  # height_ratio 2.2 instead of 3.0 shared), panels c-f, the legend, b and g moved up by the height
+  # saved, and the axes of h 194.86 -> 150 pt square, centred in the panel (its labels moved with
+  # the axes). Each track view is 83.44 pt tall (published 106.6).
+  size_pt: [590.4, 550.38]
+  png_px: [2460, 2293]
+  output: {width_mm: 180}
+  # line_width_pt 1.0167: borders print at the submitted 0.879 pt (1.0 x 183/180)
+  track_view: {height_ratio: 2.2, line_width_pt: 1.0167}
   letters:
     A: [0.12, 12.22]
-    B: [323.82, 112.6]
-    C: [0.12, 226.08]
-    D: [0.12, 333.31]
-    E: [0.12, 443.51]
-    F: [0.12, 556.05]
-    G: [323.82, 259.9]
-    H: [323.82, 398.67]
+    B: [323.82, 87.98]
+    C: [0.12, 201.46]
+    D: [0.12, 284.06]
+    E: [0.12, 369.64]
+    F: [0.12, 457.56]
+    G: [323.82, 225.28]
+    H: [323.82, 359.05]
   track_columns:
     0: [60.05, 313.85]
     1: [334.53, 588.33]
   title_axis_gap: 15.7
-  track_style: {array_bar_offset: 2.0, array_caption_offset: 24.9}
+  # tick_font and array_label_font: the sizes height_ratio 3.0 gives (they scale with the track height)
+  # track_height 31 (33 at height_ratio 2.2) and track_spacing 9.15 drawing units: tracks 2.33 mm tall,
+  # 0.69 mm apart at print size (the submitted gap; it no longer scales with height_ratio);
+  # element_label_offset 22 and bottom_pad 2: the space under the element numbers as at height_ratio 2.2
+  track_style: {array_bar_offset: 2.0, array_caption_offset: 24.9, tick_font: 24, array_label_font: 27,
+                track_height: 31, track_spacing: 9.15, element_label_offset: 22, bottom_pad: 2}
   tracks:
   - {panel: A, column: 0, ruler_y: 14.03}
   - {panel: A, column: 1, ruler_y: 14.03}
-  - {panel: C, column: 0, ruler_y: 228.96}
-  - {panel: D, column: 0, ruler_y: 337.16}
-  - {panel: E, column: 0, ruler_y: 447.31}
-  - {panel: F, column: 0, ruler_y: 561.05}
+  - {panel: C, column: 0, ruler_y: 204.34}
+  - {panel: D, column: 0, ruler_y: 287.91}
+  - {panel: E, column: 0, ruler_y: 373.44}
+  - {panel: F, column: 0, ruler_y: 462.56}
   track_legend:
   - header: Common
-    header_at: [9.75, 113.04]
-    items_at: [17.25, 121.67]
+    header_at: [9.75, 88.42]
+    items_at: [17.25, 97.05]
     items: &id001
     - [novel, novel]
   - header: Genes
-    header_at: [9.95, 134.94]
-    items_at: [17.35, 142.56]
+    header_at: [9.95, 110.32]
+    items_at: [17.35, 117.94]
     items: &id002
     - [exon, 'gene:exon_specific']
     - [intergenic, 'gene:intergenic_specific']
     - [intron, 'gene:intron_specific']
   - header: Satellites
-    header_at: [57.45, 113.04]
-    items_at: [64.85, 122.01]
+    header_at: [57.45, 88.42]
+    items_at: [64.85, 97.39]
     items: &id003
     - [arm, 'region:arm_multigroup1']
     - [bsat, 'region:bsat_specific']
@@ -118,8 +131,8 @@ fig4:
     - [centromeric, 'region:centromeric_multigroup1']
     - [ct, 'region:ct_specific']
   - header: Repeats
-    header_at: [106.75, 113.04]
-    items_at: [114.25, 121.68]
+    header_at: [106.75, 88.42]
+    items_at: [114.25, 97.06]
     items:
     - &id004 [Class_I_Retrotransposition, 'repeat:Class_I_Retrotransposition_multigroup1']
     - &id010 [Transposable_Element, 'repeat:Transposable_Element_multigroup1']
@@ -128,7 +141,7 @@ fig4:
     - &id008 [Retroposon, 'repeat:Retroposon_specific']
   - header: null
     header_at: null
-    items_at: [200.45, 121.57]
+    items_at: [200.45, 96.95]
     items:
     - &id009 [SINE, 'repeat:SINE_specific']
     - &id005 [DNA, 'repeat:DNA_specific']
@@ -136,8 +149,8 @@ fig4:
     - &id012 [nonrepeat, 'repeat:nonrepeat_specific']
     - &id013 [rRNA, 'repeat:rRNA_specific']
   - header: Subtelomere
-    header_at: [251.35, 113.04]
-    items_at: [258.75, 121.8]
+    header_at: [251.35, 88.42]
+    items_at: [258.75, 97.18]
     items: &id014
     - [ITS, 'subtelomeric:ITS_specific']
     - [TAR1, 'subtelomeric:TAR1_specific']
@@ -146,54 +159,54 @@ fig4:
     - [nonsubtelomeric, 'subtelomeric:nonsubtelomeric_specific']
     - [telomere_like, 'subtelomeric:telomere_like_multigroup1']
   - header: D4Z4 Arrays
-    header_at: [9.55, 176.55]
-    items_at: [16.95, 185.09]
+    header_at: [9.55, 151.93]
+    items_at: [16.95, 160.47]
     items: &id015
     - [A-like (C+), 'd4z4:COLOR_CANONICAL_BSAT']
     - [B-like (C-), 'd4z4:COLOR_CANONICAL_CT']
     - [Degraded array, 'd4z4:COLOR_DEGRADED_ARRAY']
   - header: Other Elements
-    header_at: [86.45, 176.55]
-    items_at: [93.95, 185.39]
+    header_at: [86.45, 151.93]
+    items_at: [93.95, 160.77]
     items: &id016
     - [Transition element (T), 'd4z4:COLOR_TRANSITION']
     - [bsat terminal, 'd4z4:COLOR_PLAM']
     - [Solitary bsat, 'd4z4:COLOR_SOLITARY_PLAM']
   - header: pLAM Sequence
-    header_at: [159.85, 176.55]
-    items_at: [167.35, 185.39]
+    header_at: [159.85, 151.93]
+    items_at: [167.35, 160.77]
     items: &id017
     - [Functional pLAM, 'triangle:COLOR_PLAM_FUNCTIONAL']
     - [Non-functional pLAM, 'triangle:COLOR_PLAM_NONFUNCTIONAL']
   B:
     titles:
-      chr4: [393.31, 114.65]
-      chr10: [523.96, 114.46]
+      chr4: [393.31, 90.03]
+      chr10: [523.96, 89.84]
     title_size: 7.9
     grids:
       chr4:
-        origin: [334.23, 117.16]
+        origin: [334.23, 92.54]
         pitch: [6.7447, 6.562]
       chr10:
-        origin: [465.96, 117.67]
+        origin: [465.96, 93.05]
         pitch: [5.826, 5.666]
     cell_fraction: 0.9
     cell_edge: '#E5E7EB'
     cell_edge_width: 0.3
     legend:
       columns_x: [345.02, 405.82, 463.67, 534.53]
-      rows_baseline: [223.5, 233.61]
+      rows_baseline: [198.88, 208.99]
       size: 7.09
       swatch: [5.67, 4.96]
       swatch_dx: -9.81
   G:
     tables:
       chr4:
-        axes: [368.34, 265.4, 61.57, 42.65]
-        title: [399.9, 262.09]
+        axes: [368.34, 230.78, 61.57, 42.65]
+        title: [399.9, 227.47]
       chr10:
-        axes: [502.45, 264.95, 87.35, 60.64]
-        title: [548.28, 262.45]
+        axes: [502.45, 230.33, 87.35, 60.64]
+        title: [548.28, 227.83]
     text_size: 6.76
     cell_size: 7.0
     frame_width: 0.8
@@ -205,8 +218,8 @@ fig4:
     xlabel_gap: {chr4: 34.4, chr10: 45.02}
     ylabel_gap: {chr4: 40.24, chr10: 56.7}
   H:
-    box: [323.85, 385.24, 250.3, 243.0]
-    axes: [366.89, 399.21, 194.86, 194.86]
+    box: [323.85, 345.62, 250.3, 198.14]
+    axes: [389.32, 359.59, 150, 150]
     title_size: 7.9
     axis_size: 7.9
     tick_size: 7.9
@@ -214,16 +227,16 @@ fig4:
     label_size: 6.0
     fold_size: 6.0
     marker_size: 9
-    legend_box: [471.95, 530.84, 57.6, 19.4]
+    legend_box: [470.19, 460.92, 57.6, 19.4]
     outlier_labels:
-      HG00099: [371.94, 479.06]
-      NA19909: [410.66, 503.37]
-      HG005: [410.66, 503.37]   # third label once NA19909 is filtered out (its longer haplotype fails QC)
-      HG03017: [412.74, 559.09]
+      HG00099: [393.21, 421.06]
+      NA19909: [423.01, 439.77]
+      HG005: [423.01, 439.77]   # third label once NA19909 is filtered out (its longer haplotype fails QC)
+      HG03017: [424.61, 482.66]
     outlier_labels_qc:            # used with filters: assembly_qc (axes 0-110, labels below the diagonal)
-      HG00099: [368.66, 425.78]
-      HG005: [430.66, 537.38]
-      HG03017: [430.66, 569.27]
+      HG00099: [390.68, 380.04]
+      HG005: [438.41, 465.95]
+      HG03017: [438.41, 490.5]
 figS9:
   source: D4Z4-sup-fig-1-v2.ai
   page_origin: [12.28, 3.14]
