@@ -30,7 +30,8 @@ python3 nature_ai_export.py FIGURE.ai OUT_PREFIX [flags]
 | ED Fig. 2 | `--max-pt 7` |
 | ED Fig. 9 | `--max-pt 7 --anchor center --drop-small` |
 
-The script requires PyMuPDF and Pillow. The replacement letters use Arial Bold
-from the macOS location by default. On other systems, set `ARIAL_BOLD` to the
-path of `Arial Bold.ttf`. This is the only change from the copy in the paper
-repository.
+The script requires PyMuPDF and Pillow. The replacement letters use Arial Bold,
+and with `--min-pt` all text the script sets is embedded Arial. Both fonts are
+read from the macOS locations by default. On other systems, set `ARIAL_BOLD` and
+`ARIAL` to the paths of `Arial Bold.ttf` and `Arial.ttf`. These overrides are the
+only change from the copy in the paper repository.

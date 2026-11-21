@@ -26,8 +26,9 @@ import fitz  # PyMuPDF
 from PIL import Image
 
 MM = 72 / 25.4
-# Arial Bold for the replacement panel letters; macOS location by default, override with $ARIAL_BOLD.
+# Arial for the text this script sets; macOS locations by default, override with $ARIAL_BOLD and $ARIAL.
 ARIAL_BOLD = os.environ.get("ARIAL_BOLD", "/System/Library/Fonts/Supplemental/Arial Bold.ttf")
+ARIAL = os.environ.get("ARIAL", "/System/Library/Fonts/Supplemental/Arial.ttf")
 WIDTH_MM, HEIGHT_MM, PPI = 183, 247, 300
 
 
@@ -214,6 +215,14 @@ def main():
     collateral = [s for s in collateral
                   if (s["text"], tuple(round(v) for v in s["bbox"])) not in left]
     page.insert_font(fontname="AB", fontfile=ARIAL_BOLD)
+    # Text set again by this script: embedded Arial with --min-pt. Without it, the base-14
+    # Helvetica names as before, so earlier exports stay reproducible pixel for pixel. Arial has
+    # the same advance widths as Helvetica, so the lengths measured above hold for both.
+    if a.min_pt:
+        page.insert_font(fontname="AR", fontfile=ARIAL)
+    def face(s):
+        bold = "Bold" in s["font"]
+        return ("AB" if bold else "AR") if a.min_pt else ("hebo" if bold else "helv")
     for s in letters:
         letter = s["text"].strip()
         page.insert_text(fitz.Point(s["origin"]), relabel.get(letter, letter).lower(),
@@ -222,7 +231,7 @@ def main():
         x, y = s["origin"]
         if s["dir"] == (0.0, -1.0):  # reading upwards
             page.insert_text(fitz.Point(x, y), s["text"],
-                             fontname="hebo" if "Bold" in s["font"] else "helv",
+                             fontname=face(s),
                              fontsize=s["size"], color=fitz.sRGB_to_pdf(s["color"]), rotate=90)
             continue
         if s["dir"] != (1.0, 0.0):
@@ -233,7 +242,7 @@ def main():
         if below:
             y += (min(d["origin"][1] for d in below) - y) / 2
         page.insert_text(fitz.Point(x, y), s["text"],
-                         fontname="hebo" if "Bold" in s["font"] else "helv",
+                         fontname=face(s),
                          fontsize=s["size"], color=fitz.sRGB_to_pdf(s["color"]))
     for s in shrink:
         font = "hebo" if "Bold" in s["font"] else "helv"
@@ -242,7 +251,7 @@ def main():
         if a.anchor == "center":
             centre = (s["bbox"][0] + s["bbox"][2]) / 2
             x = centre - fitz.get_text_length(s["text"], fontname=font, fontsize=size) / 2
-        page.insert_text(fitz.Point(x, y), s["text"], fontname=font, fontsize=size,
+        page.insert_text(fitz.Point(x, y), s["text"], fontname=face(s), fontsize=size,
                          color=fitz.sRGB_to_pdf(s["color"]))
 
     for s in grow:
@@ -250,10 +259,10 @@ def main():
         size = a.min_pt / scale
         x, y = s["new"]
         if s["dir"] == (1.0, 0.0):
-            page.insert_text(fitz.Point(x, y), s["text"], fontname=font, fontsize=size,
+            page.insert_text(fitz.Point(x, y), s["text"], fontname=face(s), fontsize=size,
                              color=fitz.sRGB_to_pdf(s["color"]))
         elif s["dir"] == (0.0, -1.0):  # reading upwards
-            page.insert_text(fitz.Point(x, y), s["text"], fontname=font, fontsize=size,
+            page.insert_text(fitz.Point(x, y), s["text"], fontname=face(s), fontsize=size,
                              color=fitz.sRGB_to_pdf(s["color"]), rotate=90)
         else:
             sys.exit(f"text direction {s['dir']} of {s['text']!r} is not supported by --min-pt")
