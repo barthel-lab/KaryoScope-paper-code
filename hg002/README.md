@@ -1,4 +1,4 @@
-# HG002 assembly figure (Fig. 1b-e)
+# HG002 assembly figure (Fig. 1b)
 
 `conf/` and `scripts/check_data.sh` are from `barthel-lab/KaryoScope-HG002` at
 commit `27885ba`. `requirements.txt` is the original pin list and is kept for
@@ -6,13 +6,15 @@ the record. Use `../environment/figures.yml` instead. Changes from that commit:
 
 - `conf/hg002.yaml` runs only the `iscn.assembly_figure` step, points
   `scripts.iscn` at `../vendored/KaryoScope-ISCN`, and has a placeholder for
-  `colors_dir`.
+  `colors_dir`. It has a second analysis, the Fig. 1b render (see Fig. 1).
 - `scripts/setup.sh` and `scripts/sync_data.sh` are not copied. They cloned
   private repositories and copied data from the TGen cluster over SSH.
 
-The figure is drawn by `vendored/KaryoScope-ISCN/KaryoScope_assembly_figure.py`
-(karyotype grid, plus chromosome, region, and subtelomeric hierarchy trees),
-called through the vendored `karyoscope_conductor`.
+The figure is drawn by `vendored/KaryoScope-ISCN/KaryoScope_assembly_figure.py`,
+called through the vendored `karyoscope_conductor`. The first analysis in
+`conf/hg002.yaml` draws the karyotype in three rows of eight chromosomes, plus the
+chromosome, region, and subtelomeric hierarchy trees (the render behind the first
+submission's Fig. 1b-e). The second draws Fig. 1b.
 
 ## Inputs
 
@@ -39,7 +41,61 @@ sed -i "s|<KS_RESOURCES>|$KS_RESOURCES|" conf/hg002.yaml
 PYTHONPATH=../vendored/KaryoScope-conductor python -m karyoscope_conductor --config conf/hg002.yaml
 ```
 
-Output: `results/assembly_figure/HG002_figure_v2_v1cen_grid.{svg,png}`.
+Output: `results/assembly_figure/HG002_figure_v2_v1cen_grid.{svg,png}` and
+`results/assembly_figure/HG002_fig1b_two_rows.{svg,png}`.
+
+## Fig. 1
+
+Fig. 1 has two panels at the Nature main-figure size (180 mm wide, at most 170 mm
+tall): a, the FISH and KaryoScope schematic, and b, the HG002 karyotype. The
+hierarchy trees of the first submission's Fig. 1c-e are Extended Data Figs. 1b,
+2b, and 3b.
+
+Panel b is the second analysis in `conf/hg002.yaml`, which runs
+`KaryoScope_assembly_figure.py` with these options, added in this repository
+(without them the output is unchanged):
+
+| option | effect |
+|---|---|
+| `--chroms-per-row 12` | two rows: chr1 to chr12, then chr13 to chr22, X, and Y |
+| `--no-trees` | no hierarchy trees (the scale legend goes below the last row) |
+| `--justify-rows` | each row spread from the left margin to the right margin, with equal gaps between chromosomes |
+| `--legend-in-row` | the scale legend in the free space of the last row (under chr17 to chr21, left of chrX) instead of a band below it; the script stops if it does not fit |
+| `--colour-key region,subtelomeric` | a swatch key of the labels drawn in the centromere zooms (region feature set) and subtelomere zooms (subtelomeric feature set), plus novel, with the colours of the same colour files as the tracks, in the free space of the first row it fits in (under chr8 to chr12); entries 5 pt (`--key-pt`), headers 6 pt bold (`--key-header-pt`); the script stops if it does not fit |
+| `--key-centre-on chr9` | the key placed so the gap between its two headers is centred under chr9's lowest Mb labels |
+| `--key-merge-colours`, `--key-label OLD=NEW` | one key entry per colour within a group, the labels joined with ' / ', and an entry renamed |
+| `--legend-with-key` | the scale legend in the key's row, left of the key, its last line on the key's last baseline |
+| `--no-legend-colons` | legend rows read Genome, Centromere, and Telomere, as in the published panel |
+| `--width-mm 180` | page written 180 mm wide, with text sized in printed points: chromosome names 6.5 pt (`--chrom-pt`), h1 and h2 5.5 pt (`--hap-pt`), Mb labels 5 pt (`--size-pt`), and legend 6 pt (`--legend-pt`) |
+| `--margin 6` | 6-unit page margin |
+| `--scale 1.76` | genome tracks at 1.76 px/Mb (1.4 in the first submission): taller chromosomes, to fill the 170 mm page |
+
+The zoom factors do not depend on the arrangement or on `--scale`: the legend prints
+4.9x for the centromere windows and 2158x for the 25 kb telomere windows, as in the
+first submission. The inputs and the centromere window file are the same.
+
+`scripts/compose_fig1.py` places panel a, centred, above panel b and writes the figure. Panel
+a is cropped from the published Illustrator file
+(`KaryoScope-paper/figures/fig1/HG002_figure_v2_v1cen_grid.ai`, PDF-compatible, not
+modified) as vector artwork. Everything below panel a is deleted from the copy
+first. Panel a is scaled so its smallest text prints at 5.05 pt (141 x 57 mm), and
+its row labels FISH and KaryoScope are set again in Arial Bold at 7 pt. Panel
+letters are 8 pt bold lowercase Arial.
+
+The script needs PyMuPDF and cairosvg (`environment/d4z4.yml` has cairosvg; add
+PyMuPDF with `pip install pymupdf==1.26.5`).
+
+```bash
+# fontconfig must return Arial for "sans-serif" (cairosvg converts the SVG text)
+python scripts/compose_fig1.py \
+    --ai /path/to/KaryoScope-paper/figures/fig1/HG002_figure_v2_v1cen_grid.ai \
+    --panel-b results/assembly_figure/HG002_fig1b_two_rows.svg \
+    --arial-bold /path/to/arialbd.ttf --out results/Fig1
+```
+
+Output: `results/Fig1.pdf` (vector, fonts embedded) and `results/Fig1.png` (300
+ppi), 180 x 169.8 mm, text 5.0 to 7.0 pt. The script stops if the PDF holds a
+font other than Arial or if the page is taller than 170 mm.
 
 ## Centromere windows (Fig. 1b)
 
@@ -67,7 +123,8 @@ lengths printed in Fig. 1b.
 
 ## Status
 
-The published Fig. 1 is an Illustrator composition built on this render. The submitted file is exported with `illustrator/nature_ai_export.py --relabel C=E,E=C`, so panel c is the chromosome tree and panel e the subtelomeric tree. The
+The first submission's Fig. 1 is an Illustrator composition built on the
+three-row render. It was exported with `illustrator/nature_ai_export.py --relabel C=E,E=C`, so panel c is the chromosome tree and panel e the subtelomeric tree. The
 render committed in KaryoScope-HG002 was made with KaryoScope-ISCN `4d1b086`.
 Run with the standard
 `HG002.assembly.KS_human_CHM13_v2.region.presmoothed.scaffolded.centromeres.bed.gz`

@@ -253,7 +253,7 @@ def build(bed_path=None, chroms=None, draw_title=False, track_height=None):
     # ---------------------------------------------------------------------------
     # Layout (rotated 90°: chromosomes run vertically, lollipops extend right)
     # ---------------------------------------------------------------------------
-    font_family = "sans-serif"
+    font_family = "Arial"
     text_color = "#000000"
     axis_color = "#545454"
 
