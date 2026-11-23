@@ -1,7 +1,8 @@
 # Figures composed in Illustrator
 
 Figs. 1 and 5, Extended Data (ED) Figs. 1-3 and 9, and Supplementary Fig. 1 were
-composed in Adobe Illustrator. The `.ai` files are kept in the KaryoScope-paper
+composed in Adobe Illustrator. Fig. 1 is now made by `hg002/scripts/compose_fig1.py`,
+which takes only panel a from its `.ai` file (see `hg002/README.md`). The `.ai` files are kept in the KaryoScope-paper
 repository, not here. `nature_ai_export.py` (from `scripts/` in KaryoScope-paper
 `main`, including `--relabel` from PR #42)
 makes the submitted PDF and TIFF from each `.ai` file (PDF-compatible) without
@@ -23,7 +24,7 @@ python3 nature_ai_export.py FIGURE.ai OUT_PREFIX [flags]
 
 | figure | flags |
 |---|---|
-| Fig. 1 | `--relabel C=E,E=C` (the chromosome tree becomes c and the subtelomeric tree e, so panels are cited in order, while the `.ai` keeps its letters) |
+| Fig. 1 (first submission, panels a-e) | `--relabel C=E,E=C` (the chromosome tree becomes c and the subtelomeric tree e, so panels are cited in order, while the `.ai` keeps its letters). The revised Fig. 1 is not exported with this script. |
 | Fig. 5 | `--min-pt 5 --width-mm 180 --height-mm 170 --arial` |
 | ED Fig. 1 | `--min-pt 5 --arial` (the scale-bar label "10 Mbp") |
 | ED Fig. 3, Supp. Fig. 1 | `--arial` |

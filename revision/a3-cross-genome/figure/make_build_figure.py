@@ -402,7 +402,7 @@ def main():
     out = []
     out.append(
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" '
-        f'viewBox="0 0 {W} {H}" font-family="Helvetica, Arial, sans-serif">'
+        f'viewBox="0 0 {W} {H}" font-family="Arial">'
     )
     out.append(defs.replace(
         f'<rect x="0" y="0" width="1400" height="710" fill="#ffffff"/>',

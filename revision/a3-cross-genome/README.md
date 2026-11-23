@@ -29,6 +29,18 @@ python3 figure/make_build_panels_ab.py
 python3 figure/make_build_figure.py --a3-dir .
 ```
 
-Checked 2026-10-20: both outputs are identical to `build_workflow_panelsAB.svg`
+Checked 2026-10-20: both outputs were identical to `build_workflow_panelsAB.svg`
 and `build_workflow.svg` in KaryoScope-paper `main` (`5c11d87`), the submitted
-Extended Data Fig. 4.
+Extended Data Fig. 4. Since 2026-11-21 both scripts set every text in Arial (the
+SVGs named Helvetica, then Arial, and a monospace face for the command names
+`prep-bed`, `build`, and `annotate` and the priority file in panel b). The
+priority file's three columns are now three text elements at the x positions
+the monospace setting gave them. Nothing else changed: the same text, shapes,
+and positions.
+
+The submitted TIFF is the SVG at 183 mm and 300 ppi, flattened onto white:
+
+```bash
+rsvg-convert -w 2161 -b white figures/fig7/build_workflow.svg -o ED_Fig4.png   # then RGB LZW TIFF
+rsvg-convert -f pdf -w 183mm figures/fig7/build_workflow.svg -o ED_Fig4.pdf
+```
