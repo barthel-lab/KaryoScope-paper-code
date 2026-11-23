@@ -4,7 +4,8 @@
 # Part of the KaryoScope-paper-code snapshot; see vendored/README.md.
 # Changed in KaryoScope-paper-code (2026-11-21), for Fig. 1b at the Nature main-figure size:
 # --chroms-per-row, --no-trees and --width-mm (with the --*-pt text sizes). Without these
-# options the output is unchanged.
+# options the output is unchanged. Added 2026-11-23: --colour-key with --key-*
+# and --legend-with-key.
 """
 KaryoScope Assembly Figure - Combined letter-format visualization.
 
@@ -57,6 +58,7 @@ LEGEND_LABEL_PAD = 8
 LEGEND_COLONS = True    # 'Genome:' (False: 'Genome', as in the published Fig. 1b)
 LEGEND_BASELINE_DY = 3   # legend text baseline below the bar's top
 ROW_LABEL_SPACE = 40   # space below each row's tallest track for its Mb labels
+SIZE_LABELS = []       # (chrom, hap, x, bottom) of every Mb label drawn (for --key-centre-on)
 
 # Advance widths of Arial glyphs (em) for the characters of the Mb labels, to size the space
 # the rotated labels need
@@ -174,6 +176,26 @@ def parse_args():
                         help="grid, with --no-trees: put the scale legend in the free space of the "
                              "last row (under the chromosomes that end highest) instead of a band "
                              "below it; stops if it does not fit")
+    parser.add_argument("--colour-key", default=None, metavar="SETS",
+                        help="grid, with --no-trees, --width-mm and --legend-in-row: a swatch key of "
+                             "the labels drawn in the zoom panels, for these feature sets "
+                             "(comma-separated: region, subtelomeric), set in the free space under "
+                             "the chromosomes of one row; stops if it does not fit")
+    parser.add_argument("--key-merge-colours", action="store_true",
+                        help="with --colour-key: one entry per colour within a group, its labels "
+                             "joined with ' / ' (first occurrence's place)")
+    parser.add_argument("--key-label", action="append", default=[], metavar="OLD=NEW",
+                        help="with --colour-key: print entry OLD as NEW (after merging); repeatable")
+    parser.add_argument("--key-centre-on", default=None, metavar="CHROM",
+                        help="with --colour-key: place the key horizontally so the gap between the "
+                             "two group headers is centred under CHROM's lowest Mb labels")
+    parser.add_argument("--legend-with-key", action="store_true",
+                        help="with --colour-key: the scale legend in the key's row, left of the key, "
+                             "its last line on the key's last baseline, instead of in the last row")
+    parser.add_argument("--key-pt", type=float, default=5.0,
+                        help="with --colour-key: key entries (pt)")
+    parser.add_argument("--key-header-pt", type=float, default=6.0,
+                        help="with --colour-key: key headers, bold (pt)")
     parser.add_argument("--no-legend-colons", action="store_true",
                         help="scale legend rows read 'Genome', not 'Genome:'")
     parser.add_argument("--chrom-pt", type=float, default=6.5,
@@ -492,6 +514,7 @@ def draw_genome_row(d, chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths
             genome_label = gp.format_size_label(scaf_len)
             glx = pos["genome_x"] + gp.GENOME_TRACK_W / 2
             gly = gy0 + scaf_h + label_pad
+            SIZE_LABELS.append((chrom, hap, glx, gly + text_length(genome_label, SIZE_FONT)))
             d.append(draw.Text(genome_label, font_size=SIZE_FONT, x=glx, y=gly,
                                fill=text_color, font_family="sans-serif",
                                text_anchor="end", dominant_baseline="middle",
@@ -501,6 +524,7 @@ def draw_genome_row(d, chromosomes, chrom_draw_haps, chrom_map, scaffold_lengths
                 cen_label = gp.format_size_label(cen_span)
                 clx = pos["cen_x"] + gp.TRACK_W / 2
                 cly = pos["cen_panel_y"] + this_cen_h + label_pad
+                SIZE_LABELS.append((chrom, hap, clx, cly + text_length(cen_label, SIZE_FONT)))
                 d.append(draw.Text(cen_label, font_size=SIZE_FONT, x=clx, y=cly,
                                    fill=text_color, font_family="sans-serif",
                                    text_anchor="end", dominant_baseline="middle",
@@ -818,6 +842,7 @@ def draw_grid_layout(d, args, chrom_draw_haps, chrom_map, scaffold_lengths,
     # Draw chromosome rows
     print("Drawing chromosomes...")
     current_y = MARGIN
+    row_tops = []
 
     for row_idx, row_chroms in enumerate(rows):
         draw_genome_row(
@@ -829,10 +854,25 @@ def draw_grid_layout(d, args, chrom_draw_haps, chrom_map, scaffold_lengths,
             gbanding_dir=gbanding_dir, gbanding_position=gbanding_position,
         )
         row_top = current_y
+        row_tops.append(row_top)
         current_y += gp.INITIAL_Y + row_heights[row_idx] + row_label_space[row_idx] + ROW_GAP
         print(f"  Row {row_idx + 1}: {', '.join(row_chroms)}")
 
     telo_ppb_fixed = subtelo_h / args.subtelo_span if args.subtelo_span > 0 else 0
+    if args.colour_key:
+        if tree_panels or not args.legend_in_row or not args.width_mm:
+            sys.exit("--colour-key needs --no-trees, --legend-in-row and --width-mm")
+        legend_xy = draw_colour_key(d, args, rows, row_tops, row_heights, row_label_space, row_x,
+                                    row_gap_x, chrom_draw_haps, chrom_map, scaffold_lengths,
+                                    centromere_coords, all_chrom_features, colors,
+                                    pixels_per_bp_genome, subtelo_h, cen_ppb_fixed, genome_height,
+                                    sex, MARGIN, total_width, text_color, telo_ppb_fixed)
+        if legend_xy:
+            draw_scale_legend(d, *legend_xy, pixels_per_bp_genome, cen_ppb_fixed,
+                              telo_ppb_fixed, text_color)
+            report_zoom(pixels_per_bp_genome, cen_ppb_fixed, telo_ppb_fixed)
+            save_drawing(d, args.output, total_width, total_height, args.width_mm)
+            return
     if not tree_panels and args.legend_in_row:
         lx, ly = place_legend_in_row(
             rows[-1], row_top, row_heights[-1], row_label_space[-1], row_x[-1], row_gap_x[-1],
@@ -993,6 +1033,235 @@ def place_legend_in_row(row_chroms, row_top, row_h, row_label_h, x_offset, chrom
     print(f"  Scale legend in the last row under {c0}..{c1}: {w:.0f} x {h:.0f} in a free area "
           f"{x1 - x0:.0f} x {row_bottom - free_top:.0f}")
     return x, y
+
+
+# Short headers: with the feature-set names ("Centromere zoom (region feature set)") the key is
+# about 97 mm wide at 6 pt and no longer fits under chr8-chr12 of Fig. 1b (74.7 mm free).
+KEY_HEADERS = {"region": "Centromere zoom", "subtelomeric": "Subtelomere zoom"}
+KEY_LINE = 1.2      # entry line pitch, em of the entry font
+KEY_HEAD = 1.3      # header line, em of the header font
+KEY_SWATCH = 0.75   # swatch side, em of the entry font
+_KEY_FONTS = {}
+
+
+def arial_length(s, font_px, bold=False):
+    """Advance width of s in Arial (the face fontconfig returns for Arial, as cairosvg uses)."""
+    from PIL import ImageFont
+    if bold not in _KEY_FONTS:
+        path = subprocess.run(["fc-match", "-f", "%{file}", "Arial:bold" if bold else "Arial"],
+                              capture_output=True, text=True, check=True).stdout.strip()
+        _KEY_FONTS[bold] = ImageFont.truetype(path, 1000)
+    return _KEY_FONTS[bold].getlength(s) / 1000 * font_px
+
+
+def drawn_zoom_labels(fs, all_chrom_features, chrom_draw_haps, chrom_map, scaffold_lengths,
+                      centromere_coords):
+    """bp of each label drawn in the zoom panels of feature set fs (region: the centromere
+    panels; subtelomeric: the p- and q-arm panels), under the conditions draw_genome_row draws
+    them."""
+    bp = {}
+    for chrom, haps in chrom_draw_haps.items():
+        for hap in haps:
+            scaf = chrom_map.get(chrom, {}).get(hap)
+            feats = all_chrom_features.get(chrom, {}).get(hap)
+            if not scaf or scaf not in scaffold_lengths or feats is None:
+                continue
+            if fs == "region":
+                cs, ce = centromere_coords.get(scaf, (None, None))
+                tracks = [feats["centromere"]] if cs is not None and ce > cs else []
+            else:
+                tracks = [feats["p_arm"], feats["q_arm"]]
+            for t in tracks:
+                for f in t:
+                    bp[f["feature"]] = bp.get(f["feature"], 0) + f["end"] - f["start"]
+    return bp
+
+
+def colour_file_order(colors_dir, database, fs):
+    order = []
+    with open(Path(colors_dir) / f"{database}.{fs}.colors.txt") as f:
+        for i, line in enumerate(f):
+            parts = line.split()
+            if len(parts) >= 2 and not (i == 0 and parts[0].lower() == "feature"):
+                order.append(parts[0])
+    return order
+
+
+def key_layout(groups, novel, lines, ef, hf):
+    """Columns of the key with `lines` entries per column: each group under its header, its
+    entries filled column by column; the novel entry in a column of its own, with no header,
+    after the last group. Returns (width, height, items), items as (kind, x, y, text, colour)
+    relative to the key's top-left (y = top of the line)."""
+    sw, sgap, cgap, ggap = KEY_SWATCH * ef, 0.45 * ef, 1.1 * ef, 2.0 * ef
+    line_h = KEY_LINE * ef
+    head_h = KEY_HEAD * hf
+    items, x = [], 0.0
+    for header, entries in groups + ([(None, [novel])] if novel else []):
+        cols = [entries[i:i + lines] for i in range(0, len(entries), lines)]
+        cx = x
+        for col in cols:
+            for k, (label, colour) in enumerate(col):
+                items.append(("entry", cx, head_h + k * line_h, label, colour))
+            cx += sw + sgap + max(arial_length(lb, ef) for lb, _ in col) + cgap
+        w = cx - cgap - x
+        if header:
+            items.append(("header", x, 0.0, header, None))
+            w = max(w, arial_length(header, hf, bold=True))
+        x += w + ggap
+    height = head_h + min(lines, max(len(e) for _, e in groups)) * line_h - (line_h - ef) / 2
+    return x - ggap, height, items
+
+
+def draw_colour_key(d, args, rows, row_tops, row_heights, row_label_space, row_x, row_gap_x,
+                    chrom_draw_haps, chrom_map, scaffold_lengths, centromere_coords,
+                    all_chrom_features, colors, pixels_per_bp_genome, subtelo_h, cen_ppb_fixed,
+                    genome_height, sex, margin, total_width, text_color, telo_ppb_fixed):
+    """--colour-key: the labels drawn in the zoom panels, with their colours from the same colour
+    files the tracks use, in the free space under the chromosomes of a row (the first row in
+    which it fits), in as few columns as fit."""
+    px_per_pt = total_width / (args.width_mm * 72 / 25.4)
+    ef, hf = args.key_pt * px_per_pt, args.key_header_pt * px_per_pt
+    groups, novel_bp = [], 0
+    print("Colour key:")
+    for fs in [f.strip() for f in args.colour_key.split(",") if f.strip()]:
+        if fs not in KEY_HEADERS:
+            sys.exit(f"--colour-key: no key for feature set {fs!r} (one of {sorted(KEY_HEADERS)})")
+        bp = drawn_zoom_labels(fs, all_chrom_features, chrom_draw_haps, chrom_map,
+                               scaffold_lengths, centromere_coords)
+        novel_bp += bp.pop("novel", 0)
+        order = colour_file_order(args.colors_dir, args.database, fs)
+        missing = sorted(lb for lb in bp if lb not in colors[fs] or lb not in order)
+        if missing:
+            sys.exit(f"--colour-key: {fs} labels without a colour in the colour file: {missing}")
+        labels = sorted(bp, key=order.index)
+        entries = [(lb.replace("_", " "), colors[fs][lb][0]) for lb in labels]
+        for lb, (name, colour) in zip(labels, entries):
+            print(f"  {fs}\t{name}\t{colour}\t{bp[lb]} bp")
+        if args.key_merge_colours:
+            merged = {}
+            for name, colour in entries:
+                merged.setdefault(colour.lower(), (colour, []))[1].append(name)
+            entries = [(" / ".join(names), colour) for colour, names in merged.values()]
+        rename = dict(kv.split("=", 1) for kv in args.key_label)
+        entries = [(rename.get(name, name), colour) for name, colour in entries]
+        if args.key_merge_colours or rename:
+            print(f"  {fs} entries: " + "; ".join(f"{n} {c}" for n, c in entries))
+        groups.append((KEY_HEADERS[fs], entries))
+    novel = ("novel", colors["region"]["novel"][0]) if novel_bp else None
+    if novel:
+        print(f"  novel\tnovel\t{novel[1]}\t{novel_bp} bp")
+
+    mm = total_width / args.width_mm
+    pad = 0.6 * LEGEND_FONT
+    best = None
+    for r, row_chroms in enumerate(rows):
+        _, _, info, _ = row_positions(row_chroms, chrom_draw_haps, chrom_map, scaffold_lengths,
+                                      centromere_coords, pixels_per_bp_genome, subtelo_h,
+                                      cen_ppb_fixed, sex, row_x[r], row_gap_x[r])
+        y0 = row_tops[r] + gp.INITIAL_Y
+        row_bottom = y0 + row_heights[r] + row_label_space[r] - 6
+        chroms = [c for c in row_chroms if c in chrom_draw_haps]
+        spans, bottoms = [], []
+        for c in chroms:
+            ext = [info[(c, h)] for h in chrom_draw_haps[c]]
+            spans.append((min(lx for lx, _ in ext), max(lx + lw for lx, lw in ext)))
+            bottoms.append(y0 + label_space([c], chrom_draw_haps, chrom_map, scaffold_lengths,
+                                            centromere_coords, pixels_per_bp_genome,
+                                            cen_ppb_fixed, genome_height, 0) - 6)
+        for i in range(len(chroms)):
+            for j in range(i, len(chroms)):
+                free_top = max(bottoms[i:j + 1]) + pad
+                x0 = spans[i - 1][1] + pad if i > 0 else margin
+                x1 = spans[j + 1][0] - pad if j + 1 < len(chroms) else total_width - margin
+                n = max(len(e) for _, e in groups)
+                for lines in range(n, 0, -1):
+                    w, h, items = key_layout(groups, novel, lines, ef, hf)
+                    if h <= row_bottom - free_top and w <= x1 - x0:
+                        # the most compact key (most entries per column), then the tallest free
+                        # area, then the narrowest (the key sits under as few chromosomes as fit)
+                        score = (lines, row_bottom - free_top, -(x1 - x0))
+                        print(f"    fits under {chroms[i]}..{chroms[j]}: {lines} per column, "
+                              f"{w / mm:.1f} x {h / mm:.1f} mm in {(x1 - x0) / mm:.1f} x "
+                              f"{(row_bottom - free_top) / mm:.1f} mm")
+                        if best is None or score > best[0]:
+                            best = (score, r, x0, x1, free_top, row_bottom, w, h, items, lines,
+                                    chroms[i], chroms[j], chroms, spans, bottoms)
+                        break
+        if best is not None:
+            break
+    if best is None:
+        sys.exit("--colour-key: the key fits under no run of chromosomes in any row")
+    _, r, x0, x1, free_top, row_bottom, w, h, items, lines, c0, c1, chroms, spans, bottoms = best
+    kx = (x0 + x1 - w) / 2
+    ky = (free_top + row_bottom - h) / 2
+
+    def free_top_under(a, b):
+        """Top of the free space under [a, b]: below every chromosome of the row it overlaps."""
+        if a < margin - 1e-6 or b > total_width - margin + 1e-6:
+            return None
+        hit = [bt for (s0, s1), bt in zip(spans, bottoms) if s1 + pad > a and s0 - pad < b]
+        return (max(hit) if hit else -1e9) + pad
+
+    if args.key_centre_on:
+        labs = [(x, bt, hap) for c, hap, x, bt in SIZE_LABELS if c == args.key_centre_on]
+        if not labs:
+            sys.exit(f"--key-centre-on: no Mb labels drawn for {args.key_centre_on}")
+        low_hap = max(labs, key=lambda t: t[1])[2]
+        ax = sum(x for x, _, hp in labs if hp == low_hap) / sum(1 for *_, hp in labs if hp == low_hap)
+        heads = [(x, text) for kind, x, _, text, _ in items if kind == "header"]
+        if len(heads) < 2:
+            sys.exit("--key-centre-on needs two groups")
+        (hx0, ht0), (hx1, _) = sorted(heads)[:2]
+        gap_c = (hx0 + arial_length(ht0, hf, bold=True) + hx1) / 2
+        kx = ax - gap_c
+        ft = free_top_under(kx, kx + w)
+        if ft is None or row_bottom - ft < h:
+            sys.exit(f"--key-centre-on {args.key_centre_on}: the key would touch a track or label "
+                     f"or leave the page")
+        free_top = ft
+        ky = (ft + row_bottom - h) / 2
+        print(f"  Key centred on {args.key_centre_on} {low_hap}'s lowest Mb labels (x {ax:.1f}): the "
+              f"gap between the headers is centred there")
+    print(f"  Key in row {r + 1} under {c0}..{c1}: {w / mm:.1f} x {h / mm:.1f} mm, {lines} entries "
+          f"per column, in a free area {(x1 - x0) / mm:.1f} x {(row_bottom - free_top) / mm:.1f} mm; "
+          f"key box x {kx:.1f}-{kx + w:.1f}, y {ky:.1f}-{ky + h:.1f}")
+    sw, sgap = KEY_SWATCH * ef, 0.45 * ef
+    line_h = KEY_LINE * ef
+    g = draw.Group(id="colour_key")
+    for kind, x, y, text, colour in items:
+        if kind == "header":
+            g.append(draw.Text(text, font_size=hf, x=kx + x, y=ky + y + 0.75 * hf,
+                               fill=text_color, font_family="sans-serif", font_weight="bold",
+                               text_anchor="start"))
+        else:
+            sy = ky + y + (line_h - sw) / 2 - (line_h - ef) / 2
+            g.append(draw.Rectangle(kx + x, sy, sw, sw, fill=colour, stroke=text_color,
+                                    stroke_width=0.25 * px_per_pt))
+            g.append(draw.Text(text, font_size=ef, x=kx + x + sw + sgap, y=sy + sw / 2 + 0.36 * ef,
+                               fill=text_color, font_family="sans-serif", text_anchor="start"))
+    d.append(g)
+    if not args.legend_with_key:
+        return None
+    # scale legend left of the key, its last baseline on the key's last baseline
+    lw, lh, ltop = legend_size(pixels_per_bp_genome, cen_ppb_fixed, telo_ppb_fixed)
+    last = max(y for kind, _, y, _, _ in items if kind == "entry")
+    key_base = ky + last + (ef - sw) / 2 + sw / 2 + 0.36 * ef
+    ly = key_base - 2 * LEGEND_LINE_H - LEGEND_BASELINE_DY
+    l_top, l_bot = ly - ltop, ly - ltop + lh
+    right = kx - 2.0 * ef            # the gap between the two groups of the key
+    left = right
+    while left - 1 >= margin:        # extend left while the space stays free
+        ft = free_top_under(left - 1, right)
+        if ft is None or ft > l_top:
+            break
+        left -= 1
+    if right - left < lw or l_bot > row_bottom + 1e-6:
+        sys.exit(f"--legend-with-key: the scale legend ({lw / mm:.1f} x {lh / mm:.1f} mm) does not fit "
+                 f"left of the key (free {(right - left) / mm:.1f} mm)")
+    lx = (left + right - lw) / 2
+    print(f"  Scale legend left of the key: {lw / mm:.1f} x {lh / mm:.1f} mm in a free stretch "
+          f"{(right - left) / mm:.1f} mm wide; legend box x {lx:.1f}-{lx + lw:.1f}, y {l_top:.1f}-{l_bot:.1f}")
+    return lx, ly
 
 
 def save_drawing(d, output, total_width, total_height, width_mm=None):

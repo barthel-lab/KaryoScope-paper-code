@@ -61,6 +61,10 @@ Panel b is the second analysis in `conf/hg002.yaml`, which runs
 | `--no-trees` | no hierarchy trees (the scale legend goes below the last row) |
 | `--justify-rows` | each row spread from the left margin to the right margin, with equal gaps between chromosomes |
 | `--legend-in-row` | the scale legend in the free space of the last row (under chr17 to chr21, left of chrX) instead of a band below it; the script stops if it does not fit |
+| `--colour-key region,subtelomeric` | a swatch key of the labels drawn in the centromere zooms (region feature set) and subtelomere zooms (subtelomeric feature set), plus novel, with the colours of the same colour files as the tracks, in the free space of the first row it fits in (under chr8 to chr12); entries 5 pt (`--key-pt`), headers 6 pt bold (`--key-header-pt`); the script stops if it does not fit |
+| `--key-centre-on chr9` | the key placed so the gap between its two headers is centred under chr9's lowest Mb labels |
+| `--key-merge-colours`, `--key-label OLD=NEW` | one key entry per colour within a group, the labels joined with ' / ', and an entry renamed |
+| `--legend-with-key` | the scale legend in the key's row, left of the key, its last line on the key's last baseline |
 | `--no-legend-colons` | legend rows read Genome, Centromere, and Telomere, as in the published panel |
 | `--width-mm 180` | page written 180 mm wide, with text sized in printed points: chromosome names 6.5 pt (`--chrom-pt`), h1 and h2 5.5 pt (`--hap-pt`), Mb labels 5 pt (`--size-pt`), and legend 6 pt (`--legend-pt`) |
 | `--margin 6` | 6-unit page margin |
