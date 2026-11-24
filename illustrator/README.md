@@ -29,7 +29,7 @@ python3 nature_ai_export.py FIGURE.ai OUT_PREFIX [flags]
 | ED Fig. 1 | `--min-pt 5 --arial` (the scale-bar label "10 Mbp") |
 | ED Figs. 2 and 3 | `--max-pt 7 --arial`, run on the RGB copy (below). In ED Fig. 3 the cap brings the "subtelomeric" tree header from 7.03 to 7.0 pt. |
 | Supp. Fig. 1 | `--arial`, run on the RGB copy (below) |
-| ED Fig. 9 | `--max-pt 7 --anchor center --drop-small --arial` |
+| ED Fig. 9 | `--max-pt 7 --anchor center --drop-small --arial`, then `ed_fig9_panels.py` on the exported PDF (below) |
 
 `--arial` removes all text and sets the same strings again in embedded Arial
 (the Illustrator files carry Helvetica labels, and Nature asks for Arial).
@@ -74,3 +74,16 @@ python illustrator/nature_ai_export.py supfig4.rgb.pdf SuppFig1 --arial
 ```
 
 The other `.ai` files are RGB (DeviceRGB or sRGB) and are exported directly.
+
+## ED Fig. 9: FISH panels in the order of the text
+
+The Illustrator file draws one panel c holding the chr9 parental FISH (left) and the chr12 and
+chr19 FISH (right). The text discusses chr12 and chr19 first, so `ed_fig9_panels.py` swaps the two
+blocks in the exported PDF and letters them c (chr12), d (chr19), and e (chr9 parents). Nothing is
+redrawn: panels a and b are copied unchanged and the FISH images and labels are moved as they are.
+
+```bash
+python illustrator/nature_ai_export.py HPRC_cent_analysis.suppl_tpo.YC.ai ED_Fig9_export \
+    --max-pt 7 --anchor center --drop-small --arial
+python illustrator/ed_fig9_panels.py ED_Fig9_export.pdf ED_Fig9
+```
