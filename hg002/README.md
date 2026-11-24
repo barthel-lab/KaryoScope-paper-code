@@ -77,9 +77,11 @@ first submission. The inputs and the centromere window file are the same.
 
 `scripts/draw_fig1_trees.py` draws panel b, the region tree, with
 `plot_featureset_tree_bars.draw_panel` (the function that drew the Extended Data trees, given
-text sizes in printed points): labels 5.8 pt, header 6.8 pt, k-mer counts and axis ticks 5 pt,
-72 mm wide (the k-mer bars are lengthened to that width; they are never shorter than what keeps
-the axis tick labels 1 pt apart).
+text sizes in printed points): labels 5.8 pt, k-mer counts and axis ticks 5 pt, 72 mm wide (the
+k-mer bars are lengthened to that width; they are never shorter than what keeps the axis tick
+labels 1 pt apart). The bold root label ("region") is left out (`--no-header`; the figure legend
+names the feature set), and the k-mer axis is titled "Number of *k*-mers" (5.8 pt, *k* in italic)
+on the tick-label row, ending just left of the first tick (`--axis-title`, `--axis-title-pt`).
 
 `scripts/compose_fig1.py --compact-a --tree tree_region.svg` places panel a top left with short
 arrows (its four columns are placed individually and each arrow is cut from the .ai: head and
@@ -98,13 +100,13 @@ PyMuPDF with `pip install pymupdf==1.26.5`).
 ```bash
 # fontconfig must return Arial for "sans-serif" (cairosvg converts the SVG text)
 python scripts/draw_fig1_trees.py --featuresets region --label-pt 5.8 --width-mm 72 \
-    --out-dir results/fig1_trees
+    --no-header --axis-title "Number of *k*-mers" --axis-title-pt 5.8 --out-dir results/fig1_trees
 python scripts/compose_fig1.py \
     --ai /path/to/KaryoScope-paper/figures/fig1/HG002_figure_v2_v1cen_grid.ai \
     --panel-b results/assembly_figure/HG002_fig1b_two_rows.svg \
     --arial-bold /path/to/arialbd.ttf --compact-a --tree results/fig1_trees/tree_region.svg \
     --out results/Fig1
-python scripts/check_fig1.py results/Fig1.pdf
+python scripts/check_fig1.py results/Fig1.pdf --no-header --axis-title "Number of *k*-mers"
 ```
 
 Output: `results/Fig1.pdf` (vector, fonts embedded) and `results/Fig1.png` (300
@@ -113,7 +115,8 @@ between its columns (21.4 mm in the two-panel figure). The script stops if the P
 holds a font other than Arial or if the page is taller than 170 mm.
 `scripts/check_fig1.py` checks the page, text sizes, fonts and panel letters, compares
 each tree row by row (label, k-mer count, colour) with the generator's tree and its
-colours with the colour files, and finds overlapping text; `--reference` compares the
+colours with the colour files, checks the axis title and the missing header (`--axis-title`,
+`--no-header`; a tree without its header is identified by its labels), and finds overlapping text; `--reference` compares the
 karyotype labels with an earlier Fig. 1, `--ed-tree` the region tree with ED Fig. 2b.
 
 ## Centromere windows (Fig. 1b)
