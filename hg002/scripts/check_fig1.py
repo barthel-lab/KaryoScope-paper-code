@@ -2,15 +2,19 @@
 """Check a composed Fig. 1 (compose_fig1.py) against the Nature limits and its sources.
 
     python check_fig1.py Fig1.pdf [--reference Fig1_previous.pdf] [--ed-tree ED_Fig2.pdf]
+                         [--no-header] [--axis-title "Number of *k*-mers"]
 
 1. page 180 mm wide and at most 170 mm tall; all text Arial, embedded; text 5 to 7 pt; panel letters
    8 pt bold lowercase, in reading order (a, b, ... left to right, then top to bottom);
 2. with --reference: the karyotype labels (chromosome names, h1/h2, Mb values, the scale-legend
    strings) are the same multisets as in the reference figure;
-3. every tree in the figure (found by its bold root label) equals, row by row, the tree
+3. every tree in the figure (found by its bold root label, or, without one, as the panel holding
+   k-mer axis ticks and node labels, its feature set told by its labels) equals, row by row, the tree
    plot_featureset_tree_bars draws from the v2 hierarchy: label, k-mer count string (with
    "(multigroup)" where drawn) and bar colour; each bar colour equals the colour of that label in the
-   colour file the karyotype tracks are drawn with;
+   colour file the karyotype tracks are drawn with; with --no-header, no tree has its bold root label;
+   with --axis-title, each tree's k-mer axis has that title on the tick-label row, ending left of the
+   first tick label, with the parts between asterisks in italic, at 5 to 7 pt;
 4. with --ed-tree: the region tree's labels (in order) and count strings equal those of the given
    Extended Data PDF (ED Fig. 2b), whose colours went through other software and are not compared;
 5. no two text spans overlap in the trees or in the karyotype panel.
@@ -83,11 +87,28 @@ def tree_rows(page, clip):
     return rows
 
 
+TICKS = {"1", "10", "100", "1.0K", "10.0K", "100.0K", "1.0M", "10.0M", "100.0M", "1.0B"}
+
+
 def tree_clips(page, letters=()):
     """Each tree's area: from its bold root label to the next tree to its right, and down to the next
-    tree or panel letter below it in its column (or the page bottom)."""
-    roots = {s["t"]: s["rect"] for s in spans(page) if "Bold" in s["font"] and s["t"] in TREES}
+    tree or panel letter below it in its column (or the page bottom). A tree drawn without its root
+    label is found as a panel (its letter, to the next letter right of it and the next letter below)
+    that holds k-mer axis ticks and node labels; it is keyed "panel <letter>" until its labels tell
+    the feature set."""
+    sp = spans(page)
+    roots = {s["t"]: s["rect"] for s in sp if "Bold" in s["font"] and s["t"] in TREES}
     out = {}
+    for l in letters:
+        lr = l["rect"]
+        right = min([o["rect"].x0 for o in letters if abs(o["rect"].y0 - lr.y0) < 20 and o["rect"].x0 > lr.x0 + 5]
+                    + [page.rect.width])
+        below = min([o["rect"].y0 for o in letters if o["rect"].y0 > lr.y1 + 5] + [page.rect.height])
+        area = fitz.Rect(lr.x0 - 1, lr.y0 - 2, right - 1, below - 1)
+        inside = [s for s in sp if area.contains(s["rect"])]
+        if (any(s["t"] == "1.0K" for s in inside) and sum(near(s["color"], 0x333333) for s in inside) >= 3
+                and not any(area.contains(r) for r in roots.values())):
+            out[f"panel {l['t']}"] = area
     for k, r in roots.items():
         right = min([o.x0 for o in roots.values() if o.x0 > r.x0 + 5] + [page.rect.width])
         below = min([o.y0 for o in roots.values() if o.y0 > r.y1 and abs(o.x0 - r.x0) < 30]
@@ -95,6 +116,39 @@ def tree_clips(page, letters=()):
                     + [page.rect.height])
         out[k] = fitz.Rect(r.x0 - 3, r.y0 - 14, right - 1, below - 1)
     return out
+
+
+def check_axis_title(page, clip, expected, fs):
+    """The title on the tick-label row, left of the first tick label: text, italic parts, size, gap."""
+    raw = [dict(s, rect=fitz.Rect(s["bbox"])) for b in page.get_text("dict", clip=clip)["blocks"]
+           for l in b.get("lines", []) for s in l["spans"] if s["text"].strip()]
+    ticks = [s for s in raw if s["text"].strip() in TICKS and near(s["color"], 0x000000)]
+    k = [s for s in ticks if s["text"].strip() == "1.0K"]
+    if not k:
+        note(False, f"   {fs} tree: no axis tick labels found")
+        return
+    cy = (k[0]["rect"].y0 + k[0]["rect"].y1) / 2
+    row = [s for s in ticks if abs((s["rect"].y0 + s["rect"].y1) / 2 - cy) < 2]
+    first = min(row, key=lambda s: s["rect"].x0)
+    letter = lambda s: re.fullmatch(r"[a-h]", s["text"].strip()) and abs(s["size"] - 8) < 0.01
+    row_all = [s for s in raw if s not in row and not letter(s) and abs((s["rect"].y0 + s["rect"].y1) / 2 - cy) < 2]
+    parts = sorted((s for s in row_all if s["rect"].x1 <= first["rect"].x0 + 0.1), key=lambda s: s["rect"].x0)
+    stray = [s["text"] for s in row_all if s not in parts]      # title text right of the first tick
+    text = ""                              # rebuild the spaces the text extraction drops at span ends
+    for i, s in enumerate(parts):
+        if i and s["rect"].x0 - parts[i - 1]["rect"].x1 > 0.2 * s["size"] and not text.endswith(" "):
+            text += " "
+        text += s["text"]
+    text = text.replace("\xa0", " ").strip()
+    want = expected.replace("*", "")
+    italic = [s["text"].strip() for s in parts if "Italic" in s["font"]]
+    want_italic = [t for i, t in enumerate(expected.split("*")) if i % 2 == 1 and t]
+    sizes = sorted({round(s["size"], 2) for s in parts})
+    gap = (first["rect"].x0 - parts[-1]["rect"].x1) / MM if parts else 0
+    ok = (text == want and italic == want_italic and bool(sizes) and 5 - 1e-6 <= min(sizes) and max(sizes) <= 7 + 1e-6
+          and gap > 0 and not stray)
+    note(ok, f"   {fs} tree: axis title {text!r} (italic: {italic}) at {sizes} pt, ending {gap:.2f} mm left of the "
+             f"first tick label {first['text'].strip()!r}, on its row" + (f"; text right of the first tick: {stray}" if stray else ""))
 
 
 def generator_rows(fs, trees):
@@ -131,6 +185,8 @@ def main():
     ap.add_argument("pdf")
     ap.add_argument("--reference", help="a previous Fig. 1 whose karyotype labels must be the same")
     ap.add_argument("--ed-tree", help="ED Fig. 2 PDF: compare the region tree's labels and counts")
+    ap.add_argument("--no-header", action="store_true", help="the trees are drawn without their bold root label")
+    ap.add_argument("--axis-title", help='expected k-mer axis title, italic parts between asterisks')
     ap.add_argument("--colors", default=str(tp.V2_DB_DIR / "KS_human_CHM13_v2.{fs}.colors.txt"))
     a = ap.parse_args()
     page = fitz.open(a.pdf)[0]
@@ -171,7 +227,20 @@ def main():
     for root in trees.values():
         tp._apply_color_overrides(root)
     for fs, clip in clips.items():
-        rows, gen = tree_rows(page, clip), generator_rows(fs, trees)
+        rows = tree_rows(page, clip)
+        header = not fs.startswith("panel ")
+        if not header:                     # no root label: the feature set whose labels these are
+            match = [k for k in trees if list(generator_rows(k, trees)) == list(rows)]
+            note(len(match) == 1, f"3. {fs}: a tree without its root label; its labels are those of the "
+                                  f"{match[0] if match else '?'} tree")
+            fs = match[0] if match else fs
+            if fs not in trees:
+                continue
+        note(header or a.no_header, f"   {fs} tree: bold root label (header) {'present' if header else 'absent'}"
+             + (" (expected absent)" if a.no_header and header else ""))
+        if a.axis_title:
+            check_axis_title(page, clip, a.axis_title, fs)
+        gen = generator_rows(fs, trees)
         same = list(rows.items()) == list(gen.items())
         diff = [(k, rows.get(k), gen.get(k)) for k in dict.fromkeys(list(rows) + list(gen)) if rows.get(k) != gen.get(k)]
         note(same, f"3. {fs} tree: {len(rows)} rows; label, count and colour equal to the generator's tree, row by row: "

@@ -49,6 +49,12 @@ def main():
     ap.add_argument("--tick-gap-pt", type=float, default=1.0)
     ap.add_argument("--width-mm", type=float, default=None,
                     help="make each tree this wide by setting --max-bar-w (the longest k-mer bar)")
+    ap.add_argument("--no-header", action="store_true",
+                    help="leave out the bold root label (the feature set's name) above the tree")
+    ap.add_argument("--axis-title", default=None,
+                    help='title of the k-mer axis, set on the tick-label row left of the first tick; '
+                         'text between asterisks is italic, e.g. "Number of *k*-mers"')
+    ap.add_argument("--axis-title-pt", type=float, default=None, help="axis title (pt; default: --tick-pt)")
     ap.add_argument("--no-multigroup", action="store_true", help='leave out " (multigroup)" after inner-node counts')
     ap.add_argument("--out-dir", required=True)
     a = ap.parse_args()
@@ -73,6 +79,12 @@ def main():
         style = dict(font_size=tp.FONT_SIZE, root_font=root_pt / f, count_font=a.count_pt / f,
                      tick_font=a.tick_pt / f, max_bar_w=bar, font_family="Arial",
                      text_width=text_width, multigroup=not a.no_multigroup, min_w=0)
+        if a.no_header:
+            style["root_label"] = False
+        if a.axis_title:
+            parts = [(t, i % 2 == 1) for i, t in enumerate(a.axis_title.split("*")) if t]
+            style["axis_title"] = parts
+            style["axis_title_font"] = (a.axis_title_pt or a.tick_pt) / f
         g, w, h = tp.draw_panel(trees[fs], fs, style)
         if a.width_mm:                     # width grows with the bar length: bisect for it
             lo, hi = min_bar, 4000.0
@@ -83,6 +95,8 @@ def main():
             print(f"  {fs}: longest bar {style['max_bar_w'] * f / MM:.1f} mm for a {a.width_mm} mm tree")
         # the axis tick labels sit above the root row: room for them above the group
         top = max(0.0, a.tick_pt / f + 5 - (4 + tp.ROW_H / 2) + 1)
+        if a.axis_title:                   # a title taller than the ticks needs its own room
+            top = max(top, 0.75 * (a.axis_title_pt or a.tick_pt) / f - (4 + tp.ROW_H / 2 - 5) + 0.5)
         # right edge: draw_panel's estimate plus nothing; measured widths are exact
         W, H = w * f, (h + top) * f
         d = draw.Drawing(W, H)
@@ -91,8 +105,9 @@ def main():
         p = out / f"tree_{fs}.svg"
         d.save_svg(str(p))
         info[fs] = dict(width_mm=round(W / MM, 2), height_mm=round(H / MM, 2), scale=f, top_units=top)
-        print(f"{p}: {W / MM:.1f} x {H / MM:.1f} mm (longest bar {style['max_bar_w'] * f / MM:.1f} mm; labels {a.label_pt} pt, header {root_pt} pt, "
-              f"counts {a.count_pt} pt, ticks {a.tick_pt} pt)")
+        print(f"{p}: {W / MM:.1f} x {H / MM:.1f} mm (longest bar {style['max_bar_w'] * f / MM:.1f} mm; labels {a.label_pt} pt, "
+              f"header {'none' if a.no_header else f'{root_pt} pt'}, counts {a.count_pt} pt, ticks {a.tick_pt} pt"
+              + (f", axis title {a.axis_title!r} {a.axis_title_pt or a.tick_pt} pt" if a.axis_title else "") + ")")
     (out / "trees.json").write_text(json.dumps(info, indent=1))
 
 

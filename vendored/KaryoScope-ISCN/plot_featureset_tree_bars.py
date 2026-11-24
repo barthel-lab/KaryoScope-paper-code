@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # Vendored from barthel-lab/KaryoScope-ISCN at commit 68a9816baab659c5b710f265c3713844cc2729d2, file plot_featureset_tree_bars.py.
 # Copied unmodified except: KS_RESOURCES can be set from the environment (originally fixed to a directory under $HOME);
-# draw_panel takes an optional style, and tick_exponents / min_bar_w_for_ticks are added (2026-11-24, Fig. 1b). Authors (git log): Floris Barthel <fbarthel@tgen.org>.
+# draw_panel takes an optional style, and tick_exponents / min_bar_w_for_ticks are added (2026-11-24, Fig. 1b);
+# the style can leave out the root label and add an axis title (2026-11-24, round 7). Authors (git log): Floris Barthel <fbarthel@tgen.org>.
 # Part of the KaryoScope-paper-code snapshot; see vendored/README.md.
 """
 Visualize KaryoScope featureset hierarchies as vertical trees with
@@ -340,7 +341,10 @@ def draw_panel(root: TreeNode, featureset: str, style: dict | None = None) -> tu
     style (KaryoScope-paper-code, 2026-11-24) overrides the layout for a figure at final size:
     font_size, root_font, count_font, tick_font, row_h, bar_h, max_bar_w, indent, tick_len,
     text_gap, line_w, font_family, multigroup (False drops the " (multigroup)" suffix) and
-    text_width (a function (text, font_size, bold) -> width, replacing the CHAR_W estimate).
+    text_width (a function (text, font_size, bold) -> width, replacing the CHAR_W estimate),
+    root_label (False leaves out the bold root label, the tree's header; the layout is unchanged),
+    axis_title (a list of (text, italic) parts, set on the tick-label baseline and ending just left
+    of the first tick label), axis_title_font and axis_title_gap (default half the tick font).
     Without it the drawing is unchanged."""
     st = style or {}
     FONT_SIZE = st.get("font_size", globals()["FONT_SIZE"])
@@ -358,6 +362,8 @@ def draw_panel(root: TreeNode, featureset: str, style: dict | None = None) -> tu
     text_width = st.get("text_width")
     multigroup = st.get("multigroup", True)
     MIN_W = st.get("min_w", 200)
+    root_label = st.get("root_label", True)
+    axis_title = st.get("axis_title")
 
     rows = _flatten(root)
     # Rename root "categorized" to the featureset name
@@ -468,6 +474,23 @@ def draw_panel(root: TreeNode, featureset: str, style: dict | None = None) -> tu
             fill="#000000", font_family=FONT_FAMILY,
             text_anchor="middle",
         ))
+    if axis_title:
+        # what the axis counts, on the tick-label row, ending just left of the first tick label
+        tfont = st.get("axis_title_font", TICK_FONT)
+        gap = st.get("axis_title_gap", 0.5 * TICK_FONT)
+        width = (lambda t, f: text_width(t, f, False)) if text_width else (lambda t, f: len(t) * CHAR_W * f / FONT_SIZE)
+        first = format_count(10 ** tick_exps[0])
+        x_end = bar_left - width(first, TICK_FONT) / 2 - gap
+        title_w = sum(width(t, tfont) for t, _ in axis_title)
+        if x_end - title_w < 0:
+            raise ValueError(f"axis title ({title_w:.1f}) does not fit left of the first tick ({x_end:.1f})")
+        # one left-anchored text per part at its own x (renderers differ on text-anchor="end" with an
+        # italic <tspan>: cairosvg puts the tspans after the end point)
+        x = x_end - title_w
+        for t, italic in axis_title:
+            g.append(draw.Text(t, tfont, x=x, y=axis_y - 5, fill="#000000", font_family=FONT_FAMILY,
+                               font_style="italic" if italic else "normal", text_anchor="start"))
+            x += width(t, tfont)
 
     # --- Second pass: draw labels, dotted leaders, bars, counts ---
     max_right = 0
@@ -483,13 +506,14 @@ def draw_panel(root: TreeNode, featureset: str, style: dict | None = None) -> tu
         is_root = ti["is_root"]
 
         display_name = r["display_name"]
-        g.append(draw.Text(
-            display_name, ROOT_FONT if is_root else FONT_SIZE,
-            x=tx, y=y + FONT_SIZE * 0.35,
-            fill="#000000" if is_root else "#333333",
-            font_family=FONT_FAMILY,
-            font_weight="bold" if is_root else "normal",
-        ))
+        if root_label or not is_root:
+            g.append(draw.Text(
+                display_name, ROOT_FONT if is_root else FONT_SIZE,
+                x=tx, y=y + FONT_SIZE * 0.35,
+                fill="#000000" if is_root else "#333333",
+                font_family=FONT_FAMILY,
+                font_weight="bold" if is_root else "normal",
+            ))
 
         if is_root:
             max_right = max(max_right, bar_left + MAX_BAR_W + 10)
