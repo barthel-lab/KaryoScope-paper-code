@@ -23,11 +23,15 @@ are unchanged from `4e42a98`, the commit the first Fig. 3 render used
 (2026-08-28), to `68a9816`. KaryoScope-ISCN is
 GPL-3.0-or-later, and its `LICENSE` is included.
 
-Two changes:
+Changes:
 
 - `plot_featureset_tree_bars.py` reads its resource directory from
   `$KS_RESOURCES` when set (the original fixes it to a directory under `$HOME`).
-  Set it to `vendored/KaryoScope-archive-resources/resources`.
+  Set it to `vendored/KaryoScope-archive-resources/resources`. Its `draw_panel` takes an
+  optional `style` (text sizes in the figure's units, bar length, Arial widths), used by
+  `hg002/scripts/draw_fig1_trees.py` for Fig. 1b; `tick_exponents` and `min_bar_w_for_ticks`
+  give the shortest bar at which the axis tick labels do not touch. Without `style` the drawing
+  is unchanged.
 - `KaryoScope_assembly_figure.py` has the options that draw Fig. 1b at its final
   size: `--chroms-per-row`, `--no-trees`, `--justify-rows`, `--legend-in-row`,
   `--colour-key` (with `--key-pt`, `--key-header-pt`, `--key-centre-on`,

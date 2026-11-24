@@ -46,12 +46,13 @@ Output: `results/assembly_figure/HG002_figure_v2_v1cen_grid.{svg,png}` and
 
 ## Fig. 1
 
-Fig. 1 has two panels at the Nature main-figure size (180 mm wide, at most 170 mm
-tall): a, the FISH and KaryoScope schematic, and b, the HG002 karyotype. The
-hierarchy trees of the first submission's Fig. 1c-e are Extended Data Figs. 1b,
-2b, and 3b.
+Fig. 1 has three panels at the Nature main-figure size (180 mm wide, at most 170 mm
+tall): a, the FISH and KaryoScope schematic; b, the hierarchy of the region feature set
+(the tree of Extended Data Fig. 2b), which shows what a feature-set hierarchy is; and c,
+the HG002 karyotype with its colour key. The other hierarchy trees of the first
+submission's Fig. 1c-e are Extended Data Figs. 1b and 3b.
 
-Panel b is the second analysis in `conf/hg002.yaml`, which runs
+Panel c (called panel b below and in `conf/hg002.yaml`, where it was drawn first) is the second analysis in `conf/hg002.yaml`, which runs
 `KaryoScope_assembly_figure.py` with these options, added in this repository
 (without them the output is unchanged):
 
@@ -74,7 +75,16 @@ The zoom factors do not depend on the arrangement or on `--scale`: the legend pr
 4.9x for the centromere windows and 2158x for the 25 kb telomere windows, as in the
 first submission. The inputs and the centromere window file are the same.
 
-`scripts/compose_fig1.py` places panel a, centred, above panel b and writes the figure. Panel
+`scripts/draw_fig1_trees.py` draws panel b, the region tree, with
+`plot_featureset_tree_bars.draw_panel` (the function that drew the Extended Data trees, given
+text sizes in printed points): labels 5.8 pt, header 6.8 pt, k-mer counts and axis ticks 5 pt,
+72 mm wide (the k-mer bars are lengthened to that width; they are never shorter than what keeps
+the axis tick labels 1 pt apart).
+
+`scripts/compose_fig1.py --compact-a --tree tree_region.svg` places panel a top left with short
+arrows (its four columns are placed individually and each arrow is cut from the .ai: head and
+the end of its shaft), the tree top right, and the karyotype below, and letters them a, b, c.
+Without `--compact-a` and `--tree` it writes the two-panel figure (panel a centred). Panel
 a is cropped from the published Illustrator file
 (`KaryoScope-paper/figures/fig1/HG002_figure_v2_v1cen_grid.ai`, PDF-compatible, not
 modified) as vector artwork. Everything below panel a is deleted from the copy
@@ -87,15 +97,24 @@ PyMuPDF with `pip install pymupdf==1.26.5`).
 
 ```bash
 # fontconfig must return Arial for "sans-serif" (cairosvg converts the SVG text)
+python scripts/draw_fig1_trees.py --featuresets region --label-pt 5.8 --width-mm 72 \
+    --out-dir results/fig1_trees
 python scripts/compose_fig1.py \
     --ai /path/to/KaryoScope-paper/figures/fig1/HG002_figure_v2_v1cen_grid.ai \
     --panel-b results/assembly_figure/HG002_fig1b_two_rows.svg \
-    --arial-bold /path/to/arialbd.ttf --out results/Fig1
+    --arial-bold /path/to/arialbd.ttf --compact-a --tree results/fig1_trees/tree_region.svg \
+    --out results/Fig1
+python scripts/check_fig1.py results/Fig1.pdf
 ```
 
 Output: `results/Fig1.pdf` (vector, fonts embedded) and `results/Fig1.png` (300
-ppi), 180 x 169.8 mm, text 5.0 to 7.0 pt. The script stops if the PDF holds a
-font other than Arial or if the page is taller than 170 mm.
+ppi), 180 x 169.8 mm, text 5.0 to 7.0 pt; panel a 103 x 56.6 mm with 8.3 mm
+between its columns (21.4 mm in the two-panel figure). The script stops if the PDF
+holds a font other than Arial or if the page is taller than 170 mm.
+`scripts/check_fig1.py` checks the page, text sizes, fonts and panel letters, compares
+each tree row by row (label, k-mer count, colour) with the generator's tree and its
+colours with the colour files, and finds overlapping text; `--reference` compares the
+karyotype labels with an earlier Fig. 1, `--ed-tree` the region tree with ED Fig. 2b.
 
 ## Centromere windows (Fig. 1b)
 

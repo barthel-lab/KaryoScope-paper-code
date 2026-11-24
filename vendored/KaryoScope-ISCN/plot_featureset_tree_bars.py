@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # Vendored from barthel-lab/KaryoScope-ISCN at commit 68a9816baab659c5b710f265c3713844cc2729d2, file plot_featureset_tree_bars.py.
-# Copied unmodified except: KS_RESOURCES can be set from the environment (originally fixed to a directory under $HOME). Authors (git log): Floris Barthel <fbarthel@tgen.org>.
+# Copied unmodified except: KS_RESOURCES can be set from the environment (originally fixed to a directory under $HOME);
+# draw_panel takes an optional style, and tick_exponents / min_bar_w_for_ticks are added (2026-11-24, Fig. 1b). Authors (git log): Floris Barthel <fbarthel@tgen.org>.
 # Part of the KaryoScope-paper-code snapshot; see vendored/README.md.
 """
 Visualize KaryoScope featureset hierarchies as vertical trees with
@@ -333,8 +334,30 @@ def _flatten(node: TreeNode, depth: int = 0) -> list[dict]:
 # =============================================================================
 
 
-def draw_panel(root: TreeNode, featureset: str) -> tuple:
-    """Draw one featureset tree+bars, returning (draw.Group, width, height)."""
+def draw_panel(root: TreeNode, featureset: str, style: dict | None = None) -> tuple:
+    """Draw one featureset tree+bars, returning (draw.Group, width, height).
+
+    style (KaryoScope-paper-code, 2026-11-24) overrides the layout for a figure at final size:
+    font_size, root_font, count_font, tick_font, row_h, bar_h, max_bar_w, indent, tick_len,
+    text_gap, line_w, font_family, multigroup (False drops the " (multigroup)" suffix) and
+    text_width (a function (text, font_size, bold) -> width, replacing the CHAR_W estimate).
+    Without it the drawing is unchanged."""
+    st = style or {}
+    FONT_SIZE = st.get("font_size", globals()["FONT_SIZE"])
+    ROOT_FONT = st.get("root_font", FONT_SIZE + 2)
+    COUNT_FONT = st.get("count_font", FONT_SIZE - 1.5)
+    TICK_FONT = st.get("tick_font", 6.5)
+    ROW_H = st.get("row_h", globals()["ROW_H"])
+    BAR_H = st.get("bar_h", globals()["BAR_H"])
+    MAX_BAR_W = st.get("max_bar_w", globals()["MAX_BAR_W"])
+    INDENT = st.get("indent", globals()["INDENT"])
+    TICK_LEN = st.get("tick_len", globals()["TICK_LEN"])
+    TEXT_GAP = st.get("text_gap", globals()["TEXT_GAP"])
+    LINE_W = st.get("line_w", globals()["LINE_W"])
+    FONT_FAMILY = st.get("font_family", globals()["FONT_FAMILY"])
+    text_width = st.get("text_width")
+    multigroup = st.get("multigroup", True)
+    MIN_W = st.get("min_w", 200)
 
     rows = _flatten(root)
     # Rename root "categorized" to the featureset name
@@ -405,8 +428,11 @@ def draw_panel(root: TreeNode, featureset: str) -> tuple:
             tx = 0
         else:
             tx = depth * INDENT + TICK_LEN + 3
-        char_w = CHAR_W * (1.15 if is_root else 1.0)
-        text_end = tx + len(display_name) * char_w
+        if text_width:
+            text_end = tx + text_width(display_name, ROOT_FONT if is_root else FONT_SIZE, is_root)
+        else:
+            char_w = CHAR_W * (1.15 if is_root else 1.0)
+            text_end = tx + len(display_name) * char_w
         text_info.append({"tx": tx, "text_end": text_end, "is_root": is_root})
 
     bar_left = max(t["text_end"] for t in text_info) + TEXT_GAP + 4
@@ -437,7 +463,7 @@ def draw_panel(root: TreeNode, featureset: str) -> tuple:
         tick_val = 10 ** exp
         tick_str = format_count(tick_val)
         g.append(draw.Text(
-            tick_str, 6.5,
+            tick_str, TICK_FONT,
             x=tx_pos, y=axis_y - 5,
             fill="#000000", font_family=FONT_FAMILY,
             text_anchor="middle",
@@ -458,7 +484,7 @@ def draw_panel(root: TreeNode, featureset: str) -> tuple:
 
         display_name = r["display_name"]
         g.append(draw.Text(
-            display_name, FONT_SIZE + (2 if is_root else 0),
+            display_name, ROOT_FONT if is_root else FONT_SIZE,
             x=tx, y=y + FONT_SIZE * 0.35,
             fill="#000000" if is_root else "#333333",
             font_family=FONT_FAMILY,
@@ -490,21 +516,48 @@ def draw_panel(root: TreeNode, featureset: str) -> tuple:
         ))
 
         count_str = format_count(count) if count > 0 else "0"
-        suffix = " (multigroup)" if not is_leaf and count > 0 else ""
+        suffix = " (multigroup)" if not is_leaf and count > 0 and multigroup else ""
         g.append(draw.Text(
-            count_str + suffix, FONT_SIZE - 1.5,
-            x=bar_left + bw + 4, y=y + (FONT_SIZE - 1.5) * 0.35,
+            count_str + suffix, COUNT_FONT,
+            x=bar_left + bw + 4, y=y + COUNT_FONT * 0.35,
             fill="#555555", font_family=FONT_FAMILY,
         ))
 
-        right_edge = bar_left + bw + 4 + len(count_str + suffix) * 4.5 + 10
+        if text_width:
+            right_edge = bar_left + bw + 4 + text_width(count_str + suffix, COUNT_FONT, False)
+        else:
+            right_edge = bar_left + bw + 4 + len(count_str + suffix) * 4.5 + 10
         if right_edge > max_right:
             max_right = right_edge
 
     total_h = title_h + n * ROW_H + 4
-    total_w = max(max_right, 200)
+    total_w = max(max_right, MIN_W)
 
     return g, total_w, total_h
+
+
+def tick_exponents(root: TreeNode) -> tuple:
+    """The axis ticks draw_panel draws for this tree: (log_max, [exponents])."""
+    counts = [r["node"].kmer_count for r in _flatten(root) if r["node"].kmer_count > 0]
+    log_max = math.log10(max(counts)) if counts else 1
+    max_exp = int(math.floor(log_max))
+    step = 1 if max_exp <= 4 else 2 if max_exp <= 7 else 3
+    exps = list(range(0, max_exp + 1, step))
+    if max_exp not in exps and max_exp - exps[-1] >= step * 0.6:
+        exps.append(max_exp)
+    return log_max, exps
+
+
+def min_bar_w_for_ticks(root: TreeNode, tick_font: float, text_width, gap: float) -> float:
+    """Shortest MAX_BAR_W (tree units) at which draw_panel's centred tick labels, at tick_font,
+    are at least `gap` apart (KaryoScope-paper-code, 2026-11-24)."""
+    log_max, exps = tick_exponents(root)
+    need = 0.0
+    for e0, e1 in zip(exps, exps[1:]):
+        w0 = text_width(format_count(10 ** e0), tick_font, False)
+        w1 = text_width(format_count(10 ** e1), tick_font, False)
+        need = max(need, (w0 / 2 + w1 / 2 + gap) * log_max / (e1 - e0))
+    return need
 
 
 # =============================================================================

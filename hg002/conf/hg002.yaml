@@ -59,7 +59,9 @@ assembly_figure_analyses:
   # rows justified to the full width, and tracks drawn at 1.76 px/Mb (1.4 above) so the figure
   # fills 170 mm. A colour key for the centromere and subtelomere zooms sits in the free space
   # of row 1 under chr8 to chr12 (one entry per colour, centred on chr9's lowest Mb labels), with
-  # the scale legend beside it (2026-11-23). scripts/compose_fig1.py places panel a above it.
+  # the scale legend beside it (2026-11-23). In the figure this is panel c (2026-11-24):
+  # scripts/draw_fig1_trees.py draws the region hierarchy (panel b) and scripts/compose_fig1.py
+  # --compact-a --tree places panel a and the tree above it (hg002/README.md, Fig. 1).
   - name: "HG002 Fig 1b two rows"
     sample: HG002
     output: results/assembly_figure/HG002_fig1b_two_rows.svg
