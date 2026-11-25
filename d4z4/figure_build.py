@@ -24,6 +24,32 @@ from figure_tracks import TrackRenderer
 
 PT = 1 / 72
 
+# --display-names (make_figures.py): legend items print the display names of their features
+# (common/display_names.py, v1 database) instead of the labels in figures_layout.yaml. An item whose
+# display name does not fit before the next legend column keeps its label and is recorded here.
+DISPLAY_NAMES = False
+DISPLAY_NAME_MISFITS = []
+
+
+def legend_label(label, key, avail, size, measure):
+    """The label a legend item prints: with DISPLAY_NAMES, the display name of the feature in key
+    (region/gene/repeat/subtelomeric), if it fits in avail; D4Z4 classes, pLAM and novel unchanged."""
+    if not DISPLAY_NAMES:
+        return label
+    import sys
+    from pathlib import Path as _P
+    sys.path.insert(0, str(_P(__file__).resolve().parent.parent / 'common'))
+    from display_names import display_name
+    kind, _, name = key.partition(':')
+    if kind not in ('region', 'gene', 'repeat', 'subtelomeric'):
+        return label
+    new = display_name(name, 'v1')          # a parent (arm, centromeric, ...) prints its name alone
+    need = measure(new, size, False)
+    if need > avail:
+        DISPLAY_NAME_MISFITS.append((label, new, round(avail, 2), round(need, 2), round(measure(label, size, False), 2)))
+        return label
+    return new
+
 
 def _txt(s, x, y, size, font, bold=False, anchor='start', fill='#000000', rotate=None):
     return fc.text_el(s, x, y, size, font, 'bold' if bold else 'normal', anchor, fill, rotate)
@@ -138,7 +164,14 @@ class FigureContext:
                 hx, hy = sec['header_at']
                 self.items.append(_txt(sec['header'], hx, hy, spec['header_size'], self.sans, bold=True))
             ix, iy = sec['items_at']
+            # room for an item's text: to the next legend column in this row (its swatch or header)
+            row = [s for s in self.L['track_legend'] if abs(s['items_at'][1] - iy) < 3]
+            nxt = [s['items_at'][0] + spec['swatch_dx'] for s in row if s['items_at'][0] > ix + 1] + \
+                  [s['header_at'][0] for s in row if s['header'] and s['header_at'][0] > ix + 1] + \
+                  [self.L['size_pt'][0] - 4]
+            avail = min(nxt) - ix - 1.0
             for k, (label, key) in enumerate(sec['items']):
+                label = legend_label(label, key, avail, spec['item_size'], self._measure())
                 y = iy + k * spec['item_pitch']
                 sx, sy = ix + spec['swatch_dx'], y + spec['swatch_dy']
                 kind, _, name = key.partition(':')
@@ -167,6 +200,12 @@ class FigureContext:
                 key = aliases.get((kind, feat), (kind, feat))
                 if key not in covered:
                     warnings.warn(f'{self.name}: legend has no entry for {kind} feature {feat}')
+
+    def _measure(self):
+        if not hasattr(self, '_measure_fn'):
+            import figure_export
+            self._measure_fn = figure_export.text_measure()
+        return self._measure_fn
 
     def letters(self):
         fonts = self.layout['fonts']

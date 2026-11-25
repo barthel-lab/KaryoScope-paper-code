@@ -26,6 +26,8 @@ from PIL import ImageFont
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent.parent / "vendored" / "KaryoScope-ISCN"))
 import plot_featureset_tree_bars as tp  # noqa: E402
+sys.path.insert(0, str(HERE.parent.parent / "common"))
+from display_names import MULTIGROUP, display_name  # noqa: E402
 
 MM = 72 / 25.4
 
@@ -49,6 +51,12 @@ def main():
     ap.add_argument("--tick-gap-pt", type=float, default=1.0)
     ap.add_argument("--width-mm", type=float, default=None,
                     help="make each tree this wide by setting --max-bar-w (the longest k-mer bar)")
+    ap.add_argument("--display-names", action="store_true",
+                    help="print the node labels by their display names (common/display_names.py, v2 "
+                         "database) and the inner nodes' count suffix as display_names.MULTIGROUP")
+    ap.add_argument("--parent-bars", choices=["full", "thin"], default="full",
+                    help="thin: inner (parent) nodes' bars drawn 0.45 of the bar height, so parent rows "
+                         "read as parents without a text marker")
     ap.add_argument("--no-header", action="store_true",
                     help="leave out the bold root label (the feature set's name) above the tree")
     ap.add_argument("--axis-title", default=None,
@@ -81,6 +89,11 @@ def main():
                      text_width=text_width, multigroup=not a.no_multigroup, min_w=0)
         if a.no_header:
             style["root_label"] = False
+        if a.parent_bars == "thin":
+            style["parent_bar_frac"] = 0.45
+        if a.display_names:
+            style["label_name"] = lambda n: display_name(n, "v2")
+            style["multigroup_suffix"] = " " + MULTIGROUP
         if a.axis_title:
             parts = [(t, i % 2 == 1) for i, t in enumerate(a.axis_title.split("*")) if t]
             style["axis_title"] = parts

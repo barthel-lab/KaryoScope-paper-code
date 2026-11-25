@@ -119,6 +119,12 @@ colours with the colour files, checks the axis title and the missing header (`--
 `--no-header`; a tree without its header is identified by its labels), and finds overlapping text; `--reference` compares the
 karyotype labels with an earlier Fig. 1, `--ed-tree` the region tree with ED Fig. 2b.
 
+Trial (2026-11-25): `--display-names` on `KaryoScope_assembly_figure.py` (the colour key; the merged
+entry is then renamed with `--key-label "aSat / aSat HOR / active HOR=aSat / active HOR"`), on
+`draw_fig1_trees.py` (the tree; with `--no-multigroup` and `--parent-bars thin` as alternatives to the
+"(multigroup)" after a parent row's count) and on `check_fig1.py` prints and checks the display names
+of `../common/display_names.py`.
+
 ## Centromere windows (Fig. 1b)
 
 The Fig. 1b zoom windows are the rows of

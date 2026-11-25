@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # Vendored from barthel-lab/KaryoScope-ISCN at commit 68a9816baab659c5b710f265c3713844cc2729d2, file KaryoScope_assembly_contig_zoom_plot.py.
-# Copied unmodified. Authors (git log): Floris Barthel <fbarthel@tgen.org>; Rhyker Ranallo-Benavidez <rranallo-benavidez@tgen.org>.
+# Copied unmodified except --display-names (2026-11-25: the colour legend prints common/display_names.py names; off by
+# default). Authors (git log): Floris Barthel <fbarthel@tgen.org>; Rhyker Ranallo-Benavidez <rranallo-benavidez@tgen.org>.
 # Part of the KaryoScope-paper-code snapshot; see vendored/README.md.
 """
 KaryoScope Assembly Contig Zoom Plot
@@ -78,6 +79,10 @@ def parse_args():
                              'May be repeated to match --sample.')
     parser.add_argument('--show-arms', action='store_true',
                         help='Show p/q arm track next to chromosome (contig view only)')
+    parser.add_argument('--display-names', action='store_true', default=False,
+                        help='colour legend: print the display names of the features '
+                             '(KaryoScope-paper-code common/display_names.py, v1 database labels); '
+                             'the layout, a generic "multigroup" entry and the track names are unchanged')
     parser.add_argument('--no-refine', action='store_true', default=False,
                         help='Skip breakpoint refinement; use coordinates from '
                              'the regions TSV as-is')
@@ -2127,6 +2132,51 @@ def _estimate_legend_width(colors, featuresets, displayed_features, show_arm_lin
     return int(legend_content_width + 2 * padding + 10 + 15)
 
 
+DISPLAY_NAMES = False      # --display-names
+
+
+def _display_translate(name, feature_names):
+    """With --display-names: the legend text name (as built from feature_names below) with each
+    feature's cleaned name replaced by its display name. A generic 'multigroup' entry (several
+    parents sharing one colour) prints the shallowest of those parents, the root excluded (v1
+    hierarchy from vendored/KaryoScope-archive-resources/resources/CHM13/CHM13_*.priority.txt), as
+    Extended Data Fig. 7's legend does."""
+    if not DISPLAY_NAMES:
+        return name
+    import re as _re
+    import sys as _sys
+    from pathlib import Path as _P
+    _root = _P(__file__).resolve().parent.parent.parent
+    _sys.path.insert(0, str(_root / 'common'))
+    from display_names import display_name as _dn
+    if name == 'multigroup':
+        parent = {}
+        for pf in (_root / 'vendored/KaryoScope-archive-resources/resources/CHM13').glob('CHM13_*.priority.txt'):
+            for line in pf.read_text().splitlines():
+                p = line.split('\t')
+                if len(p) >= 3:
+                    parent[p[0]] = p[2]
+
+        def depth(n):
+            d = 0
+            while n in parent and d < 50:
+                n, d = parent[n], d + 1
+            return d if n == 'categorized' else 99
+        roots = sorted((depth(r), r) for r in (_re.sub(r'_multigroup\d*$', '', f) for f in feature_names
+                                               if f.endswith('_multigroup1')) if r != 'categorized')
+        return _dn(roots[0][1], 'v1') if roots else name
+    forms = {}
+    for f in feature_names:
+        base = f.replace('_specific', '')
+        forms[base.replace('_', ' ')] = _dn(f, 'v1')
+        forms[f.replace('_', ' ').replace(' specific', '')] = _dn(f, 'v1')
+        if 'multigroup' in f:
+            root = _re.sub(r'_?multigroup\d*$', '', f)
+            forms[_re.sub(r'\d+$', '', f.replace('_', ' ')).rstrip()] = _dn(f, 'v1')   # 'centromeric multigroup'
+            forms[root.replace('_', ' ')] = _dn(root, 'v1')             # a multigroup root named alone
+    return ', '.join(forms.get(part, part) for part in name.split(', '))
+
+
 def _draw_legend(d, legend_x, legend_y, colors, featuresets, displayed_features,
                  show_arm_line, arm_features, text_color, margin_right=None,
                  draw_border=True):
@@ -2308,6 +2358,9 @@ def _draw_legend(d, legend_x, legend_y, colors, featuresets, displayed_features,
             else:
                 sort_key = (1, 0, display_name)
 
+            # --display-names changes the text only: the order is that of the labels
+            if not (len(feature_names) == 1 and feature_names[0] in _DISPLAY_NAME_OVERRIDES):
+                display_name = _display_translate(display_name, feature_names)
             legend_entries.append((sort_key, color_hex, display_name))
 
         legend_entries.sort()
@@ -3007,6 +3060,8 @@ def _process_sample(sample, bed_dir, regions_path, comparison_path,
 
 def main():
     args = parse_args()
+    global DISPLAY_NAMES
+    DISPLAY_NAMES = args.display_names
 
     # Parse inputs
     featuresets = [fs.strip() for fs in args.featuresets.split(',')]

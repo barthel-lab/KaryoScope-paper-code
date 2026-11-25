@@ -113,6 +113,20 @@ RECT_RE = re.compile(
 )
 
 
+# --display-names: feature labels print their display names (common/display_names.py); labels that
+# table does not list (CEN180, cen_gap, nuclear, categorized) print as they are.
+DISPLAY_NAMES = False
+
+
+def shown(label):
+    if not DISPLAY_NAMES:
+        return label
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "common"))
+    import display_names as dn
+    return dn.display_name(label, "v2") if label in dn.REGION_V2 or label in dn.OTHER else label
+
+
 def esc(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
@@ -271,7 +285,7 @@ def build_panel_c(comp):
                  f'fill="{LEAF_COLOR[label]}" stroke="#666666" '
                  f'stroke-width="0.5"/>')
         s.append(f'  <text x="{lx + 19}" y="{lg_y + 11}" font-size="{FS_BODY}" '
-                 f'fill="#555555">{esc(label)}</text>')
+                 f'fill="#555555">{esc(shown(label))}</text>')
         lx += 19 + CHAR_W * len(label) + 24
 
     # ---- right: the composition the karyotype cannot show ------------------
@@ -316,7 +330,7 @@ def build_panel_c(comp):
         s.append(f'  <rect x="{lx}" y="{ly}" width="13" height="13" '
                  f'fill="{fill}" stroke="#666666" stroke-width="0.5"/>')
         s.append(f'  <text x="{lx + 19}" y="{ly + 11}" font-size="{FS_BODY}" '
-                 f'fill="#555555">{esc(label)}</text>')
+                 f'fill="#555555">{esc(shown(label))}</text>')
         lx += item_w
 
     # ---- right, lower: where the unresolved mass actually goes -------------
@@ -350,7 +364,7 @@ def build_panel_c(comp):
         s.append(f'  <text x="{CX0}" y="{row_y + 13}" font-size="{FS_BODY}" '
                  f'fill="#555555">{esc(fset)}</text>')
         s.append(f'  <text x="{CX0}" y="{row_y + 28}" font-size="{FS_SMALL}" '
-                 f'fill="#999999">{esc(label)}</text>')
+                 f'fill="#999999">{esc(shown(label))}</text>')
         for j, (val, fill, tcol) in enumerate((
                 (ey_parent, "#8A8A8A", "#666666"),
                 (ey_novel, "#E8A33D", "#B4741F"),
@@ -381,7 +395,11 @@ def main():
     ap.add_argument("--a3-dir", type=Path, default=None,
                     help="A3 cross-genome run directory (default: $KS_A3_DIR, "
                          "else <repo>/a3_crossgenome)")
+    ap.add_argument("--display-names", action="store_true",
+                    help="print feature labels by their display names (common/display_names.py)")
     args = ap.parse_args()
+    global DISPLAY_NAMES
+    DISPLAY_NAMES = args.display_names
     if args.a3_dir is not None:
         set_a3(args.a3_dir)
     for f in (EY_SVG, CC_SVG, COMP):

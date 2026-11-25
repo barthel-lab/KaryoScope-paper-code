@@ -5,7 +5,7 @@
 # Changed in KaryoScope-paper-code (2026-11-21), for Fig. 1b at the Nature main-figure size:
 # --chroms-per-row, --no-trees and --width-mm (with the --*-pt text sizes). Without these
 # options the output is unchanged. Added 2026-11-23: --colour-key with --key-*
-# and --legend-with-key.
+# and --legend-with-key; 2026-11-25: --display-names (common/display_names.py).
 """
 KaryoScope Assembly Figure - Combined letter-format visualization.
 
@@ -41,6 +41,8 @@ PROJECT_DIR = Path(__file__).resolve().parent
 
 sys.path.insert(0, str(PROJECT_DIR))
 import KaryoScope_assembly_genome_plot as gp
+sys.path.insert(0, str(PROJECT_DIR.parent.parent / "common"))
+from display_names import display_name  # noqa: E402  (KaryoScope-paper-code common/)
 import plot_featureset_tree_bars as tp
 
 # Text sizes in drawing units (px). --width-mm replaces them with sizes that print at the
@@ -181,6 +183,10 @@ def parse_args():
                              "the labels drawn in the zoom panels, for these feature sets "
                              "(comma-separated: region, subtelomeric), set in the free space under "
                              "the chromosomes of one row; stops if it does not fit")
+    parser.add_argument("--display-names", action="store_true",
+                        help="with --colour-key: print each label by its display name "
+                             "(common/display_names.py, v2 database) instead of the raw label; applied "
+                             "before --key-merge-colours and --key-label")
     parser.add_argument("--key-merge-colours", action="store_true",
                         help="with --colour-key: one entry per colour within a group, its labels "
                              "joined with ' / ' (first occurrence's place)")
@@ -1134,7 +1140,8 @@ def draw_colour_key(d, args, rows, row_tops, row_heights, row_label_space, row_x
         if missing:
             sys.exit(f"--colour-key: {fs} labels without a colour in the colour file: {missing}")
         labels = sorted(bp, key=order.index)
-        entries = [(lb.replace("_", " "), colors[fs][lb][0]) for lb in labels]
+        entries = [(display_name(lb, "v2") if args.display_names else lb.replace("_", " "), colors[fs][lb][0])
+                   for lb in labels]
         for lb, (name, colour) in zip(labels, entries):
             print(f"  {fs}\t{name}\t{colour}\t{bp[lb]} bp")
         if args.key_merge_colours:

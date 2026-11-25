@@ -87,6 +87,8 @@ def main():
     ap.add_argument('--out', default=str(BASE_DIR / 'results' / 'figures'))
     ap.add_argument('--font-dir', help='directory of .ttf/.otf fonts (overrides style.font_dir); '
                     'use when Arial/Helvetica are not installed, e.g. Liberation Sans')
+    ap.add_argument('--display-names', action='store_true',
+                    help='colour legends print the display names of the features (common/display_names.py)')
     ap.add_argument('--figures', nargs='+', default=['fig4', 'figS9', 'figS10'],
                     choices=['fig4', 'figS9', 'figS10', 'sunburst', 'hprc2'],
                     help='sunburst: the HPRC2 chr4 sunburst, all haplotypes and assembly-QC pass only; '
@@ -130,6 +132,7 @@ def main():
                 print(f'{name}: {w} x {h} pt, {white:.0%} white space between groups')
             return
         import figure_build
+        figure_build.DISPLAY_NAMES = args.display_names
         import figure_data
         summary = figure_data.data_summary(cfg)
         with open(out / 'figure_data.tsv', 'w') as f:
@@ -149,6 +152,10 @@ def main():
             else:
                 paths = figure_build.build(name, cfg, layout, out)
             print(f'{name}: ' + ', '.join(str(p) for p in paths))
+            for old, new, avail, need, now in figure_build.DISPLAY_NAME_MISFITS:
+                print(f'{name}: display name {new!r} does not fit its legend column ({need:.1f} pt needed, '
+                      f'{avail:.1f} pt available); kept {old!r} ({now:.1f} pt)')
+            figure_build.DISPLAY_NAME_MISFITS.clear()
 
 
 if __name__ == '__main__':

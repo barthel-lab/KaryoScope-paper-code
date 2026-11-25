@@ -151,6 +151,9 @@ python make_figures.py --config figures_config.yaml --out results/figures/
 python make_figures.py --font-dir /path/to/liberation-sans/ --out results/figures/
 ```
 
+`--display-names` prints the colour legends with the display names of `../common/display_names.py`
+(trial, 2026-11-25; D4Z4 class names, pLAM entries and the track names are unchanged).
+
 It also writes `results/figures/panels/` (each track view and plot as its own SVG) and
 `results/figures/figure_data.tsv`: every number drawn (waffle counts, every diplotype-table
 cell, n per panel, r, the labelled outliers, each shown haplotype's category).

@@ -130,6 +130,9 @@ def main():
     ap.add_argument("--bed-dir", required=True, help="Panel D's tabix BEDs.")
     ap.add_argument("--colors-dir", required=True)
     ap.add_argument("--region-bed", required=True, help="Panel E's v1 CHM13 BED.")
+    ap.add_argument("--display-names", action="store_true",
+                    help="legend rows print the display names of their features "
+                         "(KaryoScope-paper-code common/display_names.py)")
     ap.add_argument("--chroms", default="chr7,chr9,chr17,chr20",
                     help="Panel E chromosomes. The published figure omits chr8, "
                          "which carries a single k-mer.")
@@ -183,6 +186,8 @@ def main():
     box_C_top, box_C_bot = boxes[2]
     abc_bottom = abc_y + abc_h
 
+    import breakpoint_density_stacked as _bds
+    _bds.DISPLAY_NAMES = args.display_names
     ks_colors = load_colors(args.colors_dir, "KS_human_CHM13",
                             ["chromosome", "acrocentric", "region", "repeat", "gene"],
                             background="white")

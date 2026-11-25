@@ -442,6 +442,18 @@ def draw_feature_track(d, features, colors, x, y_start, bar_width,
                             fill='none', stroke='#000000', stroke_width=0.5))
 
 
+# --display-names (figure5_assemble.py): legend rows print the display names of their features
+# (KaryoScope-paper-code common/display_names.py, v1 labels); the row order stays that of the labels.
+DISPLAY_NAMES = False
+
+
+def _display(feat):
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "common"))
+    from display_names import display_name
+    return display_name(feat, "v1")
+
+
 def _clean_label(label):
     """Display form of a feature label.
 
@@ -836,18 +848,18 @@ def draw_legend(d, x, y, colors, featuresets, displayed_features,
         for c, feats in color_groups.items():
             specifics = [f for f in feats if f.endswith('_specific')]
             if specifics:
-                rep = _clean_label(sorted(specifics)[0])
+                feat = sorted(specifics)[0]
             else:
                 cands = [f for f in feats if f != 'categorized'] or list(feats)
                 cands.sort(key=lambda f: (_HIER_DEPTH.get((fs, f), 99), f))
-                rep = _clean_label(cands[0])
-            rows.append((rep, c))
+                feat = cands[0]
+            rows.append((_clean_label(feat), c, feat))
         # Only the gap-fill classes are pinned last. `unknown` is NOT one of
         # them -- the published legend sorts it alphabetically with the named
         # repeat classes (… SINE, Unknown, nonrepeat).
         BACKGROUNDISH = ('nonrepeat', 'nonacrocentric', 'novel')
         rows.sort(key=lambda r: (r[0].lower() in BACKGROUNDISH, r[0].lower()))
-        return rows
+        return [((_display(f) if DISPLAY_NAMES and f != 'novel' else rep), c) for rep, c, f in rows]
 
     density_items = [
         ('#00FF00', 0.9, 'SST1 coverage'),

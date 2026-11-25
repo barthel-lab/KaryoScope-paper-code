@@ -198,6 +198,8 @@ python scripts/figure5_assemble.py --abc-svg out/abc/breakpoint_density_stacked.
     --abc-anchors out/panelABC_anchors.json --bed-dir data/robs --colors-dir $C \
     --region-bed <CHM13 v1 region presmoothed BED> --chroms chr7,chr9,chr17,chr20 \
     --output out/figure5_assembled.svg
+# trial (2026-11-25): display names in the legends -- figure5_assemble.py --display-names, and for
+# Fig. 3 `display_names: true` under the analysis' stacked_args (see ../common/README.md)
 ```
 
 `--db-root` (default `$KS_DB_ROOT`, else `~/.karyoscope/db`) is read only for legend grouping, which `--no-legend`

@@ -29,6 +29,9 @@ python3 figure/make_build_panels_ab.py
 python3 figure/make_build_figure.py --a3-dir .
 ```
 
+`make_build_figure.py --display-names` prints the feature labels with the display names of
+`../../common/display_names.py` (trial, 2026-11-25: "p arm", "q arm", "Transposable Element").
+
 Checked 2026-10-20: both outputs were identical to `build_workflow_panelsAB.svg`
 and `build_workflow.svg` in KaryoScope-paper `main` (`5c11d87`), the submitted
 Extended Data Fig. 4. Since 2026-11-21 both scripts set every text in Arial (the

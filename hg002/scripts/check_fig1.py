@@ -31,6 +31,10 @@ import fitz  # PyMuPDF
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "vendored" / "KaryoScope-ISCN"))
 import plot_featureset_tree_bars as tp  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "common"))
+from display_names import MULTIGROUP, display_name  # noqa: E402
+DISPLAY = False                            # --display-names: trees print display names
+SUFFIX = True                              # False with --no-multigroup: no text after a parent's count
 
 MM = 72 / 25.4
 TREES = ("chromosome", "region", "subtelomeric", "repeat", "gene", "acrocentric")
@@ -156,8 +160,9 @@ def generator_rows(fs, trees):
     for r in tp._flatten(trees[fs])[1:]:
         n = r["node"]
         cnt = tp.format_count(n.kmer_count) if n.kmer_count > 0 else "0"
-        suffix = " (multigroup)" if not r["is_leaf"] and n.kmer_count > 0 else ""
-        rows[r["name"].replace("_", " ")] = (cnt + suffix, n.color.lower())
+        suffix = ((" " + MULTIGROUP) if DISPLAY else " (multigroup)") if not r["is_leaf"] and n.kmer_count > 0 and SUFFIX else ""
+        name = display_name(r["name"], "v2") if DISPLAY else r["name"].replace("_", " ")
+        rows[name] = (cnt + suffix, n.color.lower())
     return rows
 
 
@@ -186,9 +191,15 @@ def main():
     ap.add_argument("--reference", help="a previous Fig. 1 whose karyotype labels must be the same")
     ap.add_argument("--ed-tree", help="ED Fig. 2 PDF: compare the region tree's labels and counts")
     ap.add_argument("--no-header", action="store_true", help="the trees are drawn without their bold root label")
+    ap.add_argument("--no-multigroup", action="store_true",
+                    help='the trees print no " (multigroup)" after a parent row\'s count')
+    ap.add_argument("--display-names", action="store_true",
+                    help="the trees print display names (common/display_names.py); compare with those")
     ap.add_argument("--axis-title", help='expected k-mer axis title, italic parts between asterisks')
     ap.add_argument("--colors", default=str(tp.V2_DB_DIR / "KS_human_CHM13_v2.{fs}.colors.txt"))
     a = ap.parse_args()
+    global DISPLAY, SUFFIX
+    DISPLAY, SUFFIX = a.display_names, not a.no_multigroup
     page = fitz.open(a.pdf)[0]
     sp = spans(page)
 
@@ -249,8 +260,10 @@ def main():
         for line in Path(a.colors.format(fs=fs)).read_text().splitlines()[1:]:
             p = line.split()
             if len(p) >= 2:
-                cf[p[0].replace("_", " ")] = p[1].lower()
+                cf[display_name(p[0], "v2") if DISPLAY else p[0].replace("_", " ")] = p[1].lower()
         off = {k: (v[1], cf[k]) for k, v in rows.items() if k in cf and v[1] != cf[k]}
+        note(sum(k in cf for k in rows) == len(rows), f"   {fs} tree: every label found in the colour file: "
+             f"{sum(k in cf for k in rows)} of {len(rows)}")
         note(not off, f"   {fs} tree: bar colour equals the track colour (colour file) for the "
                       f"{sum(k in cf for k in rows)} labels in the file: {not off}" + (f" (differ: {off})" if off else ""))
         if a.ed_tree and fs == "region":
@@ -258,6 +271,9 @@ def main():
             ed_letters = [s for s in spans(ed) if re.fullmatch(r"[a-h]", s["t"]) and abs(s["size"] - 8) < 0.01]
             ed_clip = tree_clips(ed, ed_letters).get("region")
             er = tree_rows(ed, ed_clip) if ed_clip else {}
+            if DISPLAY:                    # the ED tree prints the raw labels: compare their display names
+                er = {display_name(k.replace(" ", "_"), "v2"):
+                      (v[0].replace(" (multigroup)", (" " + MULTIGROUP) if SUFFIX else ""), v[1]) for k, v in er.items()}
             ok = list(er) == list(rows) and all(er[k][0] == rows[k][0] for k in rows)
             note(ok, f"4. region tree: labels (in order) and counts equal to {Path(a.ed_tree).name}: {ok}")
         ov = overlaps(spans(page, clip))

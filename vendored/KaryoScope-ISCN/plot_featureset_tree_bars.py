@@ -2,7 +2,8 @@
 # Vendored from barthel-lab/KaryoScope-ISCN at commit 68a9816baab659c5b710f265c3713844cc2729d2, file plot_featureset_tree_bars.py.
 # Copied unmodified except: KS_RESOURCES can be set from the environment (originally fixed to a directory under $HOME);
 # draw_panel takes an optional style, and tick_exponents / min_bar_w_for_ticks are added (2026-11-24, Fig. 1b);
-# the style can leave out the root label and add an axis title (2026-11-24, round 7). Authors (git log): Floris Barthel <fbarthel@tgen.org>.
+# the style can leave out the root label and add an axis title (2026-11-24, round 7), and print display names
+# for the node labels (label_name, multigroup_suffix; 2026-11-25). Authors (git log): Floris Barthel <fbarthel@tgen.org>.
 # Part of the KaryoScope-paper-code snapshot; see vendored/README.md.
 """
 Visualize KaryoScope featureset hierarchies as vertical trees with
@@ -343,6 +344,9 @@ def draw_panel(root: TreeNode, featureset: str, style: dict | None = None) -> tu
     text_gap, line_w, font_family, multigroup (False drops the " (multigroup)" suffix) and
     text_width (a function (text, font_size, bold) -> width, replacing the CHAR_W estimate),
     root_label (False leaves out the bold root label, the tree's header; the layout is unchanged),
+    label_name (a function name -> printed label, replacing name.replace("_", " ")),
+    multigroup_suffix (the text after an inner node's count, default " (multigroup)"),
+    parent_bar_frac (inner nodes' bars drawn this fraction of BAR_H tall, centred; default 1),
     axis_title (a list of (text, italic) parts, set on the tick-label baseline and ending just left
     of the first tick label), axis_title_font and axis_title_gap (default half the tick font).
     Without it the drawing is unchanged."""
@@ -363,6 +367,9 @@ def draw_panel(root: TreeNode, featureset: str, style: dict | None = None) -> tu
     multigroup = st.get("multigroup", True)
     MIN_W = st.get("min_w", 200)
     root_label = st.get("root_label", True)
+    label_name = st.get("label_name")
+    multigroup_suffix = st.get("multigroup_suffix", " (multigroup)")
+    parent_bar_frac = st.get("parent_bar_frac", 1.0)
     axis_title = st.get("axis_title")
 
     rows = _flatten(root)
@@ -427,7 +434,7 @@ def draw_panel(root: TreeNode, featureset: str, style: dict | None = None) -> tu
     for i, r in enumerate(rows):
         depth = r["depth"]
         name = r["name"]
-        display_name = name.replace("_", " ")
+        display_name = label_name(name) if label_name and not (depth == 0 and i == 0) else name.replace("_", " ")
         r["display_name"] = display_name
         is_root = (depth == 0 and i == 0)
         if depth == 0:
@@ -534,13 +541,14 @@ def draw_panel(root: TreeNode, featureset: str, style: dict | None = None) -> tu
         else:
             bw = 1.5
 
+        bh = BAR_H * parent_bar_frac if not is_leaf and parent_bar_frac != 1.0 else BAR_H
         g.append(draw.Rectangle(
-            bar_left, y - BAR_H / 2, bw, BAR_H,
+            bar_left, y - bh / 2, bw, bh,
             fill=color, stroke="none",
         ))
 
         count_str = format_count(count) if count > 0 else "0"
-        suffix = " (multigroup)" if not is_leaf and count > 0 and multigroup else ""
+        suffix = multigroup_suffix if not is_leaf and count > 0 and multigroup else ""
         g.append(draw.Text(
             count_str + suffix, COUNT_FONT,
             x=bar_left + bw + 4, y=y + COUNT_FONT * 0.35,
