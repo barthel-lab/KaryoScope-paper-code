@@ -118,42 +118,132 @@ def rename_spans(spans_, a):
     return done
 
 
-def shift_key(page, spans_, spec, scale):
-    """--shift-key: move legend labels and their swatches to the right. The text is off the page at
-    this point (it is set again afterwards), so only the swatches are redrawn."""
-    names, dx_mm = spec.rsplit(":", 1)
-    names = {n.strip() for n in names.split(",")}
-    dx = float(dx_mm) * MM / scale
-    rects = [d for d in page.get_drawings()
-             if len(d["items"]) == 1 and d["items"][0][0] == "re" and d.get("fill") is not None]
-    outlines = [d for d in page.get_drawings() if len(d["items"]) == 1 and d["items"][0][0] == "re"]
-    moved = set()
-    for s in spans_:
-        label = s["text"].replace("\xa0", " ").strip()
-        if label not in names or s["dir"] != (1.0, 0.0):
-            continue
-        x0, y0, x1, y1 = s["bbox"]
-        h = y1 - y0
-        sw = [d for d in rects if d["rect"].x1 <= x0 + 0.5 and x0 - d["rect"].x1 < 1.5 * h
-              and d["rect"].y0 < (y0 + y1) / 2 < d["rect"].y1 and d["rect"].width < 2.5 * h]
-        if len(sw) != 1:
-            continue                      # the same word elsewhere on the page, not a legend entry
-        r = fitz.Rect(sw[0]["rect"])
-        box = r + (-1.5, -1.5, 1.5, 1.5)
-        # the swatch and anything drawn with it (its outline can be a path of its own)
-        parts = [d for d in outlines if box.contains(d["rect"])]
-        page.add_redact_annot(box)
+def _label(s):
+    return s["text"].replace("\xa0", " ").strip()
+
+
+def _text_end(s, faces):
+    bold = "Bold" in s["font"]
+    ital = "Italic" in s["font"] or "Oblique" in s["font"]
+    face = faces[{(0, 0): "AR", (1, 0): "AB", (0, 1): "AI", (1, 1): "ABI"}[(bold, ital)]]
+    return s["origin"][0] + fitz.Font(fontfile=face).text_length(s["text"], s["size"])
+
+
+def _redraw(page, moves):
+    """moves: [(drawing, dx, dy)] of single-rectangle drawings. All are taken off first, then all
+    are drawn again, so that one entry can move into the place another one leaves."""
+    for d, _, _ in moves:
+        page.add_redact_annot(fitz.Rect(d["rect"]) + (-0.3, -0.3, 0.3, 0.3))
+    if moves:
         page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
                               graphics=fitz.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
                               text=fitz.PDF_REDACT_TEXT_NONE)
-        for d in parts:
-            page.draw_rect(fitz.Rect(d["rect"]) + (dx, 0, dx, 0), color=d.get("color"), fill=d.get("fill"),
-                           width=d.get("width") or 0)
-        s["origin"] = (s["origin"][0] + dx, s["origin"][1])
-        s["bbox"] = (x0 + dx, y0, x1 + dx, y1)
-        moved.add(label)
-    if moved != names:
-        sys.exit(f"--shift-key: no legend entry found for {sorted(names - moved)}")
+    for d, dx, dy in moves:
+        page.draw_rect(fitz.Rect(d["rect"]) + (dx, dy, dx, dy), color=d.get("color"), fill=d.get("fill"),
+                       width=d.get("width") or 0)
+
+
+def arrange_key(page, spans_, sort_spec, shift_spec, scale):
+    """--sort-key and --shift-key: move legend entries (the label and the swatch at its left). The
+    text is off the page at this point (it is set again afterwards), so only swatches are redrawn."""
+    rects = [d for d in page.get_drawings() if len(d["items"]) == 1 and d["items"][0][0] == "re"]
+
+    def entry(label):
+        found = []
+        for s in spans_:
+            if _label(s) != label or s["dir"] != (1.0, 0.0):
+                continue
+            x0, y0, x1, y1 = s["bbox"]
+            h = y1 - y0
+            sw = [d for d in rects if d.get("fill") is not None and d["rect"].x1 <= x0 + 0.5
+                  and x0 - d["rect"].x1 < 1.5 * h and d["rect"].y0 < (y0 + y1) / 2 < d["rect"].y1
+                  and d["rect"].width < 2.5 * h]
+            if len(sw) == 1:
+                box = fitz.Rect(sw[0]["rect"]) + (-1.5, -1.5, 1.5, 1.5)
+                found.append((s, [d for d in rects if box.contains(d["rect"])]))
+        if len(found) != 1:
+            sys.exit(f"legend entry {label!r}: found {len(found)} (need exactly one label with a swatch)")
+        return found[0]
+
+    delta = {}                                   # id(span) -> [span, parts, dx, dy]
+    for column in (sort_spec.split(";") if sort_spec else []):
+        want = [n.strip() for n in column.split(",")]
+        ents = [entry(n) for n in want]
+        slots = sorted(e[0]["origin"][1] for e in ents)
+        xs = [e[0]["origin"][0] for e in ents]
+        if max(xs) - min(xs) > 3:
+            sys.exit(f"--sort-key: {want} are not one column of the legend")
+        for (sp, parts), y in zip(ents, slots):
+            delta[id(sp)] = [sp, parts, 0.0, y - sp["origin"][1]]
+    if shift_spec:
+        names, dx_mm = shift_spec.rsplit(":", 1)
+        for n in names.split(","):
+            sp, parts = entry(n.strip())
+            delta.setdefault(id(sp), [sp, parts, 0.0, 0.0])[2] = float(dx_mm) * MM / scale
+    _redraw(page, [(d, dx, dy) for _, parts, dx, dy in delta.values() for d in parts])
+    for sp, _, dx, dy in delta.values():
+        x0, y0, x1, y1 = sp["bbox"]
+        sp["origin"] = (sp["origin"][0] + dx, sp["origin"][1] + dy)
+        sp["bbox"] = (x0 + dx, y0 + dy, x1 + dx, y1 + dy)
+
+
+def tidy_leaders(page, spans_, faces):
+    """--tidy-leaders: in the hierarchy trees, start every dotted leader the same distance after its
+    label (the generator placed them by an estimated text width, and renamed labels differ in length).
+    Where a label would reach its bar, the bars and counts of that tree column move right together."""
+    drawings = page.get_drawings()
+    leaders = [d for d in drawings if d.get("dashes") and not d["dashes"].startswith("[]")
+               and len(d["items"]) == 1 and d["items"][0][0] == "l" and d["rect"].height < 0.5
+               and d["rect"].width > 1]
+    bars = [d for d in drawings if len(d["items"]) == 1 and d["items"][0][0] == "re"
+            and d.get("fill") is not None]
+    flat = [s for s in spans_ if s["dir"] == (1.0, 0.0)]
+    rows = []
+    for d in leaders:
+        y, x0, x1 = d["rect"].y0, d["rect"].x0, d["rect"].x1
+        on_row = [s for s in flat if s["bbox"][1] < y < s["bbox"][3]]
+        left = [s for s in on_row if s["origin"][0] < x0 + 1]
+        if not left:
+            continue
+        lab = max(left, key=lambda s: s["origin"][0])
+        bar = [b for b in bars if b["rect"].y0 < y < b["rect"].y1 and -1 < b["rect"].x0 - x1 < 6]
+        bar = min(bar, key=lambda b: b["rect"].x0) if bar else None
+        count = [s for s in on_row if bar and s["origin"][0] >= bar["rect"].x1 - 0.5]
+        count = min(count, key=lambda s: s["origin"][0]) if count else None
+        gap = 0.4 * lab["size"]
+        rows.append({"d": d, "lab": lab, "bar": bar, "count": count, "gap": gap,
+                     "start": _text_end(lab, faces) + gap, "end": x1})
+    # a column of a tree = rows whose bars start at the same x; it moves as one
+    cols = {}
+    for r in rows:
+        if r["bar"]:
+            cols.setdefault(round(r["bar"]["rect"].x0, 1), []).append(r)
+    moves = []
+    for col in cols.values():
+        need = max(r["start"] - r["end"] for r in col)      # only where a label reaches its bar
+        if need <= 0:
+            continue
+        for r in col:
+            r["end"] += need
+            moves.append((r["bar"], need, 0.0))
+            if r["count"]:
+                x0, y0, x1, y1 = r["count"]["bbox"]
+                r["count"]["origin"] = (r["count"]["origin"][0] + need, r["count"]["origin"][1])
+                r["count"]["bbox"] = (x0 + need, y0, x1 + need, y1)
+    for r in rows:
+        page.add_redact_annot(fitz.Rect(r["d"]["rect"]) + (-0.5, -1.2, 0.5, 1.2))
+    _redraw(page, moves)          # also applies the leader redactions (with any others)
+    if rows and not moves:
+        page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
+                              graphics=fitz.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
+                              text=fitz.PDF_REDACT_TEXT_NONE)
+    for r in rows:
+        if r["end"] - r["start"] > 1:
+            d = r["d"]
+            y = d["rect"].y0
+            page.draw_line(fitz.Point(r["start"], y), fitz.Point(r["end"], y), color=d.get("color"),
+                           width=d.get("width") or 0.4, dashes=d["dashes"])
+    return len(rows), len(moves)
 
 
 def main():
@@ -185,6 +275,12 @@ def main():
     ap.add_argument("--rename", action="append", default=[], metavar="OLD=NEW",
                     help="print NEW where a text span reads exactly OLD (repeatable; applied before "
                          "--display-names). Needs --arial")
+    ap.add_argument("--sort-key", default=None, metavar="LABEL,LABEL,...[;LABEL,...]",
+                    help="put the entries of a legend column in this order, top to bottom (one "
+                         "comma-separated list per column, columns separated by ';'). Needs --arial")
+    ap.add_argument("--tidy-leaders", action="store_true",
+                    help="start every dotted leader of the hierarchy trees the same distance after "
+                         "its label. Needs --arial")
     ap.add_argument("--shift-key", default=None, metavar="LABEL,LABEL,...:DX_MM",
                     help="move these legend entries (the label as printed, and the swatch at its left) "
                          "DX_MM to the right at final size, to make room for longer names in the "
@@ -359,6 +455,7 @@ def main():
     # the same origin. Arial has Helvetica's advance widths, so labels keep their extent.
     converted = []
     renamed = []
+    tidied = (0, 0)
     if (a.rename or a.display_names) and not a.arial:
         sys.exit("--rename and --display-names need --arial (the text is set again there)")
     if a.arial:
@@ -374,9 +471,13 @@ def main():
         if list(spans(page)):
             sys.exit(f"--arial: text left after removal: {[s['text'] for s in spans(page)][:5]}")
         renamed = rename_spans(before, a)
-        if a.shift_key:   # before the fonts are added: its redactions drop unused font resources
-            shift_key(page, before, a.shift_key, scale)
         faces = {"AR": ARIAL, "AB": ARIAL_BOLD, "AI": ARIAL_ITALIC, "ABI": ARIAL_BOLD_ITALIC}
+        # These redraw line art; they run before the fonts are added, because a redaction drops
+        # font resources that are not in use yet.
+        if a.sort_key or a.shift_key:
+            arrange_key(page, before, a.sort_key, a.shift_key, scale)
+        if a.tidy_leaders:
+            tidied = tidy_leaders(page, before, faces)
         for name, path in faces.items():
             page.insert_font(fontname=name, fontfile=path)
         for s in before:
@@ -386,14 +487,6 @@ def main():
             turn = {(1.0, 0.0): 0, (0.0, -1.0): 90, (-1.0, 0.0): 180, (0.0, 1.0): 270}.get(s["dir"])
             if turn is None:
                 sys.exit(f"--arial: text direction {s['dir']} of {s['text']!r} is not supported")
-            if s.get("renamed") and turn == 0:
-                # A longer name can run over what followed the old label (a tree's dotted leader):
-                # clear the part of the line that the new text now covers, and a little beyond it.
-                w = fitz.Font(fontfile=faces[name]).text_length(s["text"], s["size"])
-                x0, y0, x1, y1 = s["bbox"]
-                if s["origin"][0] + w > x1 + 0.5 * s["size"]:   # not for a change of a letter or two
-                    page.draw_rect(fitz.Rect(x1 - 0.2, y0, s["origin"][0] + w + 0.25 * s["size"], y1),
-                                   color=None, fill=(1, 1, 1))
             page.insert_text(fitz.Point(s["origin"]), s["text"], fontname=name, fontsize=s["size"],
                              color=fitz.sRGB_to_pdf(s["color"]), rotate=turn)
     if grow:  # enlarged labels can reach past the first crop
@@ -428,6 +521,7 @@ def main():
           + (f"; re-inserted (collateral): {len(collateral)}" if collateral else "")
           + (f"; set again in Arial: {len(converted)}" if a.arial else "")
           + (f"; labels renamed: {len(renamed)}" if a.arial and (a.rename or a.display_names) else "")
+          + (f"; leaders set again: {tidied[0]}, bars moved: {tidied[1]}" if a.arial and a.tidy_leaders else "")
           + (f"; hidden layers removed: {', '.join(hidden)}" if hidden else ""))
     if sizes:
         print(f"  text at final size: {min(sizes)}-{max(sizes)} pt; "
