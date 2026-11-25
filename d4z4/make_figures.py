@@ -133,6 +133,8 @@ def main():
             return
         import figure_build
         figure_build.DISPLAY_NAMES = args.display_names
+        import figure_schematic
+        figure_schematic.DISPLAY_NAMES = args.display_names
         import figure_data
         summary = figure_data.data_summary(cfg)
         with open(out / 'figure_data.tsv', 'w') as f:

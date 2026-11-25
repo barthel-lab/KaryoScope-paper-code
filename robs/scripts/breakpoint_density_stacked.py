@@ -443,15 +443,16 @@ def draw_feature_track(d, features, colors, x, y_start, bar_width,
 
 
 # --display-names (figure5_assemble.py): legend rows print the display names of their features
-# (KaryoScope-paper-code common/display_names.py, v1 labels); the row order stays that of the labels.
+# (KaryoScope-paper-code common/display_names.py, v1 labels), sorted by display_names.display_sort_key
+# (catch-alls still last), and a swatch several parents share prints display_names.shared_parent_name().
 DISPLAY_NAMES = False
 
 
-def _display(feat):
+def _dn():
     import sys as _sys
     _sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "common"))
-    from display_names import display_name
-    return display_name(feat, "v1")
+    import display_names
+    return display_names
 
 
 def _clean_label(label):
@@ -853,13 +854,24 @@ def draw_legend(d, x, y, colors, featuresets, displayed_features,
                 cands = [f for f in feats if f != 'categorized'] or list(feats)
                 cands.sort(key=lambda f: (_HIER_DEPTH.get((fs, f), 99), f))
                 feat = cands[0]
-            rows.append((_clean_label(feat), c, feat))
+            if DISPLAY_NAMES:
+                dn = _dn()
+                shared = [f for f in feats if f.endswith('_multigroup1')]
+                name = (dn.shared_parent_name(feats, 'v1') if not specifics and len(shared) > 1
+                        else 'novel' if feat == 'novel' else dn.display_name(feat, 'v1'))
+                rows.append((name, c, feat))
+            else:
+                rows.append((_clean_label(feat), c, feat))
         # Only the gap-fill classes are pinned last. `unknown` is NOT one of
         # them -- the published legend sorts it alphabetically with the named
         # repeat classes (… SINE, Unknown, nonrepeat).
         BACKGROUNDISH = ('nonrepeat', 'nonacrocentric', 'novel')
-        rows.sort(key=lambda r: (r[0].lower() in BACKGROUNDISH, r[0].lower()))
-        return [((_display(f) if DISPLAY_NAMES and f != 'novel' else rep), c) for rep, c, f in rows]
+        if DISPLAY_NAMES:
+            key = _dn().display_sort_key
+            rows.sort(key=lambda r: (r[0].lower() in BACKGROUNDISH, key(r[0])))
+        else:
+            rows.sort(key=lambda r: (r[0].lower() in BACKGROUNDISH, r[0].lower()))
+        return [(name, c) for name, c, f in rows]
 
     density_items = [
         ('#00FF00', 0.9, 'SST1 coverage'),

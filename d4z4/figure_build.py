@@ -33,17 +33,22 @@ DISPLAY_NAME_MISFITS = []
 
 def legend_label(label, key, avail, size, measure):
     """The label a legend item prints: with DISPLAY_NAMES, the display name of the feature in key
-    (region/gene/repeat/subtelomeric), if it fits in avail; D4Z4 classes, pLAM and novel unchanged."""
+    (region/gene/repeat/subtelomeric), or for a D4Z4 element entry its phrase with any feature label in
+    it as a display name ("bsat terminal" -> "bSat terminal"), if it fits in avail. D4Z4 class names,
+    pLAM and novel are not feature labels and stay."""
     if not DISPLAY_NAMES:
         return label
     import sys
     from pathlib import Path as _P
     sys.path.insert(0, str(_P(__file__).resolve().parent.parent / 'common'))
-    from display_names import display_name
+    from display_names import display_name, display_text
     kind, _, name = key.partition(':')
-    if kind not in ('region', 'gene', 'repeat', 'subtelomeric'):
+    if kind in ('region', 'gene', 'repeat', 'subtelomeric'):
+        new = display_name(name, 'v1')      # a parent (arm, centromeric, ...) prints its name alone
+    else:
+        new = display_text(label, 'v1')
+    if new == label:
         return label
-    new = display_name(name, 'v1')          # a parent (arm, centromeric, ...) prints its name alone
     need = measure(new, size, False)
     if need > avail:
         DISPLAY_NAME_MISFITS.append((label, new, round(avail, 2), round(need, 2), round(measure(label, size, False), 2)))

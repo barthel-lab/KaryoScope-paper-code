@@ -25,9 +25,10 @@ GPL-3.0-or-later, and its `LICENSE` is included.
 
 Changes:
 
-- Trial (2026-11-25): `KaryoScope_assembly_figure.py`, `KaryoScope_assembly_contig_zoom_plot.py` and
+- 2026-11-25: `KaryoScope_assembly_figure.py`, `KaryoScope_assembly_contig_zoom_plot.py` and
   `plot_featureset_tree_bars.py` (style `label_name`, `multigroup_suffix`, `parent_bar_frac`) can print
   the display names of `../common/display_names.py` (`--display-names`; off by default, output unchanged).
+  The contig zoom plot's own `noncentromeric_specific` -> "rDNA" override is removed; the table prints it.
 
 - `plot_featureset_tree_bars.py` reads its resource directory from
   `$KS_RESOURCES` when set (the original fixes it to a directory under `$HOME`).

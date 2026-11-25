@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # Vendored from barthel-lab/KaryoScope-ISCN at commit 68a9816baab659c5b710f265c3713844cc2729d2, file KaryoScope_assembly_contig_zoom_plot.py.
-# Copied unmodified except --display-names (2026-11-25: the colour legend prints common/display_names.py names; off by
-# default). Authors (git log): Floris Barthel <fbarthel@tgen.org>; Rhyker Ranallo-Benavidez <rranallo-benavidez@tgen.org>.
+# Copied unmodified except --display-names (2026-11-25: the colour legend prints common/display_names.py names, sorted
+# by display_names.display_sort_key; off by default) and the noncentromeric -> rDNA override, which the table now
+# covers (removed). Authors (git log): Floris Barthel <fbarthel@tgen.org>; Rhyker Ranallo-Benavidez <rranallo-benavidez@tgen.org>.
 # Part of the KaryoScope-paper-code snapshot; see vendored/README.md.
 """
 KaryoScope Assembly Contig Zoom Plot
@@ -2023,7 +2024,6 @@ def _estimate_legend_width(colors, featuresets, displayed_features, show_arm_lin
         'acrocentric': 'Acrocentric',
     }
 
-    _DISPLAY_NAME_OVERRIDES = {'noncentromeric_specific': 'rDNA'}
 
     max_label_len = 0
     if show_arm_line:
@@ -2119,8 +2119,6 @@ def _estimate_legend_width(colors, featuresets, displayed_features, show_arm_lin
             else:
                 display_name = feature_names[0].replace('_', ' ')
 
-            if len(feature_names) == 1 and feature_names[0] in _DISPLAY_NAME_OVERRIDES:
-                display_name = _DISPLAY_NAME_OVERRIDES[feature_names[0]]
 
             max_label_len = max(max_label_len, len(display_name))
 
@@ -2138,9 +2136,8 @@ DISPLAY_NAMES = False      # --display-names
 def _display_translate(name, feature_names):
     """With --display-names: the legend text name (as built from feature_names below) with each
     feature's cleaned name replaced by its display name. A generic 'multigroup' entry (several
-    parents sharing one colour) prints the shallowest of those parents, the root excluded (v1
-    hierarchy from vendored/KaryoScope-archive-resources/resources/CHM13/CHM13_*.priority.txt), as
-    Extended Data Fig. 7's legend does."""
+    parents sharing one colour) prints display_names.shared_parent_name(): the deepest of those
+    parents, the root excluded ("acrocentric" for the chromosome swatch), as Extended Data Fig. 7."""
     if not DISPLAY_NAMES:
         return name
     import re as _re
@@ -2148,23 +2145,9 @@ def _display_translate(name, feature_names):
     from pathlib import Path as _P
     _root = _P(__file__).resolve().parent.parent.parent
     _sys.path.insert(0, str(_root / 'common'))
-    from display_names import display_name as _dn
+    from display_names import display_name as _dn, shared_parent_name as _spn
     if name == 'multigroup':
-        parent = {}
-        for pf in (_root / 'vendored/KaryoScope-archive-resources/resources/CHM13').glob('CHM13_*.priority.txt'):
-            for line in pf.read_text().splitlines():
-                p = line.split('\t')
-                if len(p) >= 3:
-                    parent[p[0]] = p[2]
-
-        def depth(n):
-            d = 0
-            while n in parent and d < 50:
-                n, d = parent[n], d + 1
-            return d if n == 'categorized' else 99
-        roots = sorted((depth(r), r) for r in (_re.sub(r'_multigroup\d*$', '', f) for f in feature_names
-                                               if f.endswith('_multigroup1')) if r != 'categorized')
-        return _dn(roots[0][1], 'v1') if roots else name
+        return _spn(feature_names, 'v1') or name
     forms = {}
     for f in feature_names:
         base = f.replace('_specific', '')
@@ -2175,6 +2158,18 @@ def _display_translate(name, feature_names):
             forms[_re.sub(r'\d+$', '', f.replace('_', ' ')).rstrip()] = _dn(f, 'v1')   # 'centromeric multigroup'
             forms[root.replace('_', ' ')] = _dn(root, 'v1')             # a multigroup root named alone
     return ', '.join(forms.get(part, part) for part in name.split(', '))
+
+
+def _display_order(name):
+    """Sort key within a legend group: the name itself, or with --display-names the order of
+    display_names.display_sort_key (the region leaves in the order of the Fig. 1 key, then parents)."""
+    if not DISPLAY_NAMES:
+        return name
+    import sys as _sys
+    from pathlib import Path as _P
+    _sys.path.insert(0, str(_P(__file__).resolve().parent.parent.parent / 'common'))
+    from display_names import display_sort_key
+    return display_sort_key(name)
 
 
 def _draw_legend(d, legend_x, legend_y, colors, featuresets, displayed_features,
@@ -2230,7 +2225,6 @@ def _draw_legend(d, legend_x, legend_y, colors, featuresets, displayed_features,
     def _is_novel(f):
         return f == 'novel'
 
-    _DISPLAY_NAME_OVERRIDES = {'noncentromeric_specific': 'rDNA'}
 
     def _is_non_category(f):
         if f in ('arm_multigroup1', 'p_arm_specific', 'q_arm_specific'):
@@ -2344,23 +2338,20 @@ def _draw_legend(d, legend_x, legend_y, colors, featuresets, displayed_features,
             else:
                 display_name = feature_names[0].replace('_', ' ')
 
-            if len(feature_names) == 1 and feature_names[0] in _DISPLAY_NAME_OVERRIDES:
-                display_name = _DISPLAY_NAME_OVERRIDES[feature_names[0]]
 
+            display_name = _display_translate(display_name, feature_names)
+            order = _display_order(display_name)
             if novels:
                 sort_key = (4, 0, display_name)
             elif non_cats and not specifics:
                 sort_key = (3, 0, display_name)
             elif multigroups and not specifics:
-                sort_key = (2, 0, display_name)
+                sort_key = (2, 0, order)
             elif chr_specifics:
                 sort_key = (0, _chrom_sort_num(chr_specifics[0]), display_name)
             else:
-                sort_key = (1, 0, display_name)
+                sort_key = (1, 0, order)
 
-            # --display-names changes the text only: the order is that of the labels
-            if not (len(feature_names) == 1 and feature_names[0] in _DISPLAY_NAME_OVERRIDES):
-                display_name = _display_translate(display_name, feature_names)
             legend_entries.append((sort_key, color_hex, display_name))
 
         legend_entries.sort()

@@ -61,7 +61,9 @@ assembly_figure_analyses:
   # of row 1 under chr8 to chr12 (one entry per colour, centred on chr9's lowest Mb labels), with
   # the scale legend beside it (2026-11-23). In the figure this is panel c (2026-11-24):
   # scripts/draw_fig1_trees.py draws the region hierarchy (panel b) and scripts/compose_fig1.py
-  # --compact-a --tree places panel a and the tree above it (hg002/README.md, Fig. 1).
+  # --compact-a --tree places panel a and the tree above it (hg002/README.md, Fig. 1). The labels
+  # print as display names (common/display_names.py, 2026-11-25); the key's merged red entry is then
+  # "aSat / aSat HOR / active HOR", renamed below.
   - name: "HG002 Fig 1b two rows"
     sample: HG002
     output: results/assembly_figure/HG002_fig1b_two_rows.svg
@@ -82,7 +84,8 @@ assembly_figure_analyses:
       colour_key: region,subtelomeric
       key_centre_on: chr9
       key_merge_colours: true
+      display_names: true
       key_label:
-        - "aSat / alpha hor / active hor=aSat / active hor"
+        - "aSat / aSat HOR / active HOR=aSat / active HOR"
         - "arm / p arm / q arm=arm"
       legend_with_key: true
