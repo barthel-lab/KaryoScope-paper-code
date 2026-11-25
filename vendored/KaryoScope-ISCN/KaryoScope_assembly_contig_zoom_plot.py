@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # Vendored from barthel-lab/KaryoScope-ISCN at commit 68a9816baab659c5b710f265c3713844cc2729d2, file KaryoScope_assembly_contig_zoom_plot.py.
-# Copied unmodified. Authors (git log): Floris Barthel <fbarthel@tgen.org>; Rhyker Ranallo-Benavidez <rranallo-benavidez@tgen.org>.
+# Copied unmodified except --display-names (2026-11-25: the colour legend prints common/display_names.py names, sorted
+# by display_names.display_sort_key, in hierarchy order; off by default) and the noncentromeric -> rDNA override, which the table now
+# covers (removed). Authors (git log): Floris Barthel <fbarthel@tgen.org>; Rhyker Ranallo-Benavidez <rranallo-benavidez@tgen.org>.
 # Part of the KaryoScope-paper-code snapshot; see vendored/README.md.
 """
 KaryoScope Assembly Contig Zoom Plot
@@ -78,6 +80,10 @@ def parse_args():
                              'May be repeated to match --sample.')
     parser.add_argument('--show-arms', action='store_true',
                         help='Show p/q arm track next to chromosome (contig view only)')
+    parser.add_argument('--display-names', action='store_true', default=False,
+                        help='colour legend: print the display names of the features '
+                             '(KaryoScope-paper-code common/display_names.py, v1 database labels); '
+                             'the layout, a generic "multigroup" entry and the track names are unchanged')
     parser.add_argument('--no-refine', action='store_true', default=False,
                         help='Skip breakpoint refinement; use coordinates from '
                              'the regions TSV as-is')
@@ -2018,7 +2024,6 @@ def _estimate_legend_width(colors, featuresets, displayed_features, show_arm_lin
         'acrocentric': 'Acrocentric',
     }
 
-    _DISPLAY_NAME_OVERRIDES = {'noncentromeric_specific': 'rDNA'}
 
     max_label_len = 0
     if show_arm_line:
@@ -2114,8 +2119,6 @@ def _estimate_legend_width(colors, featuresets, displayed_features, show_arm_lin
             else:
                 display_name = feature_names[0].replace('_', ' ')
 
-            if len(feature_names) == 1 and feature_names[0] in _DISPLAY_NAME_OVERRIDES:
-                display_name = _DISPLAY_NAME_OVERRIDES[feature_names[0]]
 
             max_label_len = max(max_label_len, len(display_name))
 
@@ -2125,6 +2128,48 @@ def _estimate_legend_width(colors, featuresets, displayed_features, show_arm_lin
     legend_content_width = swatch_size + 6 + max_label_len * char_width + padding
     # margin_right = gap from zoom panels to legend_x (10) + legend content + padding + outer margin
     return int(legend_content_width + 2 * padding + 10 + 15)
+
+
+DISPLAY_NAMES = False      # --display-names
+
+
+def _display_translate(name, feature_names):
+    """With --display-names: the legend text name (as built from feature_names below) with each
+    feature's cleaned name replaced by its display name. A generic 'multigroup' entry (several
+    parents sharing one colour) prints display_names.shared_parent_name(): the deepest of those
+    parents, the root excluded ("acrocentric" for the chromosome swatch), as Extended Data Fig. 7."""
+    if not DISPLAY_NAMES:
+        return name
+    import re as _re
+    import sys as _sys
+    from pathlib import Path as _P
+    _root = _P(__file__).resolve().parent.parent.parent
+    _sys.path.insert(0, str(_root / 'common'))
+    from display_names import display_name as _dn, shared_parent_name as _spn
+    if name == 'multigroup':
+        return _spn(feature_names, 'v1') or name
+    forms = {}
+    for f in feature_names:
+        base = f.replace('_specific', '')
+        forms[base.replace('_', ' ')] = _dn(f, 'v1')
+        forms[f.replace('_', ' ').replace(' specific', '')] = _dn(f, 'v1')
+        if 'multigroup' in f:
+            root = _re.sub(r'_?multigroup\d*$', '', f)
+            forms[_re.sub(r'\d+$', '', f.replace('_', ' ')).rstrip()] = _dn(f, 'v1')   # 'centromeric multigroup'
+            forms[root.replace('_', ' ')] = _dn(root, 'v1')             # a multigroup root named alone
+    return ', '.join(forms.get(part, part) for part in name.split(', '))
+
+
+def _display_order(name, featureset=None):
+    """Sort key within a legend section: the name itself, or with --display-names the order of
+    display_names.display_sort_key (the rows of the feature set's tree, a parent above its children)."""
+    if not DISPLAY_NAMES:
+        return name
+    import sys as _sys
+    from pathlib import Path as _P
+    _sys.path.insert(0, str(_P(__file__).resolve().parent.parent.parent / 'common'))
+    from display_names import display_sort_key
+    return display_sort_key(name, featureset)
 
 
 def _draw_legend(d, legend_x, legend_y, colors, featuresets, displayed_features,
@@ -2180,7 +2225,6 @@ def _draw_legend(d, legend_x, legend_y, colors, featuresets, displayed_features,
     def _is_novel(f):
         return f == 'novel'
 
-    _DISPLAY_NAME_OVERRIDES = {'noncentromeric_specific': 'rDNA'}
 
     def _is_non_category(f):
         if f in ('arm_multigroup1', 'p_arm_specific', 'q_arm_specific'):
@@ -2294,19 +2338,23 @@ def _draw_legend(d, legend_x, legend_y, colors, featuresets, displayed_features,
             else:
                 display_name = feature_names[0].replace('_', ' ')
 
-            if len(feature_names) == 1 and feature_names[0] in _DISPLAY_NAME_OVERRIDES:
-                display_name = _DISPLAY_NAME_OVERRIDES[feature_names[0]]
 
-            if novels:
+            display_name = _display_translate(display_name, feature_names)
+            order = _display_order(display_name, fs)
+            if DISPLAY_NAMES:
+                # one list in hierarchy order (chromosome-specific, specific and parent rows together);
+                # the catch-alls, then novel, stay last
+                sort_key = ((4, order) if novels else (3, order) if non_cats and not specifics else (1, order))
+            elif novels:
                 sort_key = (4, 0, display_name)
             elif non_cats and not specifics:
                 sort_key = (3, 0, display_name)
             elif multigroups and not specifics:
-                sort_key = (2, 0, display_name)
+                sort_key = (2, 0, order)
             elif chr_specifics:
                 sort_key = (0, _chrom_sort_num(chr_specifics[0]), display_name)
             else:
-                sort_key = (1, 0, display_name)
+                sort_key = (1, 0, order)
 
             legend_entries.append((sort_key, color_hex, display_name))
 
@@ -3007,6 +3055,8 @@ def _process_sample(sample, bed_dir, regions_path, comparison_path,
 
 def main():
     args = parse_args()
+    global DISPLAY_NAMES
+    DISPLAY_NAMES = args.display_names
 
     # Parse inputs
     featuresets = [fs.strip() for fs in args.featuresets.split(',')]

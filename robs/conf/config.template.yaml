@@ -332,6 +332,7 @@ assembly_contig_zoom_plot_stacked_analyses:
     panel_letters: true
     hide_scale_bars: true
     zoom_levels: 5000000,500000,100000
+    display_names: true          # legend labels as display names (common/display_names.py)
 assembly_figure_analyses:
 - name: GM03417 assembly figure
   sample: GM03417

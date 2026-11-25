@@ -88,6 +88,7 @@ centromere/    Fig. 5 (clustering) and qc/ (assembly QC table, ED Fig. 9)
 revision/      analyses A1-A7 added during revision, and the concordance harness
 illustrator/   export of the figures composed in Illustrator
 vendored/      code copied from other repositories that the scripts import
+common/        code shared by several figure scripts (display names of the feature labels)
 environment/   conda environments, one per analysis
 ```
 

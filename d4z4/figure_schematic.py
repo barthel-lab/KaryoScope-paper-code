@@ -61,7 +61,18 @@ def _rect(x, y, w, h, fill, stroke=None, sw=0, rx=0):
     return f'<rect x="{x:.2f}" y="{y:.2f}" width="{w:.2f}" height="{h:.2f}" fill="{fill}"{s}{r}/>'
 
 
+# --display-names (make_figures.py): every phrase prints with display_names.display_text() (feature
+# labels as display names, beta-satellite as bSat); the D4Z4 class names are not feature labels and stay.
+DISPLAY_NAMES = False
+
+
 def _text(s, x, y, font, bold=False, anchor='start', fill=None):
+    if DISPLAY_NAMES:
+        import sys
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'common'))
+        from display_names import display_text
+        s = display_text(s, 'v1')
     w = ' font-weight="bold"' if bold else ''
     return (f'<text x="{x:.2f}" y="{y:.2f}" font-family="{font}" font-size="{SIZE}"{w} '
             f'text-anchor="{anchor}" fill="{fill or COLORS["text"]}">{escape(s)}</text>')

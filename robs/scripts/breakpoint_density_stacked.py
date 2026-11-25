@@ -442,6 +442,19 @@ def draw_feature_track(d, features, colors, x, y_start, bar_width,
                             fill='none', stroke='#000000', stroke_width=0.5))
 
 
+# --display-names (figure5_assemble.py): legend rows print the display names of their features
+# (KaryoScope-paper-code common/display_names.py, v1 labels), sorted by display_names.display_sort_key
+# (catch-alls still last), and a swatch several parents share prints display_names.shared_parent_name().
+DISPLAY_NAMES = False
+
+
+def _dn():
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "common"))
+    import display_names
+    return display_names
+
+
 def _clean_label(label):
     """Display form of a feature label.
 
@@ -836,18 +849,29 @@ def draw_legend(d, x, y, colors, featuresets, displayed_features,
         for c, feats in color_groups.items():
             specifics = [f for f in feats if f.endswith('_specific')]
             if specifics:
-                rep = _clean_label(sorted(specifics)[0])
+                feat = sorted(specifics)[0]
             else:
                 cands = [f for f in feats if f != 'categorized'] or list(feats)
                 cands.sort(key=lambda f: (_HIER_DEPTH.get((fs, f), 99), f))
-                rep = _clean_label(cands[0])
-            rows.append((rep, c))
+                feat = cands[0]
+            if DISPLAY_NAMES:
+                dn = _dn()
+                shared = [f for f in feats if f.endswith('_multigroup1')]
+                name = (dn.shared_parent_name(feats, 'v1') if not specifics and len(shared) > 1
+                        else 'novel' if feat == 'novel' else dn.display_name(feat, 'v1'))
+                rows.append((name, c, feat))
+            else:
+                rows.append((_clean_label(feat), c, feat))
         # Only the gap-fill classes are pinned last. `unknown` is NOT one of
         # them -- the published legend sorts it alphabetically with the named
         # repeat classes (… SINE, Unknown, nonrepeat).
         BACKGROUNDISH = ('nonrepeat', 'nonacrocentric', 'novel')
-        rows.sort(key=lambda r: (r[0].lower() in BACKGROUNDISH, r[0].lower()))
-        return rows
+        if DISPLAY_NAMES:
+            key = _dn().display_sort_key       # hierarchy order of this feature set's tree
+            rows.sort(key=lambda r: (r[0].lower() in BACKGROUNDISH, key(r[0], fs)))
+        else:
+            rows.sort(key=lambda r: (r[0].lower() in BACKGROUNDISH, r[0].lower()))
+        return [(name, c) for name, c, f in rows]
 
     density_items = [
         ('#00FF00', 0.9, 'SST1 coverage'),

@@ -100,13 +100,15 @@ PyMuPDF with `pip install pymupdf==1.26.5`).
 ```bash
 # fontconfig must return Arial for "sans-serif" (cairosvg converts the SVG text)
 python scripts/draw_fig1_trees.py --featuresets region --label-pt 5.8 --width-mm 72 \
-    --no-header --axis-title "Number of *k*-mers" --axis-title-pt 5.8 --out-dir results/fig1_trees
+    --no-header --axis-title "Number of *k*-mers" --axis-title-pt 5.8 \
+    --display-names --no-multigroup --out-dir results/fig1_trees
 python scripts/compose_fig1.py \
     --ai /path/to/KaryoScope-paper/figures/fig1/HG002_figure_v2_v1cen_grid.ai \
     --panel-b results/assembly_figure/HG002_fig1b_two_rows.svg \
     --arial-bold /path/to/arialbd.ttf --compact-a --tree results/fig1_trees/tree_region.svg \
     --out results/Fig1
-python scripts/check_fig1.py results/Fig1.pdf --no-header --axis-title "Number of *k*-mers"
+python scripts/check_fig1.py results/Fig1.pdf --no-header --axis-title "Number of *k*-mers" \
+    --display-names --no-multigroup
 ```
 
 Output: `results/Fig1.pdf` (vector, fonts embedded) and `results/Fig1.png` (300
@@ -118,6 +120,13 @@ each tree row by row (label, k-mer count, colour) with the generator's tree and 
 colours with the colour files, checks the axis title and the missing header (`--axis-title`,
 `--no-header`; a tree without its header is identified by its labels), and finds overlapping text; `--reference` compares the
 karyotype labels with an earlier Fig. 1, `--ed-tree` the region tree with ED Fig. 2b.
+
+Labels print as display names (`../common/display_names.py`, 2026-11-25): `display_names: true` in
+`conf/hg002.yaml` (the colour key; the merged red entry is renamed with
+`--key-label "aSat / aSat HOR / active HOR=aSat / active HOR"`), and `--display-names` on
+`draw_fig1_trees.py` and `check_fig1.py`. The tree prints no text after a parent row's count
+(`--no-multigroup`); `--parent-bars thin` draws parent rows' bars thinner instead, and without
+`--no-multigroup` a parent row's count is followed by "(multigroup)".
 
 ## Centromere windows (Fig. 1b)
 

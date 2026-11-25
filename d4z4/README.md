@@ -146,10 +146,20 @@ outputs, the pLAM table and the HMM counts):
 | Supplementary Fig. 2 (first submission: Fig. S10) | "Supp. Fig. 2" (`create_d4z4_supp2.py`) | a–f | `results/figures/figS10.{svg,pdf,png}` |
 
 ```bash
-python make_figures.py --config figures_config.yaml --out results/figures/
+python make_figures.py --config figures_config.yaml --out results/figures/ --display-names
 # where Arial/Helvetica are not installed (e.g. Linux), point at a metric-compatible font:
-python make_figures.py --font-dir /path/to/liberation-sans/ --out results/figures/
+python make_figures.py --font-dir /path/to/liberation-sans/ --out results/figures/ --display-names
 ```
+
+`--display-names` (2026-11-25) prints the feature labels with the display names of
+`../common/display_names.py`: the colour legends, the element entries of the "Other Elements" key
+("bSat terminal", "Solitary bSat") and the Extended Data Fig. 8a schematic ("bSat calls from
+KaryoScope", "ct terminal", bSat for beta-satellite). The D4Z4 class names (A-like (C+), B-like (C-),
+Canonical (C+)/(C-), Degraded, Transition element (T)), the pLAM entries and the track names are
+unchanged. The Satellites, Repeats, Subtelomere and Genes sections of the colour legend are listed in
+hierarchy order (`display_sort_key`; a section continued in the next column keeps its column sizes); the
+other sections keep their order. Without it the figures print the database labels in alphabetical order,
+as submitted.
 
 It also writes `results/figures/panels/` (each track view and plot as its own SVG) and
 `results/figures/figure_data.tsv`: every number drawn (waffle counts, every diplotype-table

@@ -25,8 +25,8 @@ python3 nature_ai_export.py FIGURE.ai OUT_PREFIX [flags]
 | figure | flags |
 |---|---|
 | Fig. 1 (first submission, panels a-e) | `--relabel C=E,E=C` (the chromosome tree becomes c and the subtelomeric tree e, so panels are cited in order, while the `.ai` keeps its letters). The revised Fig. 1 is not exported with this script. |
-| Fig. 5 | `--min-pt 5 --width-mm 180 --height-mm 170 --arial` |
-| ED Fig. 1 | `--min-pt 5 --arial` (the scale-bar label "10 Mbp") |
+| Fig. 5 | `--min-pt 5 --width-mm 180 --height-mm 170 --arial`, plus the display-name options (below) |
+| ED Fig. 1 | `--min-pt 5 --arial` (the scale-bar label "10 Mbp"), plus `--display-names v2 --no-multigroup` |
 | ED Figs. 2 and 3 | `--max-pt 7 --arial`, run on the RGB copy (below). In ED Fig. 3 the cap brings the "subtelomeric" tree header from 7.03 to 7.0 pt. |
 | Supp. Fig. 1 | `--arial`, run on the RGB copy (below) |
 | ED Fig. 9 | `--max-pt 7 --anchor center --drop-small --arial`, then `ed_fig9_panels.py` on the exported PDF (below) |
@@ -87,3 +87,50 @@ python illustrator/nature_ai_export.py HPRC_cent_analysis.suppl_tpo.YC.ai ED_Fig
     --max-pt 7 --anchor center --drop-small --arial
 python illustrator/ed_fig9_panels.py ED_Fig9_export.pdf ED_Fig9
 ```
+
+## Display names in the Illustrator figures
+
+The figure scripts print feature labels by the names in `common/display_names.py` when given
+`--display-names`. The Illustrator files hold the old labels as live text, and `--arial` sets all
+text again, so `nature_ai_export.py` can print the same names without the `.ai` being edited:
+
+- `--display-names v1|v2`: each text span that is a feature label is printed by its display name.
+  The value is the database vocabulary of the figure (v1 for Fig. 5, v2 for the HG002 figures).
+- `--no-multigroup`: drops "(multigroup)" after the k-mer count of parent rows in the trees.
+- `--rename OLD=NEW` (repeatable): for text that is not a bare label (callouts, axis titles).
+- `--tidy-leaders`: sets every dotted leader of the hierarchy trees again, starting 0.4 of the text
+  size after its label. The trees were drawn with an estimated text width, so the gap varied, and
+  renamed labels differ in length.
+- `--sort-key LABEL,...[;LABEL,...]`: puts the legend entries (label and swatch) in the given order,
+  one list per column. Every entry of a column is set at the same x (swatch and text), on the rows
+  of the existing legend. For Fig. 5 this is hierarchy order (`display_sort_key`): each parent directly
+  above its children, as in the trees.
+- `--shift-key LABEL,...:DX_MM`: moves legend entries to the right, where a longer name in the column
+  before them needs the room.
+
+```bash
+python illustrator/nature_ai_export.py supfig1.ai ED_Fig1 --min-pt 5 --arial \
+    --display-names v2 --no-multigroup --tidy-leaders
+python illustrator/nature_ai_export.py supfig2.rgb.pdf ED_Fig2 --max-pt 7 --arial \
+    --display-names v2 --no-multigroup --tidy-leaders
+python illustrator/nature_ai_export.py supfig3.rgb.pdf ED_Fig3 --max-pt 7 --arial \
+    --display-names v2 --no-multigroup --tidy-leaders \
+    --rename "p arm telomere (subtelomere featureset)=p arm telomere (subtelomeric feature set)" \
+    --rename "q arm telomere (subtelomere featureset)=q arm telomere (subtelomeric feature set)"
+python illustrator/nature_ai_export.py HPRC_cent_analysis.v2_tpo.YC.ai Fig5 \
+    --min-pt 5 --width-mm 180 --height-mm 170 --arial --display-names v1 \
+    --rename "chr3: del Hsat1A=chr3: del HSat1A" --rename "chr5: del Hsat3=chr5: del HSat3" \
+    --rename "chr12: dup asat1=chr12: dup aSat" --rename "Hsat1A=HSat1A" --rename "Hsat3=HSat3" \
+    --sort-key "centromeric,aSat,aSat HOR,active HOR,divergent HOR,inactive HOR,monomeric,bSat,cenSat,ct,gSat;HSat,HSat1,HSat1A,HSat1B,HSat2,HSat3,rDNA,arm,p arm,q arm" \
+    --shift-key "HSat,HSat1,HSat1A,HSat1B,HSat2,HSat3,rDNA,arm,p arm,q arm:3"
+python illustrator/nature_ai_export.py supfig4.rgb.pdf SuppFig1_export --arial --display-names v2 \
+    --rename "p arm telomere (satellite featureset)=p arm telomere (region feature set)" \
+    --rename "q arm telomere (satellite featureset)=q arm telomere (region feature set)"
+python illustrator/keep_panel_a.py SuppFig1_export.pdf SuppFig1
+```
+
+The `.rgb.pdf` inputs are the RGB copies written by `ai_cmyk_to_rgb.py` (above). Without these
+options the exports are unchanged.
+
+Supp. Fig. 1 keeps panel a only (`keep_panel_a.py`). Its panel b drew the region hierarchy again in
+a hand-compacted layout in which the longer names do not fit. The same tree is Fig. 1b and ED Fig. 2b.
