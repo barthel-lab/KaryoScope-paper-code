@@ -81,6 +81,7 @@ OTHER = {
     "canonical_telomere": "canonical telomere",
     "noncanonical_telomere": "noncanonical telomere",
     "telomere_like": "telomere-like",
+    "cen_gap": "centromere gap",        # Arabidopsis region set: inside the centromere core, between CEN180 bands
     "nonsubtelomeric": "nonsubtelomeric",
     "nonrepeat": "nonrepeat",
     "nonacrocentric": "nonacrocentric",

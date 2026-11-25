@@ -165,31 +165,46 @@ def arrange_key(page, spans_, sort_spec, shift_spec, scale):
             sys.exit(f"legend entry {label!r}: found {len(found)} (need exactly one label with a swatch)")
         return found[0]
 
-    delta = {}                                   # id(span) -> [span, parts, dx, dy]
+    delta = {}                                   # id(span) -> [span, parts, dx_text, dy, dx_swatch]
     if sort_spec:
-        # The lists are the columns as they should read; the places are the ones the same entries
-        # hold now, column by column, so an entry may move to another column.
-        want = [n.strip() for col in sort_spec.split(";") for n in col.split(",")]
-        ents = [entry(n) for n in want]
+        # The lists are the columns as they should read. The places are a grid: the x of each
+        # existing column (its swatch and its text, taken from the column's first entry, so that
+        # every entry of a column lines up exactly) and the rows of the longest existing column.
+        lists = [[n.strip() for n in col.split(",")] for col in sort_spec.split(";")]
+        ents = {n: entry(n) for col in lists for n in col}
+
+        def sw_x(e):
+            return min(d["rect"].x0 for d in e[1])
         cols = []
-        for x, y in sorted((e[0]["origin"][0], e[0]["origin"][1]) for e in ents):
-            if cols and x - cols[-1][-1][0] < 3:
-                cols[-1].append((x, y))
+        for e in sorted(ents.values(), key=lambda e: e[0]["origin"][0]):
+            if cols and e[0]["origin"][0] - cols[-1][0][0]["origin"][0] < 3:
+                cols[-1].append(e)
             else:
-                cols.append([(x, y)])
-        slots = [(c[0][0], y) for c in cols for y in sorted(p[1] for p in c)]
-        sizes = [len(col.split(",")) for col in sort_spec.split(";")]
-        if [len(c) for c in cols] != sizes:
-            sys.exit(f"--sort-key: the lists have {sizes} entries, the legend columns {[len(c) for c in cols]}")
-        for (sp, parts), (x, y) in zip(ents, slots):
-            delta[id(sp)] = [sp, parts, x - sp["origin"][0], y - sp["origin"][1]]
+                cols.append([e])
+        if len(cols) != len(lists):
+            sys.exit(f"--sort-key: {len(lists)} lists for {len(cols)} legend columns")
+        rows = sorted(e[0]["origin"][1] for e in max(cols, key=len))
+        pitch = (rows[-1] - rows[0]) / (len(rows) - 1)
+        first = min(cols[0], key=lambda e: e[0]["origin"][1])
+        gap = first[0]["origin"][0] - sw_x(first)          # swatch to text, the same in every column
+        for want, col in zip(lists, cols):
+            ref = min(col, key=lambda e: e[0]["origin"][1])
+            tx = ref[0]["origin"][0]
+            sx = tx - gap
+            for i, n in enumerate(want):
+                sp, parts = ents[n]
+                y = rows[i] if i < len(rows) else rows[-1] + pitch * (i - len(rows) + 1)
+                delta[id(sp)] = [sp, parts, tx - sp["origin"][0], y - sp["origin"][1], sx - sw_x((sp, parts))]
     if shift_spec:
         names, dx_mm = shift_spec.rsplit(":", 1)
+        dx = float(dx_mm) * MM / scale
         for n in names.split(","):
             sp, parts = entry(n.strip())
-            delta.setdefault(id(sp), [sp, parts, 0.0, 0.0])[2] += float(dx_mm) * MM / scale
-    _redraw(page, [(d, dx, dy) for _, parts, dx, dy in delta.values() for d in parts])
-    for sp, _, dx, dy in delta.values():
+            e = delta.setdefault(id(sp), [sp, parts, 0.0, 0.0, 0.0])
+            e[2] += dx
+            e[4] += dx
+    _redraw(page, [(d, dxs, dy) for _, parts, _, dy, dxs in delta.values() for d in parts])
+    for sp, _, dx, dy, _ in delta.values():
         x0, y0, x1, y1 = sp["bbox"]
         sp["origin"] = (sp["origin"][0] + dx, sp["origin"][1] + dy)
         sp["bbox"] = (x0 + dx, y0 + dy, x1 + dx, y1 + dy)

@@ -102,7 +102,8 @@ text again, so `nature_ai_export.py` can print the same names without the `.ai` 
   size after its label. The trees were drawn with an estimated text width, so the gap varied, and
   renamed labels differ in length.
 - `--sort-key LABEL,...[;LABEL,...]`: puts the legend entries (label and swatch) in the given order,
-  one list per column. For Fig. 5 this is hierarchy order (`display_sort_key`): each parent directly
+  one list per column. Every entry of a column is set at the same x (swatch and text), on the rows
+  of the existing legend. For Fig. 5 this is hierarchy order (`display_sort_key`): each parent directly
   above its children, as in the trees.
 - `--shift-key LABEL,...:DX_MM`: moves legend entries to the right, where a longer name in the column
   before them needs the room.
@@ -120,8 +121,8 @@ python illustrator/nature_ai_export.py HPRC_cent_analysis.v2_tpo.YC.ai Fig5 \
     --min-pt 5 --width-mm 180 --height-mm 170 --arial --display-names v1 \
     --rename "chr3: del Hsat1A=chr3: del HSat1A" --rename "chr5: del Hsat3=chr5: del HSat3" \
     --rename "chr12: dup asat1=chr12: dup aSat" --rename "Hsat1A=HSat1A" --rename "Hsat3=HSat3" \
-    --sort-key "centromeric,aSat,aSat HOR,active HOR,divergent HOR,inactive HOR,monomeric,bSat,cenSat,ct,gSat,HSat;HSat1,HSat1A,HSat1B,HSat2,HSat3,rDNA,arm,p arm,q arm" \
-    --shift-key "HSat1,HSat1A,HSat1B,HSat2,HSat3,rDNA,arm,p arm,q arm:3"
+    --sort-key "centromeric,aSat,aSat HOR,active HOR,divergent HOR,inactive HOR,monomeric,bSat,cenSat,ct,gSat;HSat,HSat1,HSat1A,HSat1B,HSat2,HSat3,rDNA,arm,p arm,q arm" \
+    --shift-key "HSat,HSat1,HSat1A,HSat1B,HSat2,HSat3,rDNA,arm,p arm,q arm:3"
 python illustrator/nature_ai_export.py supfig4.rgb.pdf SuppFig1_export --arial --display-names v2 \
     --rename "p arm telomere (satellite featureset)=p arm telomere (region feature set)" \
     --rename "q arm telomere (satellite featureset)=q arm telomere (region feature set)"
