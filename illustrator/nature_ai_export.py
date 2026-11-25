@@ -85,6 +85,77 @@ def spans(page):
                     yield dict(s, dir=tuple(line["dir"]))
 
 
+def rename_spans(spans_, a):
+    """Apply --rename and --display-names to the text of the spans, in place. -> [(old, new)]"""
+    if not (a.rename or a.display_names):
+        return []
+    explicit = dict(r.split("=", 1) for r in a.rename)
+    if a.display_names:
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "common"))
+        import display_names as dn
+        listed = dn.REGION_V1 if a.display_names == "v1" else dn.REGION_V2
+    done = []
+    for s in spans_:
+        old = s["text"]
+        key = old.replace("\xa0", " ").strip()
+        new = key
+        if key in explicit:
+            new = explicit[key]
+        elif a.display_names:
+            if a.no_multigroup and key.endswith(" " + dn.MULTIGROUP):
+                new = key[: -len(dn.MULTIGROUP) - 1]
+            else:
+                for label in (key, key.replace(" ", "_")):
+                    base = label[: -len("_multigroup1")] if label.endswith("_multigroup1") else \
+                        label[: -len("_specific")] if label.endswith("_specific") else label
+                    if base in listed or base in dn.OTHER:
+                        new = dn.display_name(label, a.display_names)
+                        break
+        if new != key:
+            s["renamed"] = True
+            s["text"] = old.replace(old.strip(), new.replace(" ", "\xa0") if "\xa0" in old else new)
+            done.append((key, new))
+    return done
+
+
+def shift_key(page, spans_, spec, scale):
+    """--shift-key: move legend labels and their swatches to the right. The text is off the page at
+    this point (it is set again afterwards), so only the swatches are redrawn."""
+    names, dx_mm = spec.rsplit(":", 1)
+    names = {n.strip() for n in names.split(",")}
+    dx = float(dx_mm) * MM / scale
+    rects = [d for d in page.get_drawings()
+             if len(d["items"]) == 1 and d["items"][0][0] == "re" and d.get("fill") is not None]
+    outlines = [d for d in page.get_drawings() if len(d["items"]) == 1 and d["items"][0][0] == "re"]
+    moved = set()
+    for s in spans_:
+        label = s["text"].replace("\xa0", " ").strip()
+        if label not in names or s["dir"] != (1.0, 0.0):
+            continue
+        x0, y0, x1, y1 = s["bbox"]
+        h = y1 - y0
+        sw = [d for d in rects if d["rect"].x1 <= x0 + 0.5 and x0 - d["rect"].x1 < 1.5 * h
+              and d["rect"].y0 < (y0 + y1) / 2 < d["rect"].y1 and d["rect"].width < 2.5 * h]
+        if len(sw) != 1:
+            continue                      # the same word elsewhere on the page, not a legend entry
+        r = fitz.Rect(sw[0]["rect"])
+        box = r + (-1.5, -1.5, 1.5, 1.5)
+        # the swatch and anything drawn with it (its outline can be a path of its own)
+        parts = [d for d in outlines if box.contains(d["rect"])]
+        page.add_redact_annot(box)
+        page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
+                              graphics=fitz.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
+                              text=fitz.PDF_REDACT_TEXT_NONE)
+        for d in parts:
+            page.draw_rect(fitz.Rect(d["rect"]) + (dx, 0, dx, 0), color=d.get("color"), fill=d.get("fill"),
+                           width=d.get("width") or 0)
+        s["origin"] = (s["origin"][0] + dx, s["origin"][1])
+        s["bbox"] = (x0 + dx, y0, x1 + dx, y1)
+        moved.add(label)
+    if moved != names:
+        sys.exit(f"--shift-key: no legend entry found for {sorted(names - moved)}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("ai")
@@ -106,6 +177,18 @@ def main():
                     help="nominal size above which a bold single capital counts as a panel letter")
     ap.add_argument("--relabel", default="",
                     help="re-letter panels, e.g. C=E,E=C (the .ai keeps its original letters)")
+    ap.add_argument("--display-names", choices=["v1", "v2"], default=None,
+                    help="print feature labels by their display names (common/display_names.py); the "
+                         "value is the database vocabulary of the figure. Needs --arial")
+    ap.add_argument("--no-multigroup", action="store_true",
+                    help="with --display-names: drop the '(multigroup)' suffix after parent-row counts")
+    ap.add_argument("--rename", action="append", default=[], metavar="OLD=NEW",
+                    help="print NEW where a text span reads exactly OLD (repeatable; applied before "
+                         "--display-names). Needs --arial")
+    ap.add_argument("--shift-key", default=None, metavar="LABEL,LABEL,...:DX_MM",
+                    help="move these legend entries (the label as printed, and the swatch at its left) "
+                         "DX_MM to the right at final size, to make room for longer names in the "
+                         "column before them. Needs --arial")
     ap.add_argument("--arial", action="store_true",
                     help="set all remaining text that is not Arial again in embedded Arial "
                          "(same origin, size, colour and direction)")
@@ -275,6 +358,9 @@ def main():
     # Any text still in another typeface (Helvetica from Illustrator): the same string in Arial at
     # the same origin. Arial has Helvetica's advance widths, so labels keep their extent.
     converted = []
+    renamed = []
+    if (a.rename or a.display_names) and not a.arial:
+        sys.exit("--rename and --display-names need --arial (the text is set again there)")
     if a.arial:
         # All text comes off and goes back, including text that is Arial already: a redaction box
         # also removes single characters of neighbouring labels, which would then be left in part.
@@ -287,6 +373,9 @@ def main():
                               text=fitz.PDF_REDACT_TEXT_REMOVE)
         if list(spans(page)):
             sys.exit(f"--arial: text left after removal: {[s['text'] for s in spans(page)][:5]}")
+        renamed = rename_spans(before, a)
+        if a.shift_key:   # before the fonts are added: its redactions drop unused font resources
+            shift_key(page, before, a.shift_key, scale)
         faces = {"AR": ARIAL, "AB": ARIAL_BOLD, "AI": ARIAL_ITALIC, "ABI": ARIAL_BOLD_ITALIC}
         for name, path in faces.items():
             page.insert_font(fontname=name, fontfile=path)
@@ -297,6 +386,14 @@ def main():
             turn = {(1.0, 0.0): 0, (0.0, -1.0): 90, (-1.0, 0.0): 180, (0.0, 1.0): 270}.get(s["dir"])
             if turn is None:
                 sys.exit(f"--arial: text direction {s['dir']} of {s['text']!r} is not supported")
+            if s.get("renamed") and turn == 0:
+                # A longer name can run over what followed the old label (a tree's dotted leader):
+                # clear the part of the line that the new text now covers, and a little beyond it.
+                w = fitz.Font(fontfile=faces[name]).text_length(s["text"], s["size"])
+                x0, y0, x1, y1 = s["bbox"]
+                if s["origin"][0] + w > x1 + 0.5 * s["size"]:   # not for a change of a letter or two
+                    page.draw_rect(fitz.Rect(x1 - 0.2, y0, s["origin"][0] + w + 0.25 * s["size"], y1),
+                                   color=None, fill=(1, 1, 1))
             page.insert_text(fitz.Point(s["origin"]), s["text"], fontname=name, fontsize=s["size"],
                              color=fitz.sRGB_to_pdf(s["color"]), rotate=turn)
     if grow:  # enlarged labels can reach past the first crop
@@ -330,6 +427,7 @@ def main():
              f"{[s['text'] for s in thinned]}" if a.min_pt else "")
           + (f"; re-inserted (collateral): {len(collateral)}" if collateral else "")
           + (f"; set again in Arial: {len(converted)}" if a.arial else "")
+          + (f"; labels renamed: {len(renamed)}" if a.arial and (a.rename or a.display_names) else "")
           + (f"; hidden layers removed: {', '.join(hidden)}" if hidden else ""))
     if sizes:
         print(f"  text at final size: {min(sizes)}-{max(sizes)} pt; "
