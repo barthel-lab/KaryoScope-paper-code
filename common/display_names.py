@@ -19,10 +19,9 @@ The v1 and v2 tables agree with karyoscope_feature_name_mapping.tsv (here; the v
 pair in it gets one display name. v1 noncentromeric_specific is v2 rDNA (the rDNA intervals the v1 region
 source dropped) and prints "rDNA".
 
-Legend order (display_sort_key): the region feature set in the order of REGION_ORDER, which is the order of
-the Fig. 1 colour key -- the leaves (active HOR, divergent HOR, inactive HOR, mixed aSat, monomeric, bSat,
-cenSat, ct, gSat, HSat1A, HSat1B, HSat2, HSat3, rDNA, p arm, q arm), then the parents (centromeric, aSat,
-aSat HOR, HSat, HSat1, arm); any other name after these, alphabetically.
+Legend order (display_sort_key): hierarchy order, the rows of each feature set's tree from top to bottom
+(HIERARCHY_ORDER), so a parent is listed directly above its children: centromeric, aSat, aSat HOR, active HOR,
+divergent HOR, inactive HOR, mixed aSat, monomeric, bSat, ... Any name not in a tree follows, alphabetically.
 
 display_text(phrase) rewrites a printed phrase: each token that is a feature label (with or without its
 _specific / _multigroup1 suffix) becomes its display name, and the Greek forms beta-satellite / beta-sat become
@@ -121,14 +120,26 @@ def display_name(label, vocabulary="v2"):
     return name
 
 
-REGION_ORDER = ["active HOR", "divergent HOR", "inactive HOR", "mixed aSat", "monomeric", "bSat", "cenSat", "ct",
-                "gSat", "HSat1A", "HSat1B", "HSat2", "HSat3", "rDNA", "p arm", "q arm",
-                "centromeric", "aSat", "aSat HOR", "HSat", "HSat1", "arm"]
+# Hierarchy order: the rows of each feature set's tree, top to bottom (Fig. 1b; ED Figs. 2b-e and 3b),
+# so that a parent is listed directly above its children in every legend.
+REGION_ORDER = ["centromeric", "aSat", "aSat HOR", "active HOR", "divergent HOR", "inactive HOR", "mixed aSat",
+                "monomeric", "bSat", "cenSat", "ct", "gSat", "HSat", "HSat1", "HSat1A", "HSat1B", "HSat2",
+                "HSat3", "rDNA", "arm", "p arm", "q arm"]
+REPEAT_ORDER = ["Interspersed Repeat", "RNA", "rRNA", "scRNA", "snRNA", "srpRNA", "tRNA", "Transposable Element",
+                "Class I Retrotransposition", "LINE", "LINE-dependent Retroposon", "Retroposon", "SINE", "LTR",
+                "Class II DNA Transposition", "DNA", "RC", "Unknown", "Satellite", "Noninterspersed",
+                "Low complexity", "Simple repeat", "tandem repeat", "nonrepeat"]
+SUBTELOMERIC_ORDER = ["canonical telomere", "telomere-like", "ITS", "noncanonical telomere", "TAR1",
+                      "nonsubtelomeric"]
+GENE_ORDER = ["exon", "intron", "intergenic"]
+ACROCENTRIC_ORDER = ["DJ", "PJ", "SST1", "PHR", "nonacrocentric"]
+HIERARCHY_ORDER = REGION_ORDER + REPEAT_ORDER + SUBTELOMERIC_ORDER + GENE_ORDER + ACROCENTRIC_ORDER
 
 
 def display_sort_key(name):
-    """Sort key of a printed (display) name: REGION_ORDER first, then the rest alphabetically."""
-    return (REGION_ORDER.index(name), "") if name in REGION_ORDER else (len(REGION_ORDER), name.lower())
+    """Sort key of a printed (display) name: hierarchy order, then any other name alphabetically."""
+    return ((HIERARCHY_ORDER.index(name), "") if name in HIERARCHY_ORDER
+            else (len(HIERARCHY_ORDER), name.lower()))
 
 
 GREEK = {"β-satellite": "bSat", "β-sat": "bSat"}

@@ -166,20 +166,28 @@ def arrange_key(page, spans_, sort_spec, shift_spec, scale):
         return found[0]
 
     delta = {}                                   # id(span) -> [span, parts, dx, dy]
-    for column in (sort_spec.split(";") if sort_spec else []):
-        want = [n.strip() for n in column.split(",")]
+    if sort_spec:
+        # The lists are the columns as they should read; the places are the ones the same entries
+        # hold now, column by column, so an entry may move to another column.
+        want = [n.strip() for col in sort_spec.split(";") for n in col.split(",")]
         ents = [entry(n) for n in want]
-        slots = sorted(e[0]["origin"][1] for e in ents)
-        xs = [e[0]["origin"][0] for e in ents]
-        if max(xs) - min(xs) > 3:
-            sys.exit(f"--sort-key: {want} are not one column of the legend")
-        for (sp, parts), y in zip(ents, slots):
-            delta[id(sp)] = [sp, parts, 0.0, y - sp["origin"][1]]
+        cols = []
+        for x, y in sorted((e[0]["origin"][0], e[0]["origin"][1]) for e in ents):
+            if cols and x - cols[-1][-1][0] < 3:
+                cols[-1].append((x, y))
+            else:
+                cols.append([(x, y)])
+        slots = [(c[0][0], y) for c in cols for y in sorted(p[1] for p in c)]
+        sizes = [len(col.split(",")) for col in sort_spec.split(";")]
+        if [len(c) for c in cols] != sizes:
+            sys.exit(f"--sort-key: the lists have {sizes} entries, the legend columns {[len(c) for c in cols]}")
+        for (sp, parts), (x, y) in zip(ents, slots):
+            delta[id(sp)] = [sp, parts, x - sp["origin"][0], y - sp["origin"][1]]
     if shift_spec:
         names, dx_mm = shift_spec.rsplit(":", 1)
         for n in names.split(","):
             sp, parts = entry(n.strip())
-            delta.setdefault(id(sp), [sp, parts, 0.0, 0.0])[2] = float(dx_mm) * MM / scale
+            delta.setdefault(id(sp), [sp, parts, 0.0, 0.0])[2] += float(dx_mm) * MM / scale
     _redraw(page, [(d, dx, dy) for _, parts, dx, dy in delta.values() for d in parts])
     for sp, _, dx, dy in delta.values():
         x0, y0, x1, y1 = sp["bbox"]
