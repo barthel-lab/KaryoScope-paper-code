@@ -114,7 +114,7 @@ RECT_RE = re.compile(
 
 
 # --display-names: feature labels print their display names (common/display_names.py); labels that
-# table does not list (CEN180, cen_gap, nuclear, categorized) print as they are.
+# table does not list (CEN180, nuclear, categorized) print as they are; cen_gap prints "centromere gap".
 DISPLAY_NAMES = False
 
 
@@ -286,7 +286,7 @@ def build_panel_c(comp):
                  f'stroke-width="0.5"/>')
         s.append(f'  <text x="{lx + 19}" y="{lg_y + 11}" font-size="{FS_BODY}" '
                  f'fill="#555555">{esc(shown(label))}</text>')
-        lx += 19 + CHAR_W * len(label) + 24
+        lx += 19 + CHAR_W * len(shown(label)) + 24     # room for the printed label
 
     # ---- right: the composition the karyotype cannot show ------------------
     ey_r = comp[("ey15_2", "region")]
@@ -323,7 +323,7 @@ def build_panel_c(comp):
     lx = CX0
     for label in LEAF_ORDER + NONLEAF_ORDER:
         fill = LEAF_COLOR.get(label) or NONLEAF_COLOR[label]
-        item_w = 19 + CHAR_W * len(label) + 24
+        item_w = 19 + CHAR_W * len(shown(label)) + 24     # room for the printed label
         if lx + item_w > CX0 + CW + 10:
             lx = CX0
             ly += 22

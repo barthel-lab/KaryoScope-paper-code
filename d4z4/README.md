@@ -156,7 +156,10 @@ python make_figures.py --font-dir /path/to/liberation-sans/ --out results/figure
 ("bSat terminal", "Solitary bSat") and the Extended Data Fig. 8a schematic ("bSat calls from
 KaryoScope", "ct terminal", bSat for beta-satellite). The D4Z4 class names (A-like (C+), B-like (C-),
 Canonical (C+)/(C-), Degraded, Transition element (T)), the pLAM entries and the track names are
-unchanged. Without it the figures print the database labels, as submitted.
+unchanged. The Satellites, Repeats, Subtelomere and Genes sections of the colour legend are listed in
+hierarchy order (`display_sort_key`; a section continued in the next column keeps its column sizes); the
+other sections keep their order. Without it the figures print the database labels in alphabetical order,
+as submitted.
 
 It also writes `results/figures/panels/` (each track view and plot as its own SVG) and
 `results/figures/figure_data.tsv`: every number drawn (waffle counts, every diplotype-table

@@ -56,6 +56,38 @@ def legend_label(label, key, avail, size, measure):
     return new
 
 
+LEGEND_SORTED = {'Satellites': 'region', 'Repeats': 'repeat', 'Subtelomere': 'subtelomeric', 'Genes': 'gene'}
+
+
+def legend_sections(sections):
+    """The colour legend's sections; with DISPLAY_NAMES, the Satellites, Repeats, Subtelomere and Genes
+    entries in hierarchy order (display_names.display_sort_key of the feature set), filled into the same
+    slots: a section without a header continues the one before it in the next column, and each column keeps
+    its number of entries. The other sections keep their order."""
+    if not DISPLAY_NAMES:
+        return sections
+    import sys
+    from pathlib import Path as _P
+    sys.path.insert(0, str(_P(__file__).resolve().parent.parent / 'common'))
+    from display_names import display_name, display_sort_key
+    out, groups = [dict(sec) for sec in sections], []
+    for k, sec in enumerate(out):
+        if sec['header']:
+            groups.append([k])
+        elif groups:
+            groups[-1].append(k)
+    for g in groups:
+        fs = LEGEND_SORTED.get(out[g[0]]['header'])
+        if not fs:
+            continue
+        items = [it for k in g for it in out[k]['items']]
+        items.sort(key=lambda it: display_sort_key(display_name(it[1].partition(':')[2], 'v1'), fs))
+        for k in g:
+            n = len(out[k]['items'])
+            out[k]['items'], items = items[:n], items[n:]
+    return out
+
+
 def _txt(s, x, y, size, font, bold=False, anchor='start', fill='#000000', rotate=None):
     return fc.text_el(s, x, y, size, font, 'bold' if bold else 'normal', anchor, fill, rotate)
 
@@ -164,7 +196,7 @@ class FigureContext:
         spec = self.layout['track_legend']
         cmaps = self.renderer.color_maps
         covered = set()
-        for sec in self.L['track_legend']:
+        for sec in legend_sections(self.L['track_legend']):
             if sec['header']:
                 hx, hy = sec['header_at']
                 self.items.append(_txt(sec['header'], hx, hy, spec['header_size'], self.sans, bold=True))

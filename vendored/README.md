@@ -29,6 +29,8 @@ Changes:
   `plot_featureset_tree_bars.py` (style `label_name`, `multigroup_suffix`, `parent_bar_frac`) can print
   the display names of `../common/display_names.py` (`--display-names`; off by default, output unchanged).
   The contig zoom plot's own `noncentromeric_specific` -> "rDNA" override is removed; the table prints it.
+  With `--display-names` the contig zoom plot lists each legend section in hierarchy order
+  (`display_sort_key` of the section's feature set), the catch-all and "novel" entries last.
 
 - `plot_featureset_tree_bars.py` reads its resource directory from
   `$KS_RESOURCES` when set (the original fixes it to a directory under `$HOME`).

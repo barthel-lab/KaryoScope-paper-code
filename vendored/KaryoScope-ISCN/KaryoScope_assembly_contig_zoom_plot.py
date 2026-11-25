@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Vendored from barthel-lab/KaryoScope-ISCN at commit 68a9816baab659c5b710f265c3713844cc2729d2, file KaryoScope_assembly_contig_zoom_plot.py.
 # Copied unmodified except --display-names (2026-11-25: the colour legend prints common/display_names.py names, sorted
-# by display_names.display_sort_key; off by default) and the noncentromeric -> rDNA override, which the table now
+# by display_names.display_sort_key, in hierarchy order; off by default) and the noncentromeric -> rDNA override, which the table now
 # covers (removed). Authors (git log): Floris Barthel <fbarthel@tgen.org>; Rhyker Ranallo-Benavidez <rranallo-benavidez@tgen.org>.
 # Part of the KaryoScope-paper-code snapshot; see vendored/README.md.
 """
@@ -2160,16 +2160,16 @@ def _display_translate(name, feature_names):
     return ', '.join(forms.get(part, part) for part in name.split(', '))
 
 
-def _display_order(name):
-    """Sort key within a legend group: the name itself, or with --display-names the order of
-    display_names.display_sort_key (the region leaves in the order of the Fig. 1 key, then parents)."""
+def _display_order(name, featureset=None):
+    """Sort key within a legend section: the name itself, or with --display-names the order of
+    display_names.display_sort_key (the rows of the feature set's tree, a parent above its children)."""
     if not DISPLAY_NAMES:
         return name
     import sys as _sys
     from pathlib import Path as _P
     _sys.path.insert(0, str(_P(__file__).resolve().parent.parent.parent / 'common'))
     from display_names import display_sort_key
-    return display_sort_key(name)
+    return display_sort_key(name, featureset)
 
 
 def _draw_legend(d, legend_x, legend_y, colors, featuresets, displayed_features,
@@ -2340,8 +2340,12 @@ def _draw_legend(d, legend_x, legend_y, colors, featuresets, displayed_features,
 
 
             display_name = _display_translate(display_name, feature_names)
-            order = _display_order(display_name)
-            if novels:
+            order = _display_order(display_name, fs)
+            if DISPLAY_NAMES:
+                # one list in hierarchy order (chromosome-specific, specific and parent rows together);
+                # the catch-alls, then novel, stay last
+                sort_key = ((4, order) if novels else (3, order) if non_cats and not specifics else (1, order))
+            elif novels:
                 sort_key = (4, 0, display_name)
             elif non_cats and not specifics:
                 sort_key = (3, 0, display_name)

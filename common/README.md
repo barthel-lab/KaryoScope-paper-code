@@ -9,10 +9,13 @@ Code shared by the figure scripts of several analyses.
   `hor`, `mon`) or the v1 database (`KS_human_CHM13`: `active_specific`, `inactive_specific`,
   `hor_multigroup1`) and returns, for example, "active HOR", "inactive HOR", "aSat HOR". A parent
   (`<name>_multigroup1`) prints its name alone. `MULTIGROUP` is the text a tree may print after a
-  parent row's k-mer count. `display_sort_key` orders legends (the region leaves in the order of the
-  Fig. 1 key -- active HOR, divergent HOR, inactive HOR, mixed aSat, monomeric, bSat, cenSat, ct, gSat,
-  HSat1A, HSat1B, HSat2, HSat3, rDNA, p arm, q arm -- then the parents centromeric, aSat, aSat HOR, HSat,
-  HSat1, arm, then any other name alphabetically). `display_text` rewrites a printed phrase (its feature
+  parent row's k-mer count. `display_sort_key(name, featureset)` orders legends in hierarchy
+  order: the rows of the feature set's tree from top to bottom (the v2 trees of Fig. 1b and ED Figs. 2-3,
+  children by priority), so a parent is listed directly above its children -- for region centromeric,
+  aSat, aSat HOR, active HOR, divergent HOR, inactive HOR, mixed aSat, monomeric, bSat, cenSat, ct, gSat,
+  HSat, HSat1, HSat1A, HSat1B, HSat2, HSat3, rDNA, arm, p arm, q arm -- then any other name
+  alphabetically. Each legend section passes its feature set (rDNA is a row of both the region and the
+  acrocentric tree); the catch-all and "novel" entries stay last. `display_text` rewrites a printed phrase (its feature
   labels as display names, beta-satellite as bSat). `shared_parent_name` names a swatch several parents
   share: the deepest of them in the v1 hierarchy, the root excluded ("acrocentric").
 - `karyoscope_feature_name_mapping.tsv`: the v1 label of every feature and its v2 label. Every pair

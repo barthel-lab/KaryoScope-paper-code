@@ -30,8 +30,9 @@ python3 figure/make_build_figure.py --a3-dir . --display-names
 ```
 
 `--display-names` (2026-11-25) prints the feature labels with the display names of
-`../../common/display_names.py` ("p arm", "q arm", "Transposable Element"); without it the labels
-print as in the database (`p_arm`, `q_arm`, `Transposable_Element`), as checked below.
+`../../common/display_names.py` ("p arm", "q arm", "Transposable Element", "centromere gap"; the keys
+space their entries by the printed label); without it the labels print as in the database (`p_arm`,
+`q_arm`, `Transposable_Element`, `cen_gap`), as checked below.
 
 Checked 2026-10-20: both outputs were identical to `build_workflow_panelsAB.svg`
 and `build_workflow.svg` in KaryoScope-paper `main` (`5c11d87`), the submitted

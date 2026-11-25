@@ -867,8 +867,8 @@ def draw_legend(d, x, y, colors, featuresets, displayed_features,
         # repeat classes (… SINE, Unknown, nonrepeat).
         BACKGROUNDISH = ('nonrepeat', 'nonacrocentric', 'novel')
         if DISPLAY_NAMES:
-            key = _dn().display_sort_key
-            rows.sort(key=lambda r: (r[0].lower() in BACKGROUNDISH, key(r[0])))
+            key = _dn().display_sort_key       # hierarchy order of this feature set's tree
+            rows.sort(key=lambda r: (r[0].lower() in BACKGROUNDISH, key(r[0], fs)))
         else:
             rows.sort(key=lambda r: (r[0].lower() in BACKGROUNDISH, r[0].lower()))
         return [(name, c) for name, c, f in rows]

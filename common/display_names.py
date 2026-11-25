@@ -20,8 +20,11 @@ pair in it gets one display name. v1 noncentromeric_specific is v2 rDNA (the rDN
 source dropped) and prints "rDNA".
 
 Legend order (display_sort_key): hierarchy order, the rows of each feature set's tree from top to bottom
-(HIERARCHY_ORDER), so a parent is listed directly above its children: centromeric, aSat, aSat HOR, active HOR,
-divergent HOR, inactive HOR, mixed aSat, monomeric, bSat, ... Any name not in a tree follows, alphabetically.
+(the v2 trees as plot_featureset_tree_bars draws them: children by priority), so a parent is listed directly
+above its children: centromeric, aSat, aSat HOR, active HOR, divergent HOR, inactive HOR, mixed aSat,
+monomeric, bSat, ... Given the feature set of the legend section, the key uses that set's tree (rDNA is a row
+of both the region and the acrocentric tree); without it, HIERARCHY_ORDER, the trees one after another. Any
+name not in the tree follows, alphabetically.
 
 display_text(phrase) rewrites a printed phrase: each token that is a feature label (with or without its
 _specific / _multigroup1 suffix) becomes its display name, and the Greek forms beta-satellite / beta-sat become
@@ -122,25 +125,34 @@ def display_name(label, vocabulary="v2"):
 
 
 # Hierarchy order: the rows of each feature set's tree, top to bottom (Fig. 1b; ED Figs. 2b-e and 3b),
-# so that a parent is listed directly above its children in every legend.
+# so that a parent is listed directly above its children in every legend. The root ("categorized") is not
+# a row. "tandem repeat" is not a tree row: it is the class benchmarks/fig2/contrast_HG002.py merges from
+# Satellite, Simple repeat, Low complexity and Noninterspersed, listed after those rows.
 REGION_ORDER = ["centromeric", "aSat", "aSat HOR", "active HOR", "divergent HOR", "inactive HOR", "mixed aSat",
                 "monomeric", "bSat", "cenSat", "ct", "gSat", "HSat", "HSat1", "HSat1A", "HSat1B", "HSat2",
                 "HSat3", "rDNA", "arm", "p arm", "q arm"]
-REPEAT_ORDER = ["Interspersed Repeat", "RNA", "rRNA", "scRNA", "snRNA", "srpRNA", "tRNA", "Transposable Element",
-                "Class I Retrotransposition", "LINE", "LINE-dependent Retroposon", "Retroposon", "SINE", "LTR",
-                "Class II DNA Transposition", "DNA", "RC", "Unknown", "Satellite", "Noninterspersed",
-                "Low complexity", "Simple repeat", "tandem repeat", "nonrepeat"]
+REPEAT_ORDER = ["repeat", "Interspersed Repeat", "RNA", "rRNA", "scRNA", "snRNA", "srpRNA", "tRNA",
+                "Transposable Element", "Class I Retrotransposition", "LINE", "LINE-dependent Retroposon",
+                "Retroposon", "SINE", "LTR", "Class II DNA Transposition", "DNA", "RC", "Unknown", "Satellite",
+                "Noninterspersed", "Low complexity", "Simple repeat", "tandem repeat", "nonrepeat"]
 SUBTELOMERIC_ORDER = ["canonical telomere", "telomere-like", "ITS", "noncanonical telomere", "TAR1",
                       "nonsubtelomeric"]
 GENE_ORDER = ["exon", "intron", "intergenic"]
-ACROCENTRIC_ORDER = ["DJ", "PJ", "SST1", "PHR", "nonacrocentric"]
-HIERARCHY_ORDER = REGION_ORDER + REPEAT_ORDER + SUBTELOMERIC_ORDER + GENE_ORDER + ACROCENTRIC_ORDER
+ACROCENTRIC_ORDER = ["acrocentric", "array", "DJ", "PJ", "rDNA", "SST1", "PHR", "nonacrocentric"]
+CHROMOSOME_ORDER = ["autosome", "acrocentric", "chr13", "chr14", "chr15", "chr21", "chr22",
+                    "metacentric", "chr1", "chr3", "chr16", "chr19", "chr20",
+                    "submetacentric", "chr2", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11",
+                    "chr12", "chr17", "chr18", "sex", "chrX", "chrY"]
+FEATURESET_ORDER = {"region": REGION_ORDER, "repeat": REPEAT_ORDER, "subtelomeric": SUBTELOMERIC_ORDER,
+                    "gene": GENE_ORDER, "acrocentric": ACROCENTRIC_ORDER, "chromosome": CHROMOSOME_ORDER}
+HIERARCHY_ORDER = REGION_ORDER + REPEAT_ORDER + SUBTELOMERIC_ORDER + GENE_ORDER + ACROCENTRIC_ORDER + CHROMOSOME_ORDER
 
 
-def display_sort_key(name):
-    """Sort key of a printed (display) name: hierarchy order, then any other name alphabetically."""
-    return ((HIERARCHY_ORDER.index(name), "") if name in HIERARCHY_ORDER
-            else (len(HIERARCHY_ORDER), name.lower()))
+def display_sort_key(name, featureset=None):
+    """Sort key of a printed (display) name: the row order of the feature set's tree (all trees one after
+    another when featureset is None or unknown), then any other name alphabetically."""
+    order = FEATURESET_ORDER.get(featureset, HIERARCHY_ORDER)
+    return (order.index(name), "") if name in order else (len(order), name.lower())
 
 
 GREEK = {"β-satellite": "bSat", "β-sat": "bSat"}
